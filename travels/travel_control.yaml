@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: control
-          image: lucasponce/travel_control:v2
+          image: kiali/demo_travels_control:v1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
