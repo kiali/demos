@@ -1,4 +1,4 @@
-= Travels Demo - Version 2
+= Travels Demo
 
 A Microservices demo based on Istio Service Mesh tool. 
 
@@ -22,9 +22,9 @@ kubectl label namespace travel-agency istio-injection=enabled
 kubectl label namespace travel-portal istio-injection=enabled
 kubectl label namespace travel-control istio-injection=enabled
 
-kubectl apply -f <(curl -L https://raw.githubusercontent.com/lucasponce/travel-comparison-demo/v2/travel_agency.yaml) -n travel-agency
-kubectl apply -f <(curl -L https://raw.githubusercontent.com/lucasponce/travel-comparison-demo/v2/travel_portal.yaml) -n travel-portal
-kubectl apply -f <(curl -L https://raw.githubusercontent.com/lucasponce/travel-comparison-demo/v2/travel_control.yaml) -n travel-control
+kubectl apply -f <(curl -L https://raw.githubusercontent.com/kiali/demos/travels/master/travel_agency.yaml) -n travel-agency
+kubectl apply -f <(curl -L https://raw.githubusercontent.com/kiali/demos/travels/master/travel_portal.yaml) -n travel-portal
+kubectl apply -f <(curl -L https://raw.githubusercontent.com/kiali/demos/travels/master/travel_control.yaml) -n travel-control
 
 ----
 
@@ -50,9 +50,9 @@ Undeploy the example:
 
 [source,yaml]
 ----
-kubectl delete -f <(curl -L https://raw.githubusercontent.com/lucasponce/travel-comparison-demo/v2/travel_agency.yaml) -n travel-agency
-kubectl delete -f <(curl -L https://raw.githubusercontent.com/lucasponce/travel-comparison-demo/v2/travel_portal.yaml) -n travel-portal
-kubectl delete -f <(curl -L https://raw.githubusercontent.com/lucasponce/travel-comparison-demo/v2/travel_control.yaml) -n travel-control
+kubectl delete -f <(curl -L https://raw.githubusercontent.com/kiali/demos/travels/master/travel_agency.yaml) -n travel-agency
+kubectl delete -f <(curl -L https://raw.githubusercontent.com/kiali/demos/travels/master/travel_portal.yaml) -n travel-portal
+kubectl delete -f <(curl -L https://raw.githubusercontent.com/kiali/demos/travels/master/travel_control.yaml) -n travel-control
 
 kubectl delete namespace travel-agency
 kubectl delete namespace travel-portal
@@ -89,7 +89,7 @@ image:doc/Preliminary-Design.png[Design]
 
 == Travels Dashboard
 
-In the Travels Demo Version 2 it has been introduced a *business dashboard* with two features:
+In the Travels Demo it has been introduced a *business dashboard* with two features:
 
 * Allow to change the settings of every travel shop simulator. Allowing to change the characteristics of the traffic (ratio, device, user, type of travel).
 * Providing a *business* view of the total requests generated from the *travel-portal* namespace to the *travel-agency* services, organized with business criteria as grouped per shop, per type of traffic and per city.
@@ -98,7 +98,7 @@ image:doc/Travels-Dashboard.png[Travels Dashboard]
 
 == Kiali Dashboard
 
-Travels Demo Version 2 has introduced a *database* in the example.
+Travels Demo has introduced a *database* in the example.
 
 A typical flow consists of following steps:
 
