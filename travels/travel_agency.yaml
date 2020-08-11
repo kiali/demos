@@ -58,7 +58,7 @@ spec:
     spec:
       containers:
         - name: mysqldb
-          image: lucasponce/mysqldb:v2
+          image: kiali/demo_travels_mysqldb:v1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3306
@@ -99,7 +99,7 @@ spec:
     spec:
       containers:
         - name: cars
-          image: lucasponce/cars:v2
+          image: kiali/demo_travels_cars:v1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000
@@ -162,7 +162,7 @@ spec:
     spec:
       containers:
         - name: discounts
-          image: lucasponce/discounts:v2
+          image: kiali/demo_travels_discounts:v1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000
@@ -212,7 +212,7 @@ spec:
     spec:
       containers:
         - name: flights
-          image: lucasponce/flights:v2
+          image: kiali/demo_travels_flights:v1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000
@@ -275,7 +275,7 @@ spec:
     spec:
       containers:
         - name: hotels
-          image: lucasponce/hotels:v2
+          image: kiali/demo_travels_hotels:v1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000
@@ -338,7 +338,7 @@ spec:
     spec:
       containers:
         - name: insurances
-          image: lucasponce/insurances:v2
+          image: kiali/demo_travels_insurances:v1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000
@@ -401,7 +401,7 @@ spec:
     spec:
       containers:
         - name: travels
-          image: lucasponce/travels:v2
+          image: kiali/demo_travels_travels:v1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000

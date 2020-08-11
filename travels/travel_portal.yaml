@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: voyages
-          image: lucasponce/travel_portal:v2
+          image: kiali/demo_travels_portal:v1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000
@@ -69,7 +69,7 @@ spec:
     spec:
       containers:
         - name: control
-          image: lucasponce/travel_portal:v2
+          image: kiali/demo_travels_portal:v1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000
@@ -120,7 +120,7 @@ spec:
     spec:
       containers:
         - name: control
-          image: lucasponce/travel_portal:v2
+          image: kiali/demo_travels_portal:v1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000

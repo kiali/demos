@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 set -e
 
-DOCKER_VERSION=v2
+DOCKER_VERSION=v1
 
 ## Travel Control
 
-DOCKER_TRAVEL_CONTROL=lucasponce/travel_control
+DOCKER_TRAVEL_CONTROL=kiali/demo_travels_control
 DOCKER_TRAVEL_CONTROL_TAG=${DOCKER_TRAVEL_CONTROL}:${DOCKER_VERSION}
 
 rm -Rf docker/travel_control/travel_control docker/travel_control/html
@@ -18,7 +18,7 @@ podman build -t ${DOCKER_TRAVEL_CONTROL_TAG} docker/travel_control
 
 ## Travel Portal
 
-DOCKER_TRAVEL_PORTAL=lucasponce/travel_portal
+DOCKER_TRAVEL_PORTAL=kiali/demo_travels_portal
 DOCKER_TRAVEL_PORTAL_TAG=${DOCKER_TRAVEL_PORTAL}:${DOCKER_VERSION}
 
 rm -Rf docker/travel_portal/travel_portal
@@ -30,14 +30,14 @@ podman build -t ${DOCKER_TRAVEL_PORTAL_TAG} docker/travel_portal
 
 ## MySQL
 
-DOCKER_TRAVEL_MYSQL=lucasponce/mysqldb
+DOCKER_TRAVEL_MYSQL=kiali/demo_travels_mysqldb
 DOCKER_TRAVEL_MYSQL_TAG=${DOCKER_TRAVEL_MYSQL}:${DOCKER_VERSION}
 
 podman build -t ${DOCKER_TRAVEL_MYSQL_TAG} docker/travel_agency/mysql
 
 ## Cars
 
-DOCKER_TRAVEL_CARS=lucasponce/cars
+DOCKER_TRAVEL_CARS=kiali/demo_travels_cars
 DOCKER_TRAVEL_CARS_TAG=${DOCKER_TRAVEL_CARS}:${DOCKER_VERSION}
 
 rm -Rf docker/travel_agency/cars/cars
@@ -49,7 +49,7 @@ podman build -t ${DOCKER_TRAVEL_CARS_TAG} docker/travel_agency/cars
 
 ## Discounts
 
-DOCKER_TRAVEL_DISCOUNTS=lucasponce/discounts
+DOCKER_TRAVEL_DISCOUNTS=kiali/demo_travels_discounts
 DOCKER_TRAVEL_DISCOUNTS_TAG=${DOCKER_TRAVEL_DISCOUNTS}:${DOCKER_VERSION}
 
 rm -Rf docker/travel_agency/discounts/discounts
@@ -61,7 +61,7 @@ podman build -t ${DOCKER_TRAVEL_DISCOUNTS_TAG} docker/travel_agency/discounts
 
 ## Flights
 
-DOCKER_TRAVEL_FLIGHTS=lucasponce/flights
+DOCKER_TRAVEL_FLIGHTS=kiali/demo_travels_flights
 DOCKER_TRAVEL_FLIGHTS_TAG=${DOCKER_TRAVEL_FLIGHTS}:${DOCKER_VERSION}
 
 rm -Rf docker/travel_agency/flights/flights
@@ -73,7 +73,7 @@ podman build -t ${DOCKER_TRAVEL_FLIGHTS_TAG} docker/travel_agency/flights
 
 ## Hotels
 
-DOCKER_TRAVEL_HOTELS=lucasponce/hotels
+DOCKER_TRAVEL_HOTELS=kiali/demo_travels_hotels
 DOCKER_TRAVEL_HOTELS_TAG=${DOCKER_TRAVEL_HOTELS}:${DOCKER_VERSION}
 
 rm -Rf docker/travel_agency/hotels/hotels
@@ -85,7 +85,7 @@ podman build -t ${DOCKER_TRAVEL_HOTELS_TAG} docker/travel_agency/hotels
 
 ## Insurances
 
-DOCKER_TRAVEL_INSURANCES=lucasponce/insurances
+DOCKER_TRAVEL_INSURANCES=kiali/demo_travels_insurances
 DOCKER_TRAVEL_INSURANCES_TAG=${DOCKER_TRAVEL_INSURANCES}:${DOCKER_VERSION}
 
 rm -Rf docker/travel_agency/insurances/insurances
@@ -97,7 +97,7 @@ podman build -t ${DOCKER_TRAVEL_INSURANCES_TAG} docker/travel_agency/insurances
 
 ## Travels
 
-DOCKER_TRAVEL_TRAVELS=lucasponce/travels
+DOCKER_TRAVEL_TRAVELS=kiali/demo_travels_travels
 DOCKER_TRAVEL_TRAVELS_TAG=${DOCKER_TRAVEL_TRAVELS}:${DOCKER_VERSION}
 
 rm -Rf docker/travel_agency/travels/travels
