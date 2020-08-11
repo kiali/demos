@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
+DORP=${DORP:-podman}
+
 DOCKER_VERSION=v1
 
 ## Travel Control
@@ -14,7 +16,7 @@ go build -o ../docker/travel_control/travel_control
 cp -R html ../docker/travel_control
 cd ..
 
-podman build -t ${DOCKER_TRAVEL_CONTROL_TAG} docker/travel_control
+${DORP} build -t ${DOCKER_TRAVEL_CONTROL_TAG} docker/travel_control
 
 ## Travel Portal
 
@@ -26,14 +28,14 @@ cd travel_portal
 go build -o ../docker/travel_portal/travel_portal
 cd ..
 
-podman build -t ${DOCKER_TRAVEL_PORTAL_TAG} docker/travel_portal
+${DORP} build -t ${DOCKER_TRAVEL_PORTAL_TAG} docker/travel_portal
 
 ## MySQL
 
 DOCKER_TRAVEL_MYSQL=kiali/demo_travels_mysqldb
 DOCKER_TRAVEL_MYSQL_TAG=${DOCKER_TRAVEL_MYSQL}:${DOCKER_VERSION}
 
-podman build -t ${DOCKER_TRAVEL_MYSQL_TAG} docker/travel_agency/mysql
+${DORP} build -t ${DOCKER_TRAVEL_MYSQL_TAG} docker/travel_agency/mysql
 
 ## Cars
 
@@ -45,7 +47,7 @@ cd travel_agency/cars
 go build -o ../../docker/travel_agency/cars/cars
 cd ../..
 
-podman build -t ${DOCKER_TRAVEL_CARS_TAG} docker/travel_agency/cars
+${DORP} build -t ${DOCKER_TRAVEL_CARS_TAG} docker/travel_agency/cars
 
 ## Discounts
 
@@ -57,7 +59,7 @@ cd travel_agency/discounts
 go build -o ../../docker/travel_agency/discounts/discounts
 cd ../..
 
-podman build -t ${DOCKER_TRAVEL_DISCOUNTS_TAG} docker/travel_agency/discounts
+${DORP} build -t ${DOCKER_TRAVEL_DISCOUNTS_TAG} docker/travel_agency/discounts
 
 ## Flights
 
@@ -69,7 +71,7 @@ cd travel_agency/flights
 go build -o ../../docker/travel_agency/flights/flights
 cd ../..
 
-podman build -t ${DOCKER_TRAVEL_FLIGHTS_TAG} docker/travel_agency/flights
+${DORP} build -t ${DOCKER_TRAVEL_FLIGHTS_TAG} docker/travel_agency/flights
 
 ## Hotels
 
@@ -81,7 +83,7 @@ cd travel_agency/hotels
 go build -o ../../docker/travel_agency/hotels/hotels
 cd ../..
 
-podman build -t ${DOCKER_TRAVEL_HOTELS_TAG} docker/travel_agency/hotels
+${DORP} build -t ${DOCKER_TRAVEL_HOTELS_TAG} docker/travel_agency/hotels
 
 ## Insurances
 
@@ -93,7 +95,7 @@ cd travel_agency/insurances
 go build -o ../../docker/travel_agency/insurances/insurances
 cd ../..
 
-podman build -t ${DOCKER_TRAVEL_INSURANCES_TAG} docker/travel_agency/insurances
+${DORP} build -t ${DOCKER_TRAVEL_INSURANCES_TAG} docker/travel_agency/insurances
 
 ## Travels
 
@@ -105,15 +107,15 @@ cd travel_agency/travels
 go build -o ../../docker/travel_agency/travels/travels
 cd ../..
 
-podman build -t ${DOCKER_TRAVEL_TRAVELS_TAG} docker/travel_agency/travels
+${DORP} build -t ${DOCKER_TRAVEL_TRAVELS_TAG} docker/travel_agency/travels
 
-podman login docker.io
-podman push ${DOCKER_TRAVEL_CONTROL_TAG}
-podman push ${DOCKER_TRAVEL_PORTAL_TAG}
-podman push ${DOCKER_TRAVEL_MYSQL_TAG}
-podman push ${DOCKER_TRAVEL_CARS_TAG}
-podman push ${DOCKER_TRAVEL_DISCOUNTS_TAG}
-podman push ${DOCKER_TRAVEL_FLIGHTS_TAG}
-podman push ${DOCKER_TRAVEL_HOTELS_TAG}
-podman push ${DOCKER_TRAVEL_INSURANCES_TAG}
-podman push ${DOCKER_TRAVEL_TRAVELS_TAG}
+${DORP} login docker.io
+${DORP} push ${DOCKER_TRAVEL_CONTROL_TAG}
+${DORP} push ${DOCKER_TRAVEL_PORTAL_TAG}
+${DORP} push ${DOCKER_TRAVEL_MYSQL_TAG}
+${DORP} push ${DOCKER_TRAVEL_CARS_TAG}
+${DORP} push ${DOCKER_TRAVEL_DISCOUNTS_TAG}
+${DORP} push ${DOCKER_TRAVEL_FLIGHTS_TAG}
+${DORP} push ${DOCKER_TRAVEL_HOTELS_TAG}
+${DORP} push ${DOCKER_TRAVEL_INSURANCES_TAG}
+${DORP} push ${DOCKER_TRAVEL_TRAVELS_TAG}
