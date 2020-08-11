@@ -1,0 +1,3 @@
+= Kiali Demos Repo
+
+A repo with sample applications to demo microservices scenarios based on Istio and managed by Kiali
