@@ -1,0 +1,152 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: voyages
+spec:
+  selector:
+    matchLabels:
+      app: voyages
+      version: v1
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        readiness.status.sidecar.istio.io/applicationPorts: ""
+      labels:
+        app: voyages
+        version: v1
+    spec:
+      containers:
+        - name: voyages
+          image: lucasponce/travel_portal:v2
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          securityContext:
+            privileged: false
+          env:
+            - name: LISTEN_ADDRESS
+              value: ":8000"
+            - name: PORTAL_COORDINATES
+              value: "48.861310,2.337418"
+            - name: PORTAL_COUNTRY
+              value: "France"
+            - name: PORTAL_NAME
+              value: "voyages.fr"
+            - name: TRAVELS_AGENCY_SERVICE
+              value: "http://travels.travel-agency:8000"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: voyages
+  labels:
+    app: voyages
+spec:
+  ports:
+    - name: http
+      port: 8000
+  selector:
+    app: voyages
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: viaggi
+spec:
+  selector:
+    matchLabels:
+      app: viaggi
+      version: v1
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        readiness.status.sidecar.istio.io/applicationPorts: ""
+      labels:
+        app: viaggi
+        version: v1
+    spec:
+      containers:
+        - name: control
+          image: lucasponce/travel_portal:v2
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          securityContext:
+            privileged: false
+          env:
+            - name: LISTEN_ADDRESS
+              value: ":8000"
+            - name: PORTAL_COORDINATES
+              value: "41.890668,12.492194"
+            - name: PORTAL_COUNTRY
+              value: "Italy"
+            - name: PORTAL_NAME
+              value: "viaggi.it"
+            - name: TRAVELS_AGENCY_SERVICE
+              value: "http://travels.travel-agency:8000"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: viaggi
+  labels:
+    app: viaggi
+spec:
+  ports:
+    - name: http
+      port: 8000
+  selector:
+    app: viaggi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: travels
+spec:
+  selector:
+    matchLabels:
+      app: travels
+      version: v1
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        readiness.status.sidecar.istio.io/applicationPorts: ""
+      labels:
+        app: travels
+        version: v1
+    spec:
+      containers:
+        - name: control
+          image: lucasponce/travel_portal:v2
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          securityContext:
+            privileged: false
+          env:
+            - name: LISTEN_ADDRESS
+              value: ":8000"
+            - name: PORTAL_COORDINATES
+              value: "55.956245,-3.187915"
+            - name: PORTAL_COUNTRY
+              value: "United Kingdom"
+            - name: PORTAL_NAME
+              value: "travels.uk"
+            - name: TRAVELS_AGENCY_SERVICE
+              value: "http://travels.travel-agency:8000"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: travels
+  labels:
+    app: travels
+spec:
+  ports:
+    - name: http
+      port: 8000
+  selector:
+    app: travels

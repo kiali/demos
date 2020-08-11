@@ -1,0 +1,22 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, build with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+travels/docker/travel_agency/cars/cars
+travels/docker/travel_agency/discounts/discounts
+travels/docker/travel_agency/flights/flights
+travels/docker/travel_agency/hotels/hotels
+travels/docker/travel_agency/insurances/insurances
+travels/docker/travel_agency/travels/travels
+travels/docker/travel_control/travel_control
+travels/docker/travel_control/html
+travels/docker/travel_portal/travel_portal
