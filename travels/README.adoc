@@ -22,9 +22,9 @@ kubectl label namespace travel-agency istio-injection=enabled
 kubectl label namespace travel-portal istio-injection=enabled
 kubectl label namespace travel-control istio-injection=enabled
 
-kubectl apply -f <(curl -L https://raw.githubusercontent.com/kiali/demos/travels/master/travel_agency.yaml) -n travel-agency
-kubectl apply -f <(curl -L https://raw.githubusercontent.com/kiali/demos/travels/master/travel_portal.yaml) -n travel-portal
-kubectl apply -f <(curl -L https://raw.githubusercontent.com/kiali/demos/travels/master/travel_control.yaml) -n travel-control
+kubectl apply -f <(curl -L https://raw.githubusercontent.com/kiali/demos/master/travels/travel_agency.yaml) -n travel-agency
+kubectl apply -f <(curl -L https://raw.githubusercontent.com/kiali/demos/master/travels/travel_portal.yaml) -n travel-portal
+kubectl apply -f <(curl -L https://raw.githubusercontent.com/kiali/demos/master/travels/travel_control.yaml) -n travel-control
 
 ----
 
@@ -50,9 +50,9 @@ Undeploy the example:
 
 [source,yaml]
 ----
-kubectl delete -f <(curl -L https://raw.githubusercontent.com/kiali/demos/travels/master/travel_agency.yaml) -n travel-agency
-kubectl delete -f <(curl -L https://raw.githubusercontent.com/kiali/demos/travels/master/travel_portal.yaml) -n travel-portal
-kubectl delete -f <(curl -L https://raw.githubusercontent.com/kiali/demos/travels/master/travel_control.yaml) -n travel-control
+kubectl delete -f <(curl -L https://raw.githubusercontent.com/kiali/demos/master/travels/travel_agency.yaml) -n travel-agency
+kubectl delete -f <(curl -L https://raw.githubusercontent.com/kiali/demos/master/travels/travel_portal.yaml) -n travel-portal
+kubectl delete -f <(curl -L https://raw.githubusercontent.com/kiali/demos/master/travels/travel_control.yaml) -n travel-control
 
 kubectl delete namespace travel-agency
 kubectl delete namespace travel-portal
