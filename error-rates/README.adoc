@@ -1,0 +1,57 @@
+= Error Rates Demo
+
+A set of clients and servers that simulate different error requests.
+
+== Platform Install
+
+This demo has been tested using https://istio.io/latest/docs/setup/platform-setup/minikube/[Minikube] and https://istio.io/latest/docs/setup/install/istioctl/#install-a-different-profile[Istio 1.6 Demo Profile]
+
+== Quick Start
+
+Create `alpha` and `betha` namespaces. Add `istio-injection` label and deploy demo app.
+
+[source,yaml]
+----
+kubectl create namespace alpha
+kubectl create namespace betha
+
+kubectl label namespace alpha istio-injection=enabled
+kubectl label namespace betha istio-injection=enabled
+
+kubectl apply -f <(curl -L https://raw.githubusercontent.com/kiali/demos/master/error-rates/alpha.yaml) -n alpha
+kubectl apply -f <(curl -L https://raw.githubusercontent.com/kiali/demos/master/error-rates/betha.yaml) -n betha
+
+----
+
+Open Kiali dashboard:
+
+[source,bash]
+----
+istioctl dashboard kiali
+
+----
+
+Undeploy the example:
+
+[source,yaml]
+----
+kubectl delete -f <(curl -L https://raw.githubusercontent.com/kiali/demos/master/error-rates/alpha.yaml) -n alpha
+kubectl delete -f <(curl -L https://raw.githubusercontent.com/kiali/demos/master/error-rates/betha.yaml) -n betha
+
+kubectl delete namespace alpha
+kubectl delete namespace betha
+----
+
+== Error Rates Demo Design
+
+This demo creates two namespaces (alpha, and betha) with the same topology of microservices.
+
+A namespace will have three servers (x, y and z) that may simulate a predictable error rate.
+
+"x" server will generate 404 HTTP errors, meanwhile "y" server will generate 505 errors; "z" servers will not generate errors codes to act as contrast.
+
+There will be five clients (a, b, c, d and e) calling one or more servers (x, y, z).
+
+The goal of this setup is to demostrate Kiali Health Config capabilities where a user can define tolerance levels to indicate when an error rate is considered healthy, degraded or a faulied status.
+
+image:doc/Kiali-AlphaNamespace.png[Design]
