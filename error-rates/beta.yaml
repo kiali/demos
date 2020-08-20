@@ -26,7 +26,7 @@ spec:
             privileged: false
           env:
             - name: SERVER_URL
-              value: "http://x.betha:8888/status"
+              value: "http://x.beta:8888/status"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -56,7 +56,7 @@ spec:
             privileged: false
           env:
             - name: SERVER_URL
-              value: "http://x.betha:8888/status,http://y.betha:8888/status"
+              value: "http://x.beta:8888/status,http://y.beta:8888/status"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -86,7 +86,7 @@ spec:
             privileged: false
           env:
             - name: SERVER_URL
-              value: "http://y.betha:8888/status"
+              value: "http://y.beta:8888/status"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -116,7 +116,7 @@ spec:
             privileged: false
           env:
             - name: SERVER_URL
-              value: "http://y.betha:8888/status,http://z.betha:8888/status"
+              value: "http://y.beta:8888/status,http://z.beta:8888/status"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -146,7 +146,7 @@ spec:
             privileged: false
           env:
             - name: SERVER_URL
-              value: "http://z.betha:8888/status"
+              value: "http://z.beta:8888/status"
 ---
 apiVersion: apps/v1
 kind: Deployment

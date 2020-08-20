@@ -8,18 +8,18 @@ This demo has been tested using https://istio.io/latest/docs/setup/platform-setu
 
 == Quick Start
 
-Create `alpha` and `betha` namespaces. Add `istio-injection` label and deploy demo app.
+Create `alpha` and `beta` namespaces. Add `istio-injection` label and deploy demo app.
 
 [source,yaml]
 ----
 kubectl create namespace alpha
-kubectl create namespace betha
+kubectl create namespace beta
 
 kubectl label namespace alpha istio-injection=enabled
-kubectl label namespace betha istio-injection=enabled
+kubectl label namespace beta istio-injection=enabled
 
 kubectl apply -f <(curl -L https://raw.githubusercontent.com/kiali/demos/master/error-rates/alpha.yaml) -n alpha
-kubectl apply -f <(curl -L https://raw.githubusercontent.com/kiali/demos/master/error-rates/betha.yaml) -n betha
+kubectl apply -f <(curl -L https://raw.githubusercontent.com/kiali/demos/master/error-rates/beta.yaml) -n beta
 
 ----
 
@@ -36,15 +36,15 @@ Undeploy the example:
 [source,yaml]
 ----
 kubectl delete -f <(curl -L https://raw.githubusercontent.com/kiali/demos/master/error-rates/alpha.yaml) -n alpha
-kubectl delete -f <(curl -L https://raw.githubusercontent.com/kiali/demos/master/error-rates/betha.yaml) -n betha
+kubectl delete -f <(curl -L https://raw.githubusercontent.com/kiali/demos/master/error-rates/beta.yaml) -n beta
 
 kubectl delete namespace alpha
-kubectl delete namespace betha
+kubectl delete namespace beta
 ----
 
 == Error Rates Demo Design
 
-This demo creates two namespaces (alpha, and betha) with the same topology of microservices.
+This demo creates two namespaces (alpha, and beta) with the same topology of microservices.
 
 A namespace will have three servers (x, y and z) that may simulate a predictable error rate.
 
