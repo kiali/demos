@@ -48,11 +48,11 @@ This demo creates two namespaces (alpha, and beta) with the same topology of mic
 
 A namespace will have three servers (x, y and z) that may simulate a predictable error rate.
 
-"x" server will generate 404 HTTP errors, meanwhile "y" server will generate 505 errors; "z" servers will not generate errors codes to act as contrast.
+"x" server will generate 404 HTTP errors, meanwhile "y" server will generate 505 errors; "z" server will not generate errors codes to act as contrast.
 
 There will be five clients (a, b, c, d and e) calling one or more servers (x, y, z).
 
-The goal of this setup is to demostrate Kiali Health Config capabilities where a user can define tolerance levels to indicate when an error rate is considered healthy, degraded or a faulied status.
+The goal of this setup is to demostrate Kiali Health Config capabilities where a user can define tolerance levels to indicate when an error rate is considered healthy, degraded or failed status.
 
 image:doc/Kiali-AlphaNamespace.png[Design]
 
