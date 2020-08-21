@@ -1,11 +1,11 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: a
+  name: a-client
 spec:
   selector:
     matchLabels:
-      app: a
+      app: a-client
       version: v1
   replicas: 1
   template:
@@ -13,7 +13,7 @@ spec:
       annotations:
         readiness.status.sidecar.istio.io/applicationPorts: ""
       labels:
-        app: a
+        app: a-client
         version: v1
     spec:
       containers:
@@ -26,16 +26,16 @@ spec:
             privileged: false
           env:
             - name: SERVER_URL
-              value: "http://x.alpha:8888/status"
+              value: "http://x-server.alpha:8888/status"
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: b
+  name: b-client
 spec:
   selector:
     matchLabels:
-      app: b
+      app: b-client
       version: v1
   replicas: 1
   template:
@@ -43,11 +43,11 @@ spec:
       annotations:
         readiness.status.sidecar.istio.io/applicationPorts: ""
       labels:
-        app: b
+        app: b-client
         version: v1
     spec:
       containers:
-        - name: b
+        - name: b-client
           image: kiali/demo_error_rates_client:v1
           imagePullPolicy: IfNotPresent
           ports:
@@ -56,16 +56,16 @@ spec:
             privileged: false
           env:
             - name: SERVER_URL
-              value: "http://x.alpha:8888/status,http://y.alpha:8888/status"
+              value: "http://x-server.alpha:8888/status,http://y-server.alpha:8888/status"
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: c
+  name: c-client
 spec:
   selector:
     matchLabels:
-      app: c
+      app: c-client
       version: v1
   replicas: 1
   template:
@@ -73,11 +73,11 @@ spec:
       annotations:
         readiness.status.sidecar.istio.io/applicationPorts: ""
       labels:
-        app: c
+        app: c-client
         version: v1
     spec:
       containers:
-        - name: c
+        - name: c-client
           image: kiali/demo_error_rates_client:v1
           imagePullPolicy: IfNotPresent
           ports:
@@ -86,16 +86,16 @@ spec:
             privileged: false
           env:
             - name: SERVER_URL
-              value: "http://y.alpha:8888/status"
+              value: "http://y-server.alpha:8888/status"
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: d
+  name: d-client
 spec:
   selector:
     matchLabels:
-      app: d
+      app: d-client
       version: v1
   replicas: 1
   template:
@@ -103,11 +103,11 @@ spec:
       annotations:
         readiness.status.sidecar.istio.io/applicationPorts: ""
       labels:
-        app: d
+        app: d-client
         version: v1
     spec:
       containers:
-        - name: d
+        - name: d-client
           image: kiali/demo_error_rates_client:v1
           imagePullPolicy: IfNotPresent
           ports:
@@ -116,16 +116,16 @@ spec:
             privileged: false
           env:
             - name: SERVER_URL
-              value: "http://y.alpha:8888/status,http://z.alpha:8888/status"
+              value: "http://y-server.alpha:8888/status,http://z-server.alpha:8888/status"
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: e
+  name: e-client
 spec:
   selector:
     matchLabels:
-      app: e
+      app: e-client
       version: v1
   replicas: 1
   template:
@@ -133,11 +133,11 @@ spec:
       annotations:
         readiness.status.sidecar.istio.io/applicationPorts: ""
       labels:
-        app: e
+        app: e-client
         version: v1
     spec:
       containers:
-        - name: e
+        - name: e-client
           image: kiali/demo_error_rates_client:v1
           imagePullPolicy: IfNotPresent
           ports:
@@ -146,16 +146,16 @@ spec:
             privileged: false
           env:
             - name: SERVER_URL
-              value: "http://z.alpha:8888/status"
+              value: "http://z-server.alpha:8888/status"
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: x
+  name: x-server
 spec:
   selector:
     matchLabels:
-      app: x
+      app: x-server
       version: v1
   replicas: 1
   template:
@@ -163,11 +163,11 @@ spec:
       annotations:
         readiness.status.sidecar.istio.io/applicationPorts: ""
       labels:
-        app: x
+        app: x-server
         version: v1
     spec:
       containers:
-        - name: x
+        - name: x-server
           image: kiali/demo_error_rates_server:v1
           imagePullPolicy: IfNotPresent
           ports:
@@ -181,24 +181,24 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: x
+  name: x-server
   labels:
-    app: x
+    app: x-server
 spec:
   ports:
     - name: http
       port: 8888
   selector:
-    app: x
+    app: x-server
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "y"
+  name: y-server
 spec:
   selector:
     matchLabels:
-      app: "y"
+      app: y-server
       version: v1
   replicas: 1
   template:
@@ -206,11 +206,11 @@ spec:
       annotations:
         readiness.status.sidecar.istio.io/applicationPorts: ""
       labels:
-        app: "y"
+        app: y-server
         version: v1
     spec:
       containers:
-        - name: "y"
+        - name: y-server
           image: kiali/demo_error_rates_server:v1
           imagePullPolicy: IfNotPresent
           ports:
@@ -224,24 +224,24 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: "y"
+  name: y-server
   labels:
-    app: "y"
+    app: y-server
 spec:
   ports:
     - name: http
       port: 8888
   selector:
-    app: "y"
+    app: y-server
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: z
+  name: z-server
 spec:
   selector:
     matchLabels:
-      app: z
+      app: z-server
       version: v1
   replicas: 1
   template:
@@ -249,11 +249,11 @@ spec:
       annotations:
         readiness.status.sidecar.istio.io/applicationPorts: ""
       labels:
-        app: z
+        app: z-server
         version: v1
     spec:
       containers:
-        - name: z
+        - name: z-server
           image: kiali/demo_error_rates_server:v1
           imagePullPolicy: IfNotPresent
           ports:
@@ -267,12 +267,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: z
+  name: z-server
   labels:
-    app: z
+    app: z-server
 spec:
   ports:
     - name: http
       port: 8888
   selector:
-    app: z
+    app: z-server
