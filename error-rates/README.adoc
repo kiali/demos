@@ -46,11 +46,11 @@ kubectl delete namespace beta
 
 This demo creates two namespaces (alpha, and beta) with the same topology of microservices.
 
-A namespace will have three servers (x, y and z) that may simulate a predictable error rate.
+A namespace will have three servers (x-server, y-server and z-server) that may simulate a predictable error rate.
 
 "x" server will generate 404 HTTP errors, meanwhile "y" server will generate 505 errors; "z" server will not generate errors codes to act as contrast.
 
-There will be five clients (a, b, c, d and e) calling one or more servers (x, y, z).
+There will be five clients (a-client, b-client, c-client, d-client and e-client) calling one or more servers (x-server, y-server, z-server).
 
 The goal of this setup is to demostrate Kiali Health Config capabilities where a user can define tolerance levels to indicate when an error rate is considered healthy, degraded or failed status.
 
