@@ -6,6 +6,8 @@ A set of clients and servers that simulate different error requests.
 
 This demo has been tested using https://istio.io/latest/docs/setup/platform-setup/minikube/[Minikube] and https://istio.io/latest/docs/setup/install/istioctl/#install-a-different-profile[Istio 1.6 Demo Profile]
 
+Additional configurations are needed in a case of installing on https://istio.io/latest/docs/setup/platform-setup/openshift/[OpenShift]
+
 == Quick Start
 
 Create `alpha` and `beta` namespaces. Add `istio-injection` label and deploy demo app.
