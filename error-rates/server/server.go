@@ -20,6 +20,7 @@ var (
 	counterRequests = make(map[int]int)
 	serverName = "server"
 	mutex sync.Mutex
+	serverURL = []string{}
 )
 
 func setup() {
@@ -29,6 +30,11 @@ func setup() {
 	if la != "" {
 		listenAddress = la
 		glog.Infof("LISTEN_ADDRESS=%s", listenAddress)
+	}
+	su := os.Getenv("SERVER_URL")
+	if su != "" {
+		serverURL = strings.Split(su, ",")
+		glog.Infof("SERVER_URL=%s", serverURL)
 	}
 	cr := os.Getenv("CODE_REQUESTS")
 	if cr != "" {
@@ -51,6 +57,14 @@ func setup() {
 func GetStatus(w http.ResponseWriter, _ *http.Request) {
 	defer mutex.Unlock()
 	mutex.Lock()
+        // if configured, act as client of configured servers
+	for _, url := range serverURL {
+		request, _ := http.NewRequest("GET", url, nil)
+		client := &http.Client{}
+		response, _ := client.Do(request)
+		glog.Infof("[%s] Request to %s - Code [%d]", serverName, serverURL, response.StatusCode)
+	}
+        // now send response
 	returnCode := 200
 	found := false
 	for _, httpCode := range httpCodes {
