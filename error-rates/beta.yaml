@@ -175,7 +175,7 @@ spec:
             privileged: false
           env:
             - name: SERVER_URL
-              value: "http://v-server.alpha:8888/status"
+              value: "http://v-server.beta:8888/status"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -206,9 +206,8 @@ spec:
           env:
             - name: CODE_REQUESTS
               value: "200,10"
-          env:
             - name: SERVER_URL
-              value: "http://w-server.alpha:8888/status"
+              value: "http://w-server.beta:8888/status"
 ---
 apiVersion: v1
 kind: Service

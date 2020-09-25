@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: music-v3
+spec:
+  selector:
+    matchLabels:
+      app: music
+      version: v3
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        readiness.status.sidecar.istio.io/applicationPorts: ""
+      labels:
+        app: music
+        version: v3
+    spec:
+      containers:
+        - name: music
+          image: kiali/demo_error_rates_server:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8888
+          securityContext:
+            privileged: false
+          env:
+            - name: CODE_REQUESTS
+              value: "200,19,1000;500,1"
+            - name: SERVER_NAME
+              value: "music-v3"
