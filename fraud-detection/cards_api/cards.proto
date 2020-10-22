@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+option go_package = "github.com/kiali/demos/fraud-detection/cards_api";
+
+package cards_api;
+
+service CardsService {
+    rpc ListCards(CardOwner) returns (stream Card) {}
+    rpc ListMovements(Card) returns (stream Movement) {}
+}
+
+message CardOwner {
+    string ownerId = 1;
+}
+
+message Card {
+    string ownerId = 1;
+    string cardId = 2;
+}
+
+message Movement {
+    string ownerId = 1;
+    string cardId = 2;
+    int64 timestamp = 3;
+    string type = 4;
+    string description = 5;
+    double quantity = 6;
+}

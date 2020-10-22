@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fraud-v1
+spec:
+  selector:
+    matchLabels:
+      app: fraud
+      version: v1
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        readiness.status.sidecar.istio.io/applicationPorts: ""
+      labels:
+        app: fraud
+        version: v1
+    spec:
+      containers:
+        - name: fraud
+          image: kiali/demo_fraud_fraud:v1
+          imagePullPolicy: Always
+          securityContext:
+            privileged: false
+          env:
+            - name: CURRENT_SERVICE
+              value: "fraud"
+            - name: CURRENT_VERSION
+              value: "v1"
+            - name: WAIT
+              value: "500"
+            - name: BANK_ADDRESS
+              value: "bank.fraud-detection:50053"
+            - name: INSURANCE_ADDRESS
+              value: "insurance.fraud-detection:50063"
+
+---

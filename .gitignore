@@ -14,6 +14,14 @@
 error-rates/docker/client/client
 error-rates/docker/server/server
 
+fraud-detection/docker/accounts/accounts
+fraud-detection/docker/bank/bank
+fraud-detection/docker/cards/cards
+fraud-detection/docker/claims/claims
+fraud-detection/docker/fraud/fraud
+fraud-detection/docker/insurance/insurance
+fraud-detection/docker/policies/policies
+
 travels/docker/travel_agency/cars/cars
 travels/docker/travel_agency/discounts/discounts
 travels/docker/travel_agency/flights/flights
