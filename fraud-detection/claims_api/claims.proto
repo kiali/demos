@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option go_package = "github.com/kiali/demos/fraud-detection/claims_api";
+
+package claims_api;
+
+service ClaimsService {
+    rpc ListClaims(Policy) returns (stream Claim) {}
+}
+
+message Policy {
+    string policyId = 1;
+}
+
+message Claim {
+    string policyId = 1;
+    string claimId = 2;
+    int64 timestamp = 3;
+    string type = 4;
+    string description = 5;
+    double value = 6;
+}
+

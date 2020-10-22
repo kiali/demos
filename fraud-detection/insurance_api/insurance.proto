@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option go_package = "github.com/kiali/demos/fraud-detection/insurance_api";
+
+package insurance_api;
+
+service InsuranceService {
+    rpc FraudReport(Customer) returns (InsuranceReport) {}
+}
+
+message Customer {
+    string customerId = 1;
+}
+
+message InsuranceReport {
+    string customerId = 1;
+    double risk = 2;
+    string description = 3;
+}

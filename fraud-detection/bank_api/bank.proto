@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option go_package = "github.com/kiali/demos/fraud-detection/bank_api";
+
+package bank_api;
+
+service BankService {
+    rpc FraudReport(Customer) returns (BankReport) {}
+}
+
+message Customer {
+    string customerId = 1;
+}
+
+message BankReport {
+    string customerId = 1;
+    double risk = 2;
+    string description = 3;
+}
+
+

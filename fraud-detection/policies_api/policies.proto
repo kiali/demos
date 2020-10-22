@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option go_package = "github.com/kiali/demos/fraud-detection/policies_api";
+
+package policies_api;
+
+service PoliciesService {
+    rpc ListPolicies(PolicyOwner) returns (stream Policy) {}
+}
+
+message PolicyOwner {
+    string ownerId = 1;
+}
+
+message Policy {
+    string ownerId = 1;
+    string policyId = 2;
+}

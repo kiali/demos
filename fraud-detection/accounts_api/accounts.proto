@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+option go_package = "github.com/kiali/demos/fraud-detection/accounts_api";
+
+package accounts_api;
+
+service AccountService {
+    rpc ListAccounts(AccountOwner) returns (stream Account) {}
+    rpc ListMovements(Account) returns (stream Movement) {}
+}
+
+message AccountOwner {
+    string ownerId = 1;
+}
+
+message Account {
+    string ownerId = 1;
+    string accountId = 2;
+}
+
+message Movement {
+    string ownerId = 1;
+    string accountId = 2;
+    int64 timestamp = 3;
+    string type = 4;
+    string description = 5;
+    double quantity = 6;
+}
+
+
