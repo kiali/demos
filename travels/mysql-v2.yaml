@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysqldb-v2
+  labels:
+    app: mysqldb
+    version: v2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysqldb
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: mysqldb
+        version: v2
+    spec:
+      containers:
+        - name: mysqldb
+          image: kiali/demo_travels_mysqldb:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-credentials
+                  key: rootpasswd
+          args: ["--default-authentication-plugin","mysql_native_password"]
+          volumeMounts:
+            - name: var-lib-mysql
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: var-lib-mysql
+          emptyDir:

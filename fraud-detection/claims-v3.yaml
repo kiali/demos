@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: claims-v3
+spec:
+  selector:
+    matchLabels:
+      app: claims
+      version: v3
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        readiness.status.sidecar.istio.io/applicationPorts: ""
+      labels:
+        app: claims
+        version: v3
+    spec:
+      containers:
+        - name: claims
+          image: kiali/demo_fraud_claims:v1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 50061
+              protocol: TCP
+              name: grpc
+          securityContext:
+            privileged: false
+          env:
+            - name: CURRENT_SERVICE
+              value: "claims"
+            - name: CURRENT_VERSION
+              value: "v3"
+            - name: LISTEN_ADDRESS
+              value: ":50061"
+            - name: WAIT
+              value: "8"
+---
