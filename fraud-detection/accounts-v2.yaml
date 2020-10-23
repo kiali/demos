@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: accounts-v2
+spec:
+  selector:
+    matchLabels:
+      app: accounts
+      version: v2
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        readiness.status.sidecar.istio.io/applicationPorts: ""
+      labels:
+        app: accounts
+        version: v2
+    spec:
+      containers:
+        - name: accounts
+          image: kiali/demo_fraud_accounts:v1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 50051
+              protocol: TCP
+              name: grpc
+          securityContext:
+            privileged: false
+          env:
+            - name: CURRENT_SERVICE
+              value: "accounts"
+            - name: CURRENT_VERSION
+              value: "v2"
+            - name: LISTEN_ADDRESS
+              value: ":50051"
+            - name: WAIT
+              value: "9"
+---
