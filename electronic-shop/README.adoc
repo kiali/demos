@@ -51,7 +51,7 @@ In a first iteration, all services have deployed a first version like it's shown
 
 image:doc/Kiali-ElectronicShop-v1.png[Design v1]
 
-In a next step we are going to deploy new versions of the Music service with different behaviour:
+In the next step we are going to deploy new versions of the Music service with different behaviour:
 
 [source,yaml]
 ----
@@ -61,4 +61,21 @@ kubectl apply -f <(curl -L https://raw.githubusercontent.com/kiali/demos/master/
 
 image:doc/Kiali-ElectronicShop-Music-v2-v3.png[Design v2 v3]
 
+Once evaluated new version of the Music service, we can deploy new versions for Games and Bookstore service using external services mapped in the Mesh using ServiceEntries.
+
+For Games service:
+
+[source,yaml]
+----
+kubectl apply -f <(curl -L https://raw.githubusercontent.com/kiali/demos/master/electronic-shop/games-service-entry.yaml) -n electronic-shop
+kubectl apply -f <(curl -L https://raw.githubusercontent.com/kiali/demos/master/electronic-shop/games-v2.yaml) -n electronic-shop
+----
+
+For Bookstore service:
+
+[source,yaml]
+----
+kubectl apply -f <(curl -L https://raw.githubusercontent.com/kiali/demos/master/electronic-shop/bookstore-service-entry.yaml) -n electronic-shop
+kubectl apply -f <(curl -L https://raw.githubusercontent.com/kiali/demos/master/electronic-shop/bookstore-v2.yaml) -n electronic-shop
+----
 

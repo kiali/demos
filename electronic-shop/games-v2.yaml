@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: games-v2
+spec:
+  selector:
+    matchLabels:
+      app: games
+      version: v2
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        readiness.status.sidecar.istio.io/applicationPorts: ""
+      labels:
+        app: games
+        version: v2
+    spec:
+      containers:
+        - name: games
+          image: kiali/demo_error_rates_server:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8888
+          securityContext:
+            privileged: false
+          env:
+            - name: CODE_REQUESTS
+              value: "200,8;201,1;202,1"
+            - name: SEVER_NAME
+              value: "games-v2"
+            - name: SERVER_URL
+              value: "http://zone.msn.com/en-us/home"

@@ -1,0 +1,17 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: zone-msn-com
+spec:
+  hosts:
+    - zone.msn.com
+  ports:
+    - number: 80
+      name: http-port
+      protocol: HTTP
+      targetPort: 443
+    - number: 443
+      name: https
+      protocol: HTTPS
+  resolution: NONE
+  location: MESH_EXTERNAL
