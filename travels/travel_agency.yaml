@@ -93,6 +93,24 @@ spec:
     metadata:
       annotations:
         readiness.status.sidecar.istio.io/applicationPorts: ""
+        proxy.istio.io/config: |
+          tracing:
+            zipkin:
+              address: zipkin.istio-system:9411
+            sampling: 10
+            custom_tags:
+              http.header.portal:
+                header:
+                  name: portal
+              http.header.device:
+                header:
+                  name: device
+              http.header.user:
+                header:
+                  name: user
+              http.header.travel:
+                header:
+                  name: travel
       labels:
         app: cars
         version: v1
@@ -156,6 +174,24 @@ spec:
     metadata:
       annotations:
         readiness.status.sidecar.istio.io/applicationPorts: ""
+        proxy.istio.io/config: |
+          tracing:
+            zipkin:
+              address: zipkin.istio-system:9411
+            sampling: 10
+            custom_tags:
+              http.header.portal:
+                header:
+                  name: portal
+              http.header.device:
+                header:
+                  name: device
+              http.header.user:
+                header:
+                  name: user
+              http.header.travel:
+                header:
+                  name: travel
       labels:
         app: discounts
         version: v1
@@ -206,6 +242,24 @@ spec:
     metadata:
       annotations:
         readiness.status.sidecar.istio.io/applicationPorts: ""
+        proxy.istio.io/config: |
+          tracing:
+            zipkin:
+              address: zipkin.istio-system:9411
+            sampling: 10
+            custom_tags:
+              http.header.portal:
+                header:
+                  name: portal
+              http.header.device:
+                header:
+                  name: device
+              http.header.user:
+                header:
+                  name: user
+              http.header.travel:
+                header:
+                  name: travel
       labels:
         app: flights
         version: v1
@@ -269,6 +323,24 @@ spec:
     metadata:
       annotations:
         readiness.status.sidecar.istio.io/applicationPorts: ""
+        proxy.istio.io/config: |
+          tracing:
+            zipkin:
+              address: zipkin.istio-system:9411
+            sampling: 10
+            custom_tags:
+              http.header.portal:
+                header:
+                  name: portal
+              http.header.device:
+                header:
+                  name: device
+              http.header.user:
+                header:
+                  name: user
+              http.header.travel:
+                header:
+                  name: travel
       labels:
         app: hotels
         version: v1
@@ -395,6 +467,24 @@ spec:
     metadata:
       annotations:
         readiness.status.sidecar.istio.io/applicationPorts: ""
+        proxy.istio.io/config: |
+          tracing:
+            zipkin:
+              address: zipkin.istio-system:9411
+            sampling: 10
+            custom_tags:
+              http.header.portal:
+                header:
+                  name: portal
+              http.header.device:
+                header:
+                  name: device
+              http.header.user:
+                header:
+                  name: user
+              http.header.travel:
+                header:
+                  name: travel
       labels:
         app: travels
         version: v1

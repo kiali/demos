@@ -7,6 +7,6 @@ set -e
 # Windows users can use "cmd" command
 # Otherwise, the check is just to confirm you can access addons from your browser
 
-xdg-open http://localhost:8080 &
+xdg-open http://localhost:18080 &
 
-kubectl port-forward svc/control 8080:8080 -n travel-control
+kubectl port-forward svc/control 18080:8080 -n travel-control
