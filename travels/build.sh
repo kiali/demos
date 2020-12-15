@@ -30,6 +30,13 @@ cd ..
 
 ${DORP} build -t ${DOCKER_TRAVEL_PORTAL_TAG} docker/travel_portal
 
+## Travel LoadBalancer
+
+DOCKER_TRAVEL_LOADBALANCER=kiali/demo_travels_loadbalancer
+DOCKER_TRAVEL_LOADBALANCER_TAG=${DOCKER_TRAVEL_LOADBALANCER}:${DOCKER_VERSION}
+
+${DORP} build -t ${DOCKER_TRAVEL_LOADBALANCER_TAG} docker/travel_loadbalancer
+
 ## MySQL
 
 DOCKER_TRAVEL_MYSQL=kiali/demo_travels_mysqldb
@@ -112,6 +119,7 @@ ${DORP} build -t ${DOCKER_TRAVEL_TRAVELS_TAG} docker/travel_agency/travels
 ${DORP} login docker.io
 ${DORP} push ${DOCKER_TRAVEL_CONTROL_TAG}
 ${DORP} push ${DOCKER_TRAVEL_PORTAL_TAG}
+${DORP} push ${DOCKER_TRAVEL_LOADBALANCER_TAG}
 ${DORP} push ${DOCKER_TRAVEL_MYSQL_TAG}
 ${DORP} push ${DOCKER_TRAVEL_CARS_TAG}
 ${DORP} push ${DOCKER_TRAVEL_DISCOUNTS_TAG}
