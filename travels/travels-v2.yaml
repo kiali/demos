@@ -1,0 +1,59 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: travels-v2
+spec:
+  selector:
+    matchLabels:
+      app: travels
+      version: v2
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        readiness.status.sidecar.istio.io/applicationPorts: ""
+        proxy.istio.io/config: |
+          tracing:
+            zipkin:
+              address: zipkin.istio-system:9411
+            sampling: 10
+            custom_tags:
+              http.header.portal:
+                header:
+                  name: portal
+              http.header.device:
+                header:
+                  name: device
+              http.header.user:
+                header:
+                  name: user
+              http.header.travel:
+                header:
+                  name: travel
+      labels:
+        app: travels
+        version: v2
+    spec:
+      containers:
+        - name: travels
+          image: kiali/demo_travels_travels:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          securityContext:
+            privileged: false
+          env:
+            - name: CURRENT_SERVICE
+              value: "travels"
+            - name: CURRENT_VERSION
+              value: "v2"
+            - name: LISTEN_ADDRESS
+              value: ":8000"
+            - name: FLIGHTS_SERVICE
+              value: "http://flights.travel-agency:8000"
+            - name: HOTELS_SERVICE
+              value: "http://hotels.travel-agency:8000"
+            - name: CARS_SERVICE
+              value: "http://cars.travel-agency:8000"
+            - name: INSURANCES_SERVICE
+              value: "http://insurances.travel-agency:8000"

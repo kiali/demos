@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loadbalancer
+spec:
+  selector:
+    matchLabels:
+      app: loadbalancer
+      version: v1
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        readiness.status.sidecar.istio.io/applicationPorts: ""
+      labels:
+        app: loadbalancer
+        version: v1
+    spec:
+      containers:
+        - name: loadbalancer
+          image: kiali/demo_travels_loadbalancer:v1
+          imagePullPolicy: Always
+          securityContext:
+            privileged: false
+          env:
+            - name: CONNECTIONS
+              value: "50"
+            - name: NUMCALLS
+              value: "20"
+            - name: RATE
+              value: "0"
+            - name: SLEEP
+              value: "5"
+            - name: TRAVELS_AGENCY_SERVICE
+              value: "http://travels.travel-agency:8000"
