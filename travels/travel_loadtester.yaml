@@ -1,11 +1,11 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: loadbalancer
+  name: loadtester
 spec:
   selector:
     matchLabels:
-      app: loadbalancer
+      app: loadtester
       version: v1
   replicas: 1
   template:
@@ -13,12 +13,12 @@ spec:
       annotations:
         readiness.status.sidecar.istio.io/applicationPorts: ""
       labels:
-        app: loadbalancer
+        app: loadtester
         version: v1
     spec:
       containers:
-        - name: loadbalancer
-          image: kiali/demo_travels_loadbalancer:v1
+        - name: loadtester
+          image: kiali/demo_travels_loadtester:v1
           imagePullPolicy: Always
           securityContext:
             privileged: false
