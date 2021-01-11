@@ -5,7 +5,7 @@ NUMCALLS=${NUMCALLS:-20}
 RATE=${RATE:-0}
 SLEEP=${SLEEP:-5}
 
-echo "Travel LoadBalancer Configuration"
+echo "Travel Portal LoadTester Configuration"
 echo "================================================"
 echo "CONNECTIONS=${CONNECTIONS}"
 echo "NUMCALLS=${NUMCALLS}"
