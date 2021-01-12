@@ -1,3 +1,10 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: loadtester
+  labels:
+    account: loadtester
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -16,6 +23,7 @@ spec:
         app: loadtester
         version: v1
     spec:
+      serviceAccountName: loadtester
       containers:
         - name: loadtester
           image: kiali/demo_travels_loadtester:v1
