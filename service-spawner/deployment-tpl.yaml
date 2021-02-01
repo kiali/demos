@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    project: service-spawner
+    app: this-service
+    version: base
+  name: this-service
+  namespace: this-namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: this-service
+      version: base
+  template:
+    metadata:
+      labels:
+        project: service-spawner
+        app: this-service
+        version: base
+    spec:
+      containers:
+      - args:
+        - /bin/sh
+        - -c
+        - while sleep 0.1; do wget -q $TARGET; done
+        image: quay.io/jotak/busybox
+        imagePullPolicy: IfNotPresent
+        name: client
+        env:
+        - name: TARGET
+          value: "target-service"
+      - image: quay.io/jotak/nginx-hello:0.2
+        imagePullPolicy: IfNotPresent
+        name: server
+        ports:
+        - containerPort: 80
+          name: http
+          protocol: TCP
+        securityContext:
+          privileged: false
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: this-service
+  namespace: this-namespace
+  labels:
+    project: service-spawner
+    app: this-service
+spec:
+  ports:
+  - name: http
+    port: 80
+  selector:
+    app: this-service
