@@ -1,0 +1,28 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  namespace: "{{ item.0.namespace }}"
+  name: "workload{{ item.0.name | regex_replace('service') }}-{{ item.1 }}"
+  labels:
+    kialiScaleMesh: "true"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ item.0.app }}
+      version: workload{{ item.0.name | regex_replace('service') }}-{{ item.1 }}
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "true"
+      labels:
+        kialiScaleMesh: "true"
+        app: {{ item.0.app }}
+        version:  workload{{ item.0.name | regex_replace('service') }}-{{ item.1 }}
+    spec:
+      containers:
+        - name: workload{{ item.0.name | regex_replace('service') }}-{{ item.1 }}
+          image: quay.io/kiali/kiali-test-service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+          - containerPort: 8888

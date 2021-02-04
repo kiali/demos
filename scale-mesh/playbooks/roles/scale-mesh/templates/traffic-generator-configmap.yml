@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: "{{ tg_namespace }}"
+  name: "traffic-generator-config"
+  labels:
+    kialiScaleMesh: "true"
+    app: kiali-traffic-generator
+    version: v1
+data:
+  duration: "{{ tg_duration }}"
+  rate: "{{ tg_rate }}"
+  route: "{{ full_route }}"

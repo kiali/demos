@@ -1,0 +1,7 @@
+- hosts: localhost
+  gather_facts: no
+  tasks:
+  - debug:
+      msg: Installing scale-mesh demo
+  - include_role:
+      name: "scale-mesh"

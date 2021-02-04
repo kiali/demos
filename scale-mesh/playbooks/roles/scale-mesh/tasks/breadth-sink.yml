@@ -1,0 +1,8 @@
+- name: Set Breadth Sink Route
+  vars:
+    fqdn_services_breadth_sink_route: "{{all_services | map(attribute='fqdn') | select('search', 'breadth-sink') | list}}"
+  set_fact:
+    full_route: "http://{{fqdn_services_breadth_sink_route[0]}}/route?path={{item}},{{fqdn_services_breadth_sink_route[-1]}};{{full_route}}"
+    namespace: "{{all_services | map(attribute='namespace') | select('search', 'breadth-sink') | list | first }}"
+  with_items:
+  - "{{ fqdn_services_breadth_sink_route | reverse | list }} "

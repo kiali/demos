@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: "{{ item }}"
+  labels:
+    kialiScaleMesh: "true"
+    istio-injection: "enabled"

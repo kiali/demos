@@ -1,0 +1,6 @@
+- name: Set Depth Route
+  vars:
+    fqdn_services_depth: "{{all_services | map(attribute='fqdn') | select('search', 'depth') | list | difference(all_services | map(attribute='fqdn') | select('search', 'depth-sink') | list)}}"
+  set_fact:
+    full_route: "http://{{fqdn_services_depth[0]}}/route?path={{ fqdn_services_depth | list | join(',') }}"
+    namespace: "{{all_services | map(attribute='namespace') | select('search', 'depth') | list | first }}"

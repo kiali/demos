@@ -1,0 +1,7 @@
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  namespace: "{{ item }}"
+  name: "istio-cni"
+  labels:
+    kialiScaleMesh: "true"
