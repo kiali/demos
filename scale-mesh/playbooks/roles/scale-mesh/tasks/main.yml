@@ -1,0 +1,125 @@
+- fail:
+    msg: "state=[{{ state }}] - set the 'state' variable to 'present' to install or 'absent' to uninstall the mesh components"
+  when:
+  - state != 'present' and state != 'absent'
+
+- name: Get information about the cluster
+  set_fact:
+    api_groups: "{{ lookup('k8s', cluster_info='api_groups') }}"
+
+- name: Determine the cluster type
+  set_fact:
+    is_openshift: "{{ True if 'route.openshift.io' in api_groups else False }}"
+    is_k8s: "{{ False if 'route.openshift.io' in api_groups else True }}"
+
+- name: Determine the Kubernetes version
+  ignore_errors: yes
+  set_fact:
+    k8s_version: "{{ lookup('k8s', cluster_info='version').kubernetes.gitVersion | regex_replace('^v', '') }}"
+
+- name: Determine the OpenShift version
+  ignore_errors: yes
+  vars:
+    kube_apiserver_cluster_op_raw: "{{ lookup('k8s', api_version='config.openshift.io/v1', kind='ClusterOperator', resource_name='kube-apiserver') | default({}) }}"
+    ri_query: "status.versions[?name == 'raw-internal'].version"
+  set_fact:
+    openshift_version: "{{ kube_apiserver_cluster_op_raw | json_query(ri_query) | join }}"
+  when:
+  - is_openshift == True
+
+- name: Determine if Istio implementation is Maistra
+  set_fact:
+    is_istio_maistra: "{{ True if 'maistra.io' in api_groups else False }}"
+
+- name: Generate versions array
+  set_fact:
+    versions: "{{versions}} + ['v{{ item }}']"
+  with_sequence: start=1 end={{number_versions}} format=%d
+
+- name: Generate services array
+  set_fact:
+    services: "{{services}} + ['{{ item }}']"
+  with_sequence: start=1 end={{number_services}} format=%d
+
+- name: Generate apps array
+  set_fact:
+    apps: "{{apps}} + ['{{ item }}']"
+  with_sequence: start=1 end={{number_apps}} format=%d
+
+- name: Create service and namespace dict
+  set_fact:
+  args:
+    service:
+      name: "service-{{ item.0 }}"
+      namespace: "{{item.1}}-{{ (item.0 | int) % (number_namespaces | int) }}"
+      fqdn: "service-{{ item.0 }}.{{item.1}}-{{ (item.0 | int) % (number_namespaces | int) }}.svc.cluster.local"
+      app: "app{{ (item.0 | int) % (number_apps | int) }}"
+  with_nested:
+  - "{{ services }}"
+  - "{{ mesh_type }}"
+  register: all_services
+
+- name: Create all services list
+  set_fact:
+    all_services: "{{all_services.results | map(attribute='ansible_facts.service') | list  }}"
+
+- name: "Create route for mesh_type [{{ mesh_type }}]"
+  include_tasks: "{{ mesh_type }}.yml"
+
+- name: Get namespaces
+  set_fact:
+    namespaces: "{{ all_services | map(attribute='namespace') | list | unique }}"
+
+- name: Configure the namespaces
+  k8s:
+    state: "{{ state }}"
+    definition: "{{ lookup('template', 'templates/namespace.yml') }}"
+  with_items:
+  - "{{ namespaces  }}"
+
+- name: Process NetworkAttachmentDefinition in namespaces
+  k8s:
+    state: "{{ state }}"
+    definition: "{{ lookup('template', 'templates/nad.yml') }}"
+  with_items:
+  - "{{ namespaces }}"
+  when:
+  - is_openshift == True
+
+- name: Process Maistra ServiceMeshMember in namespaces
+  k8s:
+    state: "{{ state }}"
+    definition: "{{ lookup('template', 'templates/smm.yml') }}"
+  with_items:
+  - "{{ namespaces }}"
+  when:
+  - is_istio_maistra == True
+
+- name: Process services
+  k8s:
+    state: "{{ state }}"
+    definition: "{{ lookup('template', 'templates/service.yml') }}"
+  with_items:
+  - "{{ all_services }}"
+
+- name: Process deployments
+  k8s:
+    state: "{{ state }}"
+    definition: "{{ lookup('template', 'templates/deployment.yml') }}"
+  with_nested:
+  - "{{ all_services }}"
+  - "{{ versions }}"
+
+- name: Determine traffic generator namespace
+  set_fact:
+    tg_namespace: "{{ all_services | map(attribute='namespace') | list | unique | first }}"
+
+- name: "Process traffic generator ConfigMap in {{ tg_namespace }}"
+  k8s:
+   state: "{{ state }}"
+   definition: "{{ lookup('template', 'templates/traffic-generator-configmap.yml') }}"
+
+- name: "Process traffic generator in {{ tg_namespace }} with automatic injection"
+  k8s:
+   state: "{{ state }}"
+   definition: "{{ lookup('template', 'templates/traffic-generator.yml') }}"

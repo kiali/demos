@@ -1,0 +1,23 @@
+control_plane_namespace: istio-system
+
+# One of: breadth, breadth-sink, circle, circle-callback, depth, depth-sink, hourglass
+mesh_type: "circle"
+number_namespaces: 1
+number_apps: 5
+number_versions: 2
+number_services: 5
+
+full_route: ""
+versions: []
+services: []
+apps: []
+even_services: []
+namespaces: []
+
+# set to "present" to install or "absent" to uninstall
+state: ""
+
+# settings for traffic generator
+tg_sidecar: true
+tg_rate: "1"
+tg_duration: "0s"

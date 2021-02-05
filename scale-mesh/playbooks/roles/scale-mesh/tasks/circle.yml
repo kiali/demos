@@ -1,0 +1,6 @@
+- name: Set Circle Route
+  vars:
+    fqdn_services_circle: "{{all_services | map(attribute='fqdn') | select('search', 'circle') | list | difference(all_services | map(attribute='fqdn') | select('search', 'circle-callback') | list)}}"
+  set_fact:
+    namespace: "{{all_services | map(attribute='namespace') | select('search', 'circle') | list | first }}"
+    full_route: "http://{{fqdn_services_circle[0]}}/route?path={{ fqdn_services_circle | join(',') }},{{fqdn_services_circle[0]}}"

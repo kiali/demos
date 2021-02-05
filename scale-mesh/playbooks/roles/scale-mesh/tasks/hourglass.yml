@@ -1,0 +1,26 @@
+# generate even array in order to make it simple to hourglass
+- name: Generate Hourglass Even Elements Array
+  set_fact:
+    even_services: "{{even_services}} + ['service-{{ item }}.hourglass-{{ (item.0 | int) % (number_namespaces | int) }}.svc.cluster.local']"
+  when:
+  - "(item | int) %2 == 1"
+  with_sequence: start=1 end={{ number_services }} format=%d
+
+# if the mesh is odd number so we subtract one to make it even
+- name: Hourglass Mesh if length is Odd
+  vars:
+    fqdn_services_hourglass: "{{all_services | map(attribute='fqdn') | select('search', 'hourglass') | list}}"
+  set_fact:
+    full_route: "http://{{fqdn_services_hourglass[0]}}/route?path={{  fqdn_services_hourglass | difference([fqdn_services_hourglass[-1]]) | join(',') }};http://{{fqdn_services_hourglass[0]}}/route?path={{  fqdn_services_hourglass | intersect(even_services) | join(',') }}"
+    namespace: "{{all_services | map(attribute='namespace') | select('search', 'hourglass') | list | first }}"
+  when:
+  - (fqdn_services_hourglass | length % 2 == 0)
+
+- name: Hourglass Mesh if length is Even
+  vars:
+    fqdn_services_hourglass: "{{all_services | map(attribute='fqdn') | select('search', 'hourglass') | list}}"
+  set_fact:
+    full_route: "http://{{fqdn_services_hourglass[0]}}/route?path={{  fqdn_services_hourglass | join(',') }};http://{{fqdn_services_hourglass[0]}}/route?path={{  fqdn_services_hourglass | intersect(even_services) | join(',') }}"
+    namespace: "{{all_services | map(attribute='namespace') | select('search', 'hourglass') | list | first }}"
+  when:
+  - (fqdn_services_hourglass | length % 2 == 1)

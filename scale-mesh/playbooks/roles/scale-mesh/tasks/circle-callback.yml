@@ -1,0 +1,6 @@
+- name: Set Circle Callback Route
+  vars:
+    fqdn_services_circle_callback: "{{all_services | map(attribute='fqdn') | select('search', 'circle-callback') | list}}"
+  set_fact:
+    full_route: "http://{{fqdn_services_circle_callback[0]}}/route?path={{ fqdn_services_circle_callback | join(',') }},{{fqdn_services_circle_callback[0]}};http://{{fqdn_services_circle_callback[0]}}/route?path={{fqdn_services_circle_callback[0]}},{{ fqdn_services_circle_callback | reverse | join(',') }}"
+    namespace: "{{all_services | map(attribute='namespace') | select('search', 'circle-callback') | list | first }}"

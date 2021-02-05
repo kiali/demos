@@ -1,0 +1,9 @@
+- name: Set Depth Sink Route
+  vars:
+    fqdn_services_depth_sink_route: "{{all_services | map(attribute='fqdn') | select('search', 'depth-sink') | list}}"
+  set_fact:
+    full_route: "http://{{fqdn_services_depth_sink_route[0]}}/route?path={{ fqdn_services_depth_sink_route[:(item | int)] | union([fqdn_services_depth_sink_route[-1]]) | join(',') }};{{full_route}}"
+    kiali_test_depth_sink_namespace: "{{all_services | map(attribute='namespace') | select('search', 'depth-sink') | list | first }}"
+  when:
+  - (item | int) != (number_services | int)
+  with_sequence: start={{ number_services }} end=1 stride=-1 format=%d

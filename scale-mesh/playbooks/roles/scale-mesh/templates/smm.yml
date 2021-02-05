@@ -1,0 +1,10 @@
+apiVersion: maistra.io/v1
+kind: ServiceMeshMember
+metadata:
+  namespace: "{{ item }}"
+  name: "default"
+  labels:
+    kialiScaleMesh: "true"
+spec:
+  controlPlaneRef:
+    namespace: {{ control_plane_namespace }}
