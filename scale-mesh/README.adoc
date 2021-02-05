@@ -4,56 +4,28 @@
 
 The scale mesh demo can be used for performance and scalability testing, as well as for exercising Kiali's graph feature.
 
-You set variables to control the size, type, and scale of the mesh:
-
-|===
-| Environment Variable | Description | Default
-
-| `MESH_TYPE`
-| What the mesh topology will be (one of: `breadth`, `breadth-sink`, `circle`, `circle-callback`, `depth`, `depth-sink`, `hourglass`)
-| circle
-
-| `NUMBER_NAMESPACES`
-| Total number of namespaces in the mesh
-| 1
-
-| `NUMBER_APPS`
-| Total number of apps in the mesh
-| 5
-
-| `NUMBER_VERSIONS`
-| Number of versions per app
-| 2
-
-| `NUMBER_SERVICES`
-| Total number of services within the mesh
-| 5
-
-| `CONTROL_PLANE_NAMESPACE`
-| Where Istio's control plane components are installed (this is only used when creating SMM resources within a Maistra environment)
-| istio-system
-|===
+To install/uninstall a mesh, use the script `scale-mesh.sh`. You pass command line options to the script to control the size and type of the mesh. To see all the different options available, run that script with the `--help` option. The important option to know is the `--mesh-type` option whose value determines what kind of topology the mesh should have (the option value must be one of: `breadth`, `breadth-sink`, `circle`, `circle-callback`, `depth`, `depth-sink`, `hourglass`).
 
 _(Acknowledgement: Much of this code was taken from https://github.com/kiali/kiali-test-mesh)_
 
 ## Install
 
-To deploy the demo, use the `install` make target, with optional settings (see above) passed on the command line using the `-e` option.
+To deploy the demo, use the `install` command, with optional settings passed on the command line:
 
 For example:
 
 ```bash
-make install -e MESH_TYPE=depth -e NUMBER_VERSIONS=3 -f <(curl -L https://raw.githubusercontent.com/kiali/demos/master/scale-mesh/Makefile)
+bash <(curl -L https://raw.githubusercontent.com/kiali/demos/master/scale-mesh/scale-mesh.sh) install --mesh-type=depth --versions=3 
 ```
 
 ## Uninstall
 
-Pass the same arguments as before, only execute the `uninstall` target:
+Pass the same arguments as before, only execute the `uninstall` command:
 
 For example:
 
 ```bash
-make uninstall -e MESH_TYPE=depth -e NUMBER_VERSIONS=3 -f <(curl -L https://raw.githubusercontent.com/kiali/demos/master/scale-mesh/Makefile)
+bash <(curl -L https://raw.githubusercontent.com/kiali/demos/master/scale-mesh/scale-mesh.sh) uninstall --mesh-type=depth --versions=3 
 ```
 
 ## Build
