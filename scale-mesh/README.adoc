@@ -15,7 +15,7 @@ To deploy the demo, use the `install` command, with optional settings passed on 
 For example:
 
 ```bash
-bash <(curl -L https://raw.githubusercontent.com/kiali/demos/master/scale-mesh/scale-mesh.sh) install --mesh-type=depth --versions=3 
+bash <(curl -L https://raw.githubusercontent.com/kiali/demos/master/scale-mesh/scale-mesh.sh) install --mesh-type depth --versions 3
 ```
 
 ## Uninstall
@@ -25,7 +25,7 @@ Pass the same arguments as before, only execute the `uninstall` command:
 For example:
 
 ```bash
-bash <(curl -L https://raw.githubusercontent.com/kiali/demos/master/scale-mesh/scale-mesh.sh) uninstall --mesh-type=depth --versions=3 
+bash <(curl -L https://raw.githubusercontent.com/kiali/demos/master/scale-mesh/scale-mesh.sh) uninstall --mesh-type depth --versions 3
 ```
 
 ## Build
