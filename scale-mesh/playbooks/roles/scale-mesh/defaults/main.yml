@@ -21,3 +21,4 @@ state: ""
 tg_sidecar: true
 tg_rate: "1"
 tg_duration: "0s"
+tg_silent: "false"

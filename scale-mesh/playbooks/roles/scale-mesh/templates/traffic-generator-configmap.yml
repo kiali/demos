@@ -11,3 +11,4 @@ data:
   duration: "{{ tg_duration }}"
   rate: "{{ tg_rate }}"
   route: "{{ full_route }}"
+  silent: "{{ tg_silent }}"
