@@ -25,7 +25,7 @@ spec:
         version: v1
     spec:
       containers:
-      - image: kiali/kiali-test-mesh-traffic-generator:latest
+      - image: quay.io/kiali/kiali-test-mesh-traffic-generator:latest
         name: kiali-traffic-generator
         imagePullPolicy: IfNotPresent
         env:
@@ -46,3 +46,9 @@ spec:
             configMapKeyRef:
               name: traffic-generator-config
               key: rate
+
+        - name: SILENT
+          valueFrom:
+            configMapKeyRef:
+              name: traffic-generator-config
+              key: silent
