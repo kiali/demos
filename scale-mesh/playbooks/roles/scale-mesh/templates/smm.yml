@@ -7,4 +7,5 @@ metadata:
     kialiScaleMesh: "true"
 spec:
   controlPlaneRef:
-    namespace: {{ control_plane_namespace }}
+    name: "{{ control_plane_namespace }}"
+    namespace: "{{ control_plane_namespace }}"
