@@ -87,6 +87,8 @@
   - is_openshift == True
 
 - name: Process Maistra ServiceMeshMember in namespaces
+  vars:
+    maistra_smcp: "{{ lookup('k8s', kind='ServiceMeshControlPlane', apiVersion='maistra.io/v2', namespace=control_plane_namespace) }}"
   k8s:
     state: "{{ state }}"
     definition: "{{ lookup('template', 'templates/smm.yml') }}"

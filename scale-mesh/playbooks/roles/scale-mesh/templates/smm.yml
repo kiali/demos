@@ -7,5 +7,5 @@ metadata:
     kialiScaleMesh: "true"
 spec:
   controlPlaneRef:
-    name: "{{ control_plane_namespace }}"
-    namespace: "{{ control_plane_namespace }}"
+    name: "{{ maistra_smcp.metadata.name }}"
+    namespace: "{{ maistra_smcp.metadata.namespace }}"
