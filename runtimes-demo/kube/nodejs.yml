@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    project: runtimes
+    app: nodejs
+    version: v1
+  name: nodejs-v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nodejs
+      version: v1
+  template:
+    metadata:
+      annotations:
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/metrics"
+        prometheus.io/scrape: "true"
+      labels:
+        project: runtimes
+        app: nodejs
+        version: v1
+    spec:
+      containers:
+      - image:
+        imagePullPolicy: Never
+        name: nodejs
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        securityContext:
+          privileged: false
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodejs
+  labels:
+    project: runtimes
+    app: nodejs
+spec:
+  ports:
+    - name: http
+      port: 8080
+  selector:
+    app: nodejs

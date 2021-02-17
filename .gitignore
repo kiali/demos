@@ -11,6 +11,11 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
+**/.mvn/*
+**/target/*
+**/node_modules/*
+.idea
+
 error-rates/docker/client/client
 error-rates/docker/server/server
 

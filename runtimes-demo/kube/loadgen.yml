@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    project: runtimes
+    app: load-generator
+    version: v1
+  name: load-generator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: load-generator
+      version: v1
+  template:
+    metadata:
+      labels:
+        project: runtimes
+        app: load-generator
+        version: v1
+    spec:
+      containers:
+      - args:
+        - /bin/sh
+        - -c
+        - while sleep 0.1; do wget -q $TARGET; done
+        image: quay.io/jotak/busybox
+        imagePullPolicy: IfNotPresent
+        name: client
+        env:
+        - name: TARGET
+          value: "http://vertx:8080/greetings"
