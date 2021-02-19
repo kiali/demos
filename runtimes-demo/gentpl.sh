@@ -19,7 +19,7 @@ do
         PULL_POLICY="$arg"
         LAST_ARG=""
     elif [[ "$LAST_ARG" = "-d" ]]; then
-        DOMAIN="$arg/"
+        DOMAIN="$arg"
         LAST_ARG=""
     elif [[ "$LAST_ARG" = "-t" ]]; then
         TAG="$arg"

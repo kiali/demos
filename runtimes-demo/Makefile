@@ -14,12 +14,12 @@ ISTIO ?= true
 LATEST = 0.1.0
 
 ifeq ($(REMOTE),true)
-OCI_DOMAIN ?= quay.io
-OCI_DOMAIN_IN_CLUSTER ?= quay.io
+OCI_DOMAIN ?= quay.io/
+OCI_DOMAIN_IN_CLUSTER ?= quay.io/
 PULL_POLICY ?= "IfNotPresent"
 else ifeq ($(OCI_BIN_SHORT),podman)
-OCI_DOMAIN ?= "$(shell minikube ip):5000"
-OCI_DOMAIN_IN_CLUSTER ?= localhost:5000
+OCI_DOMAIN ?= "$(shell minikube ip):5000/"
+OCI_DOMAIN_IN_CLUSTER ?= localhost:5000/
 PULL_POLICY ?= "Always"
 TAG_MINIKUBE = true
 else
@@ -108,20 +108,20 @@ images-build:
 	@echo "🏃🕔 Building images..."
 	for svc in ${SERVICES} ; do \
 		echo "Building $$svc:" ; \
-		${OCI_BIN_SHORT} build -t ${OCI_DOMAIN}/${OCI_USER}/runtimes-$$svc:${TAG} -f ./kube/$$svc.dockerfile . ; \
+		${OCI_BIN_SHORT} build -t ${OCI_DOMAIN}${OCI_USER}/runtimes-$$svc:${TAG} -f ./kube/$$svc.dockerfile . ; \
 	done
 
 push-minikube:
 	@echo "🏃🕔 Tagging for Minikube..."
 	for svc in ${SERVICES} ; do \
-		${OCI_BIN_SHORT} push ${PUSH_OPTS} ${OCI_DOMAIN}/${OCI_USER}/runtimes-$$svc:${TAG} ; \
-		${OCI_BIN_SHORT} tag ${OCI_DOMAIN}/${OCI_USER}/runtimes-$$svc:${TAG} ${OCI_DOMAIN_IN_CLUSTER}/${OCI_USER}/runtimes-$$svc:${TAG} ; \
+		${OCI_BIN_SHORT} push ${PUSH_OPTS} ${OCI_DOMAIN}${OCI_USER}/runtimes-$$svc:${TAG} ; \
+		${OCI_BIN_SHORT} tag ${OCI_DOMAIN}${OCI_USER}/runtimes-$$svc:${TAG} ${OCI_DOMAIN_IN_CLUSTER}${OCI_USER}/runtimes-$$svc:${TAG} ; \
 	done
 
 push:
 	@echo "🏃🕔 Pushing images..."
 	for svc in ${SERVICES} ; do \
-		${OCI_BIN_SHORT} push ${PUSH_OPTS} ${OCI_DOMAIN}/${OCI_USER}/runtimes-$$svc:${TAG} ; \
+		${OCI_BIN_SHORT} push ${PUSH_OPTS} ${OCI_DOMAIN}${OCI_USER}/runtimes-$$svc:${TAG} ; \
 	done
 
 deploy: .ensure-yq
@@ -142,7 +142,7 @@ undeploy:
 	kubectl -n ${NAMESPACE} delete envoyfilter -l "project=runtimes"
 
 deploy-latest: TAG=${LATEST}
-deploy-latest: OCI_DOMAIN_IN_CLUSTER=quay.io
+deploy-latest: OCI_DOMAIN_IN_CLUSTER=quay.io/
 deploy-latest: PULL_POLICY=IfNotPresent
 deploy-latest: TAG_MINIKUBE=false
 deploy-latest: deploy
