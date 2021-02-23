@@ -1,4 +1,4 @@
-FROM ubi7/nodejs-12
+FROM centos7/nodejs-12-centos7
 
 EXPOSE 8080
 
