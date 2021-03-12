@@ -36,10 +36,21 @@ html, body {
     height: 98%;
     float: left;
     margin: 0.5%;
-    padding: 15px;
+    padding-top: 0px;
+    padding-right: 15px;
+    padding-left: 15px;
+    padding-bottom: 15px;
     border: 1px solid rgb(200, 200, 200);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
     border-radius: 5px;
+    overflow: auto;
+}
+
+#tc_left_icon {
+    position: relative;
+    top: 8px;
+    width: 40px;
+    height: 40px;
 }
 
 #tc_right {
@@ -76,6 +87,12 @@ html, body {
 }
 
 .left-form label {
+    color: #777;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.left-form small {
     color: #777;
     display: block;
     margin-bottom: 5px;

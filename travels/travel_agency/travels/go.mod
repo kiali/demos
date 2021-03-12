@@ -1,4 +1,4 @@
-module github.com/lucasponce/travel-comparison-demo/travel_agency/travels
+module github.com/kiali/demos/travels/travel_agency/travels
 
 go 1.14
 

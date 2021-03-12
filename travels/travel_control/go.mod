@@ -1,4 +1,4 @@
-module github.com/lucasponce/travel-comparison-demo/travel_control
+module github.com/kiali/demos/travels/travel_control
 
 go 1.14
 
