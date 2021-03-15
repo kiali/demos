@@ -33,10 +33,13 @@ do
 done
 
 IMAGE="${DOMAIN}${USER}/runtimes-$NAME:$TAG"
+# Escape for sed
+ESCAPED_IMAGE=$(printf '%s\n' "$IMAGE" | sed -e 's/[\/&]/\\&/g')
+
 
 if [[ -f "./kube/$NAME.yml" ]] ; then
     cat "./kube/$NAME.yml" \
-        | yq w - spec.template.spec.containers[0].imagePullPolicy $PULL_POLICY \
-        | yq w - spec.template.spec.containers[0].image $IMAGE
+        | sed -e "s/#PULL_POLICY/$PULL_POLICY/g" \
+        | sed -e "s/#IMAGE/$ESCAPED_IMAGE/g"
     echo "---"
 fi

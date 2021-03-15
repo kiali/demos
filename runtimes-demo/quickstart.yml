@@ -43,8 +43,8 @@ metadata:
     app: quarkus
 spec:
   ports:
-  - name: http
-    port: 8080
+    - name: http
+      port: 8080
   selector:
     app: quarkus
 ---
@@ -93,8 +93,8 @@ metadata:
     app: vertx
 spec:
   ports:
-  - name: http
-    port: 8080
+    - name: http
+      port: 8080
   selector:
     app: vertx
 ---
@@ -143,8 +143,8 @@ metadata:
     app: nodejs
 spec:
   ports:
-  - name: http
-    port: 8080
+    - name: http
+      port: 8080
   selector:
     app: nodejs
 ---
@@ -193,8 +193,8 @@ metadata:
     app: springboot
 spec:
   ports:
-  - name: http
-    port: 8080
+    - name: http
+      port: 8080
   selector:
     app: springboot
 ---

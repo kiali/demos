@@ -48,7 +48,7 @@ help:
 	@echo "$(bold)Runtimes Demo$(sgr0)"
 	@echo "🏃 🕔 📊"
 	@echo ""
-	@echo "Note that you may need a couple of tools depending of which target you run: kubectl, yq, npm, mvn, docker/podman"
+	@echo "Note that you may need a couple of tools depending of which target you run: kubectl, npm, mvn, docker/podman"
 	@echo ""
 	@echo "$(smul)Main options$(sgr0):"
 	@echo "- $(bold)TAG$(sgr0):          Image tag to be used (current: $(TAG))"
@@ -87,9 +87,6 @@ help:
 	@echo ""
 	@echo "Enjoy! 🚀"
 
-.ensure-yq:
-	@command -v yq >/dev/null 2>&1 || { echo >&2 "yq is required. Grab it on https://github.com/mikefarah/yq"; exit 1; }
-
 build:
 	@echo "🏃🕔 Building services..."
 	for svc in ${SERVICES} ; do \
@@ -124,7 +121,7 @@ push:
 		${OCI_BIN_SHORT} push ${PUSH_OPTS} ${OCI_DOMAIN}${OCI_USER}/runtimes-$$svc:${TAG} ; \
 	done
 
-deploy: .ensure-yq
+deploy:
 	kubectl label namespace ${NAMESPACE} ${ISTIO_LABEL} 2> /dev/null ; \
 	kubectl apply -n ${NAMESPACE} -f ./kube/loadgen.yml ; \
 	for svc in ${SERVICES} ; do \
@@ -155,7 +152,7 @@ gen-quickstart:
 	@echo "🏃🕔 Generating quickstart template..."
 	rm quickstart.yml ; \
 	for svc in ${SERVICES} ; do \
-		./gentpl.sh $$svc -pp IfNotPresent -d "quay.io" -u jotak -t ${LATEST} >> quickstart.yml ; \
+		./gentpl.sh $$svc -pp IfNotPresent -d "quay.io/" -u jotak -t ${LATEST} >> quickstart.yml ; \
 	done ; \
 	cat kube/loadgen.yml >> quickstart.yml ; \
 

@@ -24,8 +24,8 @@ spec:
         version: v1
     spec:
       containers:
-      - image:
-        imagePullPolicy: Never
+      - image: #IMAGE
+        imagePullPolicy: #PULL_POLICY
         name: springboot
         ports:
         - containerPort: 8080

@@ -8,7 +8,6 @@ This demo can be used to start several services of various runtimes. Kiali will 
 
 - Kubernetes cluster running
 - Better with Kiali and Istio installed
-- `yq` might be needed at some point, if you use deploy targets; grab it from there: https://github.com/mikefarah/yq/releases (Last version known to work here: 3.1.1)
 
 ## Quick start
 
