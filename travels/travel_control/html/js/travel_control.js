@@ -14,27 +14,36 @@ const buildPortalsForm = (portals) => {
         form.id = portal.name;
         form.className = 'left-form';
         errorContent = portal.status.error ? ' - Failed to connect' : '';
+        const ratioPerSec = portal.settings.request_ratio > 0 ? (portal.settings.request_ratio / 100) * 1.33 : 0.06;
         form.innerHTML = `
-            <h2>${portal.name} Settings <span id="${portal.name}_error" class="error">${errorContent}</span></h2>
+            <h3>${portal.name} <span id="${portal.name}_error" class="error">${errorContent}</span></h3>
             <div class="left-form-group">
-                <label for="${portal.name}_ratio">Requests Ratio</label>
+                <label>Ratio</label>
                 <input class="requests-total" type="range" min="0" max="100" step="1" value="${portal.settings.request_ratio}" onchange="updatePortalForm(this.id, this.value)" id="${portal.name}_ratio" />
+                <small id="${portal.name}_ratio_label">${ratioPerSec.toFixed(2)} req/s</small>
             </div>
             <div class="left-form-group">
-                <label for="${portal.name}_device">Device (%)</label>
+                <label>Device</label>                
                 <input class="device-mobile" type="range" min="0" max="100" step="1" value="${portal.settings.devices.mobile}" onchange="updatePortalForm(this.id, this.value)" id="${portal.name}_device_mobile" />
-                <input class="device-web" type="range" min="0" max="100" step="1" value="${portal.settings.devices.web}" onchange="updatePortalForm(this.id, this.value)" id="${portal.name}_device_web" />                
+                <small id="${portal.name}_device_mobile_label">mob: ${portal.settings.devices.mobile}%</small>
+                <input class="device-web" type="range" min="0" max="100" step="1" value="${portal.settings.devices.web}" onchange="updatePortalForm(this.id, this.value)" id="${portal.name}_device_web" />
+                <small id="${portal.name}_device_web_label">web: ${portal.settings.devices.web}%</small>                
             </div>
             <div class="left-form-group">
-                <label for="${portal.name}_user">User (%)</label>
+                <label>User</label>                
                 <input class="user-new" type="range" min="0" max="100" step="1" value="${portal.settings.users.new}" onchange="updatePortalForm(this.id, this.value)" id="${portal.name}_user_new" />
-                <input class="user-registered" type="range" min="0" max="100" step="1" value="${portal.settings.users.registered}" onchange="updatePortalForm(this.id, this.value)" id="${portal.name}_user_registered" />                
+                <small id="${portal.name}_user_new_label">new: ${portal.settings.users.new}%</small>
+                <input class="user-registered" type="range" min="0" max="100" step="1" value="${portal.settings.users.registered}" onchange="updatePortalForm(this.id, this.value)" id="${portal.name}_user_registered" />
+                <small id="${portal.name}_user_registered_label">reg: ${portal.settings.users.registered}%</small>                
             </div>
             <div class="left-form-group">
-                <label for="${portal.name}_user">Travel Type (%)</label>
+                <label>Travel</label>                
                 <input class="travel-t1" type="range" min="0" max="100" step="1" value="${portal.settings.travel_type.t1}" onchange="updatePortalForm(this.id, this.value)" id="${portal.name}_travel_t1" />
+                <small id="${portal.name}_travel_t1_label">t1: ${portal.settings.travel_type.t1}%</small>
                 <input class="travel-t2" type="range" min="0" max="100" step="1" value="${portal.settings.travel_type.t2}" onchange="updatePortalForm(this.id, this.value)" id="${portal.name}_travel_t2" />
-                <input class="travel-t3" type="range" min="0" max="100" step="1" value="${portal.settings.travel_type.t3}" onchange="updatePortalForm(this.id, this.value)" id="${portal.name}_travel_t3" />                            
+                <small id="${portal.name}_travel_t2_label">t2: ${portal.settings.travel_type.t2}%</small>
+                <input class="travel-t3" type="range" min="0" max="100" step="1" value="${portal.settings.travel_type.t3}" onchange="updatePortalForm(this.id, this.value)" id="${portal.name}_travel_t3" />
+                <small id="${portal.name}_travel_t3_label">t3: ${portal.settings.travel_type.t3}%</small>                            
             </div>
         `;
         div.append(form);
@@ -48,10 +57,11 @@ const buildRefreshForm = () => {
     form.id = "refresh-control";
     form.className = 'left-form';
     form.innerHTML = `
-        <h2>Global Settings</h2>
-        <label for="refresh_control" id="refresh_control_label">Refresh Control (${refreshTimeout} ms)</label>
+        <h2>Dashboard Settings</h2>
+        <label>Refresh</label>
         <input class="refresh-control" type="range" min="0" max="10000" step="100" value="${refreshTimeout}" onchange="updateRefresh(this.value)" id="refresh_control" />
-        <label id="refresh_status">Last refresh: ${refreshLast.toTimeString()}</label>        
+        <small id="refresh_control_label">${refreshTimeout} ms</small>
+        <small id="refresh_status_label">Last refresh: ${refreshLast.toLocaleString()}</small>        
     `;
     div.append(form);
 };
@@ -76,7 +86,7 @@ const drawChartsTotal = (portals) => {
     const yAxis = g => g
         .attr("transform", `translate(${margin.left},0)`)
         .call(d3.axisLeft(y).tickFormat(i => portals[i].name).tickSizeOuter(0))
-        .attr("font-size", 16);
+        .attr("font-size", 14);
 
     const x = d3.scaleLinear()
         .domain([0, d3.max(portals, portal => portal.status.requests.total)])
@@ -88,7 +98,7 @@ const drawChartsTotal = (portals) => {
         .call(g => g.select(".domain").remove())
         .call(g => g.select(".tick:first-of-type text").clone()
             .attr("y", -20)
-            .attr("x", -3)
+            .attr("x", -100)
             .attr("text-anchor", "start")
             .attr("font-size", 16)
             .text("Total Requests per Portal"));
@@ -109,7 +119,7 @@ const drawChartsTotal = (portals) => {
         .attr("fill", "white")
         .attr("text-anchor", "end")
         .attr("font-family", "sans-serif")
-        .attr("font-size", 16)
+        .attr("font-size", 14)
         .selectAll("text")
         .data(portals)
         .join("text")
@@ -159,7 +169,7 @@ const drawChartsDetails = (portals, divId, svgId, keys, colors, dataMap, title) 
     const xAxis = g => g
         .attr("transform", `translate(0,${height - margin.bottom})`)
         .call(d3.axisBottom(x0).tickSizeOuter(0))
-        .attr("font-size", 16)
+        .attr("font-size", 14)
         .call(g => g.select(".domain").remove())
 
     // Note that we know that d.status.requests.total will represent max request per city
@@ -175,7 +185,8 @@ const drawChartsDetails = (portals, divId, svgId, keys, colors, dataMap, title) 
             .attr("x", 3)
             .attr("text-anchor", "start")
             .attr("font-size", 16)
-            .text(title));
+            .text(title)
+        );
 
     const legend = svg => {
         const g = svg
@@ -252,7 +263,7 @@ const drawChartsDevices = (portals) => {
         keys,
         colors,
         dataMap,
-        "Requests per Device"
+        "Device Type"
     );
 };
 
@@ -283,7 +294,7 @@ const drawChartsUsers = (portals) => {
         keys,
         colors,
         dataMap,
-        "Requests per User Type"
+        "User Type"
     );
 };
 
@@ -317,7 +328,7 @@ const drawChartsTypes = (portals) => {
         keys,
         colors,
         dataMap,
-        "Requests per Travel Type"
+        "Travel Type"
     );
 };
 
@@ -372,6 +383,37 @@ const drawMap = (world, portals) => {
     svg.append("g")
         .attr("id", "g_status_info");
 
+    // Map Legend
+    svg.append("text")
+        .attr("font-size", 18)
+        .attr("x", 5)
+        .attr("y", 30)
+        .text("Requests per City");
+
+    svg.append("circle")
+        .attr("cx", 200)
+        .attr("cy", 25)
+        .attr("r", 10)
+        .attr("fill", "var(--total-color)");
+
+    svg.append("text")
+        .attr("font-size", 16)
+        .attr("x", 220)
+        .attr("y", 30)
+        .text("total per city");
+
+    svg.append("circle")
+        .attr("cx", 350)
+        .attr("cy", 25)
+        .attr("r", 10)
+        .attr("fill", "var(--new-city-color)");
+
+    svg.append("text")
+        .attr("font-size", 16)
+        .attr("x", 370)
+        .attr("y", 30)
+        .text("new request");
+
     updateMap = (newPortals) => {
         const cities = getCities(newPortals);
 
@@ -401,14 +443,15 @@ const drawMap = (world, portals) => {
                     const pieX = projection(d.coordinates)[0];
                     const pieY = projection(d.coordinates)[1];
 
-                    const xOffset = (d.city.length / 2) * 8;
+                    // Magic xOffset
+                    const xOffset = ((d.city.length / 2) * 8) + 12;
                     const yOffset = pieRadius * 3;
                     svg.select("#g_status_info")
                         .append("text")
                         .attr("id", "t" + d.city)
                         .attr("x", projection(d.coordinates)[0] - xOffset)
                         .attr("y", projection(d.coordinates)[1] - yOffset)
-                        .text(d.city);
+                        .text(d.city + ' (' + d.total + ')');
 
                     const pieData = [];
                     Object.keys(d['totalPortals']).forEach((key, j) => {
@@ -419,8 +462,8 @@ const drawMap = (world, portals) => {
                     });
 
                     const pie = d3.pie()
-                            .sort(null)
-                            .value(d => d.value);
+                        .sort(null)
+                        .value(d => d.value);
 
                     const arc = d3.arc()
                         .innerRadius(pieRadius)
@@ -438,7 +481,7 @@ const drawMap = (world, portals) => {
                         .selectAll("path")
                         .data(arcs)
                         .join("path")
-                        .attr("fill", (_, i) => "var(--portal-color-" + (i +1) + ")")
+                        .attr("fill", (_, i) => "var(--portal-color-" + (i + 1) + ")")
                         .attr("d", arc)
                         .append("title")
                         .text(d => `${d.data.name}: ${d.data.value.toLocaleString()}`);
@@ -523,43 +566,43 @@ const updatePortalForm = (formid, value) => {
                 case "device_mobile":
                     oldPortals[i].settings.devices.mobile = parseInt(value);
                     oldPortals[i].settings.devices.web = 100 - value;
-                    document.getElementById(portal+"_device_web").value = oldPortals[i].settings.devices.web;
+                    document.getElementById(portal + "_device_web").value = oldPortals[i].settings.devices.web;
                     break;
                 case "device_web":
                     oldPortals[i].settings.devices.web = parseInt(value);
                     oldPortals[i].settings.devices.mobile = 100 - value;
-                    document.getElementById(portal+"_device_mobile").value = oldPortals[i].settings.devices.mobile;
+                    document.getElementById(portal + "_device_mobile").value = oldPortals[i].settings.devices.mobile;
                     break;
                 case "user_new":
                     oldPortals[i].settings.users.new = parseInt(value);
                     oldPortals[i].settings.users.registered = 100 - value;
-                    document.getElementById(portal+"_user_registered").value = oldPortals[i].settings.users.registered;
+                    document.getElementById(portal + "_user_registered").value = oldPortals[i].settings.users.registered;
                     break;
                 case "user_registered":
                     oldPortals[i].settings.users.registered = parseInt(value);
                     oldPortals[i].settings.users.new = 100 - value;
-                    document.getElementById(portal+"_user_new").value = oldPortals[i].settings.users.new;
+                    document.getElementById(portal + "_user_new").value = oldPortals[i].settings.users.new;
                     break;
                 case "travel_t1":
                     oldPortals[i].settings.travel_type.t1 = parseInt(value);
                     oldPortals[i].settings.travel_type.t2 = (100 - value) / 2;
                     oldPortals[i].settings.travel_type.t3 = (100 - value) / 2;
-                    document.getElementById(portal+"_travel_t2").value = oldPortals[i].settings.travel_type.t2;
-                    document.getElementById(portal+"_travel_t3").value = oldPortals[i].settings.travel_type.t3;
+                    document.getElementById(portal + "_travel_t2").value = oldPortals[i].settings.travel_type.t2;
+                    document.getElementById(portal + "_travel_t3").value = oldPortals[i].settings.travel_type.t3;
                     break;
                 case "travel_t2":
                     oldPortals[i].settings.travel_type.t2 = parseInt(value);
                     oldPortals[i].settings.travel_type.t1 = (100 - value) / 2;
                     oldPortals[i].settings.travel_type.t3 = (100 - value) / 2;
-                    document.getElementById(portal+"_travel_t1").value = oldPortals[i].settings.travel_type.t1;
-                    document.getElementById(portal+"_travel_t3").value = oldPortals[i].settings.travel_type.t3;
+                    document.getElementById(portal + "_travel_t1").value = oldPortals[i].settings.travel_type.t1;
+                    document.getElementById(portal + "_travel_t3").value = oldPortals[i].settings.travel_type.t3;
                     break;
                 case "travel_t3":
                     oldPortals[i].settings.travel_type.t3 = parseInt(value);
                     oldPortals[i].settings.travel_type.t1 = (100 - value) / 2;
                     oldPortals[i].settings.travel_type.t2 = (100 - value) / 2;
-                    document.getElementById(portal+"_travel_t1").value = oldPortals[i].settings.travel_type.t1;
-                    document.getElementById(portal+"_travel_t2").value = oldPortals[i].settings.travel_type.t2;
+                    document.getElementById(portal + "_travel_t1").value = oldPortals[i].settings.travel_type.t1;
+                    document.getElementById(portal + "_travel_t2").value = oldPortals[i].settings.travel_type.t2;
                     break;
             }
             updateSettings(portal, oldPortals[i].settings);
@@ -569,14 +612,27 @@ const updatePortalForm = (formid, value) => {
 
 const updatePortalsForm = (portals) => {
     portals.forEach(p => {
-        document.getElementById(p.name+"_ratio").value = p.settings.request_ratio;
-        document.getElementById(p.name+"_device_mobile").value = p.settings.devices.mobile;
-        document.getElementById(p.name+"_device_web").value = p.settings.devices.web;
-        document.getElementById(p.name+"_user_new").value = p.settings.users.new;
-        document.getElementById(p.name+"_user_registered").value = p.settings.users.registered;
-        document.getElementById(p.name+"_travel_t1").value = p.settings.travel_type.t1;
-        document.getElementById(p.name+"_travel_t2").value = p.settings.travel_type.t2;
-        document.getElementById(p.name+"_travel_t3").value = p.settings.travel_type.t3;
+        document.getElementById(p.name + "_ratio").value = p.settings.request_ratio;
+        const ratioPerSec = p.settings.request_ratio > 0 ? (p.settings.request_ratio / 100) * 1.33 : 0.06;
+        document.getElementById(p.name + "_ratio_label").innerText = ratioPerSec.toFixed(2) + ' req/s';
+
+        document.getElementById(p.name + "_device_mobile").value = p.settings.devices.mobile;
+        document.getElementById(p.name + "_device_mobile_label").innerText = 'mob: ' + p.settings.devices.mobile + '%';
+        document.getElementById(p.name + "_device_web").value = p.settings.devices.web;
+        document.getElementById(p.name + "_device_web_label").innerText = 'web: ' + p.settings.devices.web + '%';
+
+        document.getElementById(p.name + "_user_new").value = p.settings.users.new;
+        document.getElementById(p.name + "_user_new_label").innerText = 'new: ' + p.settings.users.new + '%';
+        document.getElementById(p.name + "_user_registered").value = p.settings.users.registered;
+        document.getElementById(p.name + "_user_registered_label").innerText = 'reg: ' + p.settings.users.registered + '%';
+
+        document.getElementById(p.name + "_travel_t1").value = p.settings.travel_type.t1;
+        document.getElementById(p.name + "_travel_t1_label").innerText = 't1: ' + p.settings.travel_type.t1 + '%';
+        document.getElementById(p.name + "_travel_t2").value = p.settings.travel_type.t2;
+        document.getElementById(p.name + "_travel_t2_label").innerText = 't2: ' + p.settings.travel_type.t2 + '%';
+        document.getElementById(p.name + "_travel_t3").value = p.settings.travel_type.t3;
+        document.getElementById(p.name + "_travel_t3_label").innerText = 't3: ' + p.settings.travel_type.t3 + '%';
+
         span = document.getElementById(p.name + "_error");
         if (p.status.error) {
             span.innerText = ' - Failed to connect ';
@@ -589,21 +645,21 @@ const updatePortalsForm = (portals) => {
 const updateRefresh = (value) => {
     console.info("Changing Global Refresh to " + value + " ms");
     refreshTimeout = value
-    document.getElementById('refresh_control_label').innerText = `Refresh Control (${refreshTimeout} ms)`;
+    document.getElementById('refresh_control_label').innerText = `${refreshTimeout} ms`;
     clearInterval(refreshHandler);
     refreshHandler = window.setInterval(updatePortals, refreshTimeout);
 };
 
 const updateRefreshStatus = () => {
-    const label = document.getElementById("refresh_status");
-    label.innerText = "Last refresh: " + refreshLast.toTimeString();
+    const label = document.getElementById("refresh_status_label");
+    label.innerText = "Last refresh: " + refreshLast.toLocaleString();
 };
 
 const updateSettings = (portal, settings) => {
     fetch('settings/' + portal, {
         method: 'PUT',
         body: JSON.stringify(settings),
-        headers:{
+        headers: {
             'Content-Type': 'application/json'
         }
     }).then(resp => {
