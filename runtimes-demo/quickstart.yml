@@ -1,0 +1,232 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    project: runtimes
+    app: quarkus
+    version: v1
+  name: quarkus-v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: quarkus
+      version: v1
+  template:
+    metadata:
+      annotations:
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/metrics"
+        prometheus.io/scrape: "true"
+      labels:
+        project: runtimes
+        app: quarkus
+        version: v1
+    spec:
+      containers:
+      - image: quay.io/jotak/runtimes-quarkus:0.1.0
+        imagePullPolicy: IfNotPresent
+        name: quarkus
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        securityContext:
+          privileged: false
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: quarkus
+  labels:
+    project: runtimes
+    app: quarkus
+spec:
+  ports:
+    - name: http
+      port: 8080
+  selector:
+    app: quarkus
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    project: runtimes
+    app: vertx
+    version: v1
+  name: vertx-v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vertx
+      version: v1
+  template:
+    metadata:
+      annotations:
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/metrics"
+        prometheus.io/scrape: "true"
+      labels:
+        project: runtimes
+        app: vertx
+        version: v1
+    spec:
+      containers:
+      - image: quay.io/jotak/runtimes-vertx:0.1.0
+        imagePullPolicy: IfNotPresent
+        name: vertx
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        securityContext:
+          privileged: false
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vertx
+  labels:
+    project: runtimes
+    app: vertx
+spec:
+  ports:
+    - name: http
+      port: 8080
+  selector:
+    app: vertx
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    project: runtimes
+    app: nodejs
+    version: v1
+  name: nodejs-v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nodejs
+      version: v1
+  template:
+    metadata:
+      annotations:
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/metrics"
+        prometheus.io/scrape: "true"
+      labels:
+        project: runtimes
+        app: nodejs
+        version: v1
+    spec:
+      containers:
+      - image: quay.io/jotak/runtimes-nodejs:0.1.0
+        imagePullPolicy: IfNotPresent
+        name: nodejs
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        securityContext:
+          privileged: false
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodejs
+  labels:
+    project: runtimes
+    app: nodejs
+spec:
+  ports:
+    - name: http
+      port: 8080
+  selector:
+    app: nodejs
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    project: runtimes
+    app: springboot
+    version: v1
+  name: springboot-v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: springboot
+      version: v1
+  template:
+    metadata:
+      annotations:
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/actuator/prometheus"
+        prometheus.io/scrape: "true"
+      labels:
+        project: runtimes
+        app: springboot
+        version: v1
+    spec:
+      containers:
+      - image: quay.io/jotak/runtimes-springboot:0.1.0
+        imagePullPolicy: IfNotPresent
+        name: springboot
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        securityContext:
+          privileged: false
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: springboot
+  labels:
+    project: runtimes
+    app: springboot
+spec:
+  ports:
+    - name: http
+      port: 8080
+  selector:
+    app: springboot
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    project: runtimes
+    app: load-generator
+    version: v1
+  name: load-generator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: load-generator
+      version: v1
+  template:
+    metadata:
+      labels:
+        project: runtimes
+        app: load-generator
+        version: v1
+    spec:
+      containers:
+      - args:
+        - /bin/sh
+        - -c
+        - while sleep 0.1; do wget -q $TARGET; done
+        image: quay.io/jotak/busybox
+        imagePullPolicy: IfNotPresent
+        name: client
+        env:
+        - name: TARGET
+          value: "http://vertx:8080/greetings"

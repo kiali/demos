@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "start": "node greetings.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "prom-client": "^13.1.0"
+  }
+}
