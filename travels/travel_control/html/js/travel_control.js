@@ -14,11 +14,11 @@ const buildPortalsForm = (portals) => {
         form.id = portal.name;
         form.className = 'left-form';
         errorContent = portal.status.error ? ' - Failed to connect' : '';
-        const ratioPerSec = portal.settings.request_ratio > 0 ? (portal.settings.request_ratio/100) * 1.33 : 0.06;
+        const ratioPerSec = portal.settings.request_ratio > 0 ? (portal.settings.request_ratio / 100) * 1.33 : 0.06;
         form.innerHTML = `
             <h3>${portal.name} <span id="${portal.name}_error" class="error">${errorContent}</span></h3>
             <div class="left-form-group">
-                <label>Ratio</label>                            
+                <label>Ratio</label>
                 <input class="requests-total" type="range" min="0" max="100" step="1" value="${portal.settings.request_ratio}" onchange="updatePortalForm(this.id, this.value)" id="${portal.name}_ratio" />
                 <small id="${portal.name}_ratio_label">${ratioPerSec.toFixed(2)} req/s</small>
             </div>
@@ -462,8 +462,8 @@ const drawMap = (world, portals) => {
                     });
 
                     const pie = d3.pie()
-                            .sort(null)
-                            .value(d => d.value);
+                        .sort(null)
+                        .value(d => d.value);
 
                     const arc = d3.arc()
                         .innerRadius(pieRadius)
@@ -481,7 +481,7 @@ const drawMap = (world, portals) => {
                         .selectAll("path")
                         .data(arcs)
                         .join("path")
-                        .attr("fill", (_, i) => "var(--portal-color-" + (i +1) + ")")
+                        .attr("fill", (_, i) => "var(--portal-color-" + (i + 1) + ")")
                         .attr("d", arc)
                         .append("title")
                         .text(d => `${d.data.name}: ${d.data.value.toLocaleString()}`);
@@ -566,43 +566,43 @@ const updatePortalForm = (formid, value) => {
                 case "device_mobile":
                     oldPortals[i].settings.devices.mobile = parseInt(value);
                     oldPortals[i].settings.devices.web = 100 - value;
-                    document.getElementById(portal+"_device_web").value = oldPortals[i].settings.devices.web;
+                    document.getElementById(portal + "_device_web").value = oldPortals[i].settings.devices.web;
                     break;
                 case "device_web":
                     oldPortals[i].settings.devices.web = parseInt(value);
                     oldPortals[i].settings.devices.mobile = 100 - value;
-                    document.getElementById(portal+"_device_mobile").value = oldPortals[i].settings.devices.mobile;
+                    document.getElementById(portal + "_device_mobile").value = oldPortals[i].settings.devices.mobile;
                     break;
                 case "user_new":
                     oldPortals[i].settings.users.new = parseInt(value);
                     oldPortals[i].settings.users.registered = 100 - value;
-                    document.getElementById(portal+"_user_registered").value = oldPortals[i].settings.users.registered;
+                    document.getElementById(portal + "_user_registered").value = oldPortals[i].settings.users.registered;
                     break;
                 case "user_registered":
                     oldPortals[i].settings.users.registered = parseInt(value);
                     oldPortals[i].settings.users.new = 100 - value;
-                    document.getElementById(portal+"_user_new").value = oldPortals[i].settings.users.new;
+                    document.getElementById(portal + "_user_new").value = oldPortals[i].settings.users.new;
                     break;
                 case "travel_t1":
                     oldPortals[i].settings.travel_type.t1 = parseInt(value);
                     oldPortals[i].settings.travel_type.t2 = (100 - value) / 2;
                     oldPortals[i].settings.travel_type.t3 = (100 - value) / 2;
-                    document.getElementById(portal+"_travel_t2").value = oldPortals[i].settings.travel_type.t2;
-                    document.getElementById(portal+"_travel_t3").value = oldPortals[i].settings.travel_type.t3;
+                    document.getElementById(portal + "_travel_t2").value = oldPortals[i].settings.travel_type.t2;
+                    document.getElementById(portal + "_travel_t3").value = oldPortals[i].settings.travel_type.t3;
                     break;
                 case "travel_t2":
                     oldPortals[i].settings.travel_type.t2 = parseInt(value);
                     oldPortals[i].settings.travel_type.t1 = (100 - value) / 2;
                     oldPortals[i].settings.travel_type.t3 = (100 - value) / 2;
-                    document.getElementById(portal+"_travel_t1").value = oldPortals[i].settings.travel_type.t1;
-                    document.getElementById(portal+"_travel_t3").value = oldPortals[i].settings.travel_type.t3;
+                    document.getElementById(portal + "_travel_t1").value = oldPortals[i].settings.travel_type.t1;
+                    document.getElementById(portal + "_travel_t3").value = oldPortals[i].settings.travel_type.t3;
                     break;
                 case "travel_t3":
                     oldPortals[i].settings.travel_type.t3 = parseInt(value);
                     oldPortals[i].settings.travel_type.t1 = (100 - value) / 2;
                     oldPortals[i].settings.travel_type.t2 = (100 - value) / 2;
-                    document.getElementById(portal+"_travel_t1").value = oldPortals[i].settings.travel_type.t1;
-                    document.getElementById(portal+"_travel_t2").value = oldPortals[i].settings.travel_type.t2;
+                    document.getElementById(portal + "_travel_t1").value = oldPortals[i].settings.travel_type.t1;
+                    document.getElementById(portal + "_travel_t2").value = oldPortals[i].settings.travel_type.t2;
                     break;
             }
             updateSettings(portal, oldPortals[i].settings);
@@ -612,26 +612,26 @@ const updatePortalForm = (formid, value) => {
 
 const updatePortalsForm = (portals) => {
     portals.forEach(p => {
-        document.getElementById(p.name+"_ratio").value = p.settings.request_ratio;
-        const ratioPerSec = p.settings.request_ratio > 0 ? (p.settings.request_ratio/100) * 1.33 : 0.06;
-        document.getElementById(p.name+"_ratio_label").innerText = ratioPerSec.toFixed(2) + ' req/s';
+        document.getElementById(p.name + "_ratio").value = p.settings.request_ratio;
+        const ratioPerSec = p.settings.request_ratio > 0 ? (p.settings.request_ratio / 100) * 1.33 : 0.06;
+        document.getElementById(p.name + "_ratio_label").innerText = ratioPerSec.toFixed(2) + ' req/s';
 
-        document.getElementById(p.name+"_device_mobile").value = p.settings.devices.mobile;
-        document.getElementById(p.name+"_device_mobile_label").innerText = 'mob: ' + p.settings.devices.mobile + '%';
-        document.getElementById(p.name+"_device_web").value = p.settings.devices.web;
-        document.getElementById(p.name+"_device_web_label").innerText = 'web: ' + p.settings.devices.web + '%';
+        document.getElementById(p.name + "_device_mobile").value = p.settings.devices.mobile;
+        document.getElementById(p.name + "_device_mobile_label").innerText = 'mob: ' + p.settings.devices.mobile + '%';
+        document.getElementById(p.name + "_device_web").value = p.settings.devices.web;
+        document.getElementById(p.name + "_device_web_label").innerText = 'web: ' + p.settings.devices.web + '%';
 
-        document.getElementById(p.name+"_user_new").value = p.settings.users.new;
-        document.getElementById(p.name+"_user_new_label").innerText = 'new: ' + p.settings.users.new + '%';
-        document.getElementById(p.name+"_user_registered").value = p.settings.users.registered;
-        document.getElementById(p.name+"_user_registered_label").innerText = 'reg: ' + p.settings.users.registered + '%';
+        document.getElementById(p.name + "_user_new").value = p.settings.users.new;
+        document.getElementById(p.name + "_user_new_label").innerText = 'new: ' + p.settings.users.new + '%';
+        document.getElementById(p.name + "_user_registered").value = p.settings.users.registered;
+        document.getElementById(p.name + "_user_registered_label").innerText = 'reg: ' + p.settings.users.registered + '%';
 
-        document.getElementById(p.name+"_travel_t1").value = p.settings.travel_type.t1;
-        document.getElementById(p.name+"_travel_t1_label").innerText = 't1: ' + p.settings.travel_type.t1 + '%';
-        document.getElementById(p.name+"_travel_t2").value = p.settings.travel_type.t2;
-        document.getElementById(p.name+"_travel_t2_label").innerText = 't2: '+ p.settings.travel_type.t2 + '%';
-        document.getElementById(p.name+"_travel_t3").value = p.settings.travel_type.t3;
-        document.getElementById(p.name+"_travel_t3_label").innerText = 't3: ' + p.settings.travel_type.t3 + '%';
+        document.getElementById(p.name + "_travel_t1").value = p.settings.travel_type.t1;
+        document.getElementById(p.name + "_travel_t1_label").innerText = 't1: ' + p.settings.travel_type.t1 + '%';
+        document.getElementById(p.name + "_travel_t2").value = p.settings.travel_type.t2;
+        document.getElementById(p.name + "_travel_t2_label").innerText = 't2: ' + p.settings.travel_type.t2 + '%';
+        document.getElementById(p.name + "_travel_t3").value = p.settings.travel_type.t3;
+        document.getElementById(p.name + "_travel_t3_label").innerText = 't3: ' + p.settings.travel_type.t3 + '%';
 
         span = document.getElementById(p.name + "_error");
         if (p.status.error) {
@@ -659,7 +659,7 @@ const updateSettings = (portal, settings) => {
     fetch('settings/' + portal, {
         method: 'PUT',
         body: JSON.stringify(settings),
-        headers:{
+        headers: {
             'Content-Type': 'application/json'
         }
     }).then(resp => {
