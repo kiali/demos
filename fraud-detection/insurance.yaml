@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: insurance
-          image: kiali/demo_fraud_insurance:v1
+          image: quay.io/kiali/demo_fraud_insurance:v1
           imagePullPolicy: Always
           ports:
             - containerPort: 50063

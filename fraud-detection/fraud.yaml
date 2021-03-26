@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: fraud
-          image: kiali/demo_fraud_fraud:v1
+          image: quay.io/kiali/demo_fraud_fraud:v1
           imagePullPolicy: Always
           securityContext:
             privileged: false
