@@ -1,7 +1,7 @@
 DORP ?= docker
 
 build:
-	${DORP} build -t quay.io/kiali/scale-mesh-demo:latest $(CURDIR)
+	${DORP} build -t quay.io/kiali/demo_scale_mesh:latest $(CURDIR)
 
 push:
-	${DORP} push quay.io/kiali/scale-mesh-demo:latest
+	${DORP} push quay.io/kiali/demo_scale_mesh:latest
