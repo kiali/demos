@@ -118,7 +118,7 @@ cd ../..
 
 ${DORP} build -t ${DOCKER_TRAVEL_TRAVELS_TAG} docker/travel_agency/travels
 
-${DORP} login docker.io
+${DORP} login ${IMAGE_HUB}
 ${DORP} push ${DOCKER_TRAVEL_CONTROL_TAG}
 ${DORP} push ${DOCKER_TRAVEL_PORTAL_TAG}
 ${DORP} push ${DOCKER_TRAVEL_LOADTESTER_TAG}

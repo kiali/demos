@@ -94,7 +94,7 @@ ${DORP} build -t ${DOCKER_FRAUD_POLICIES_TAG} docker/policies
 
 ## Push images
 
-${DORP} login docker.io
+${DORP} login ${IMAGE_HUB}
 ${DORP} push ${DOCKER_FRAUD_ACCOUNTS_TAG}
 ${DORP} push ${DOCKER_FRAUD_BANK_TAG}
 ${DORP} push ${DOCKER_FRAUD_CARDS_TAG}

@@ -32,6 +32,6 @@ cd ..
 ${DORP} build -t ${DOCKER_CLIENT_TAG} docker/client
 
 
-${DORP} login docker.io
+${DORP} login ${IMAGE_HUB}
 ${DORP} push ${DOCKER_SERVER_TAG}
 ${DORP} push ${DOCKER_CLIENT_TAG}
