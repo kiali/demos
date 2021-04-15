@@ -30,7 +30,7 @@ bash <(curl -L https://raw.githubusercontent.com/kiali/demos/master/scale-mesh/s
 
 ## Build
 
-This demo's link:https://quay.io/repository/kiali/scale-mesh-demo?tab=tags[docker image] is available on quay.io, but if you would like to build the docker image locally, you can do so by cloning this repository and running the `build` make target.
+This demo's link:https://quay.io/repository/kiali/demo_scale_mesh?tab=tags[docker image] is available on quay.io, but if you would like to build the docker image locally, you can do so by cloning this repository and running the `build` make target.
 
 ```bash
 make build

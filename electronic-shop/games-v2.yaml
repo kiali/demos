@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: games
-          image: kiali/demo_error_rates_server:v1
+          image: quay.io/kiali/demo_error_rates_server:v1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8888

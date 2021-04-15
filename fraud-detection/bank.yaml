@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: bank
-          image: kiali/demo_fraud_bank:v1
+          image: quay.io/kiali/demo_fraud_bank:v1
           imagePullPolicy: Always
           ports:
             - containerPort: 50053

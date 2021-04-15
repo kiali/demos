@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: control
-          image: kiali/demo_travels_control:v1
+          image: quay.io/kiali/demo_travels_control:v1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080

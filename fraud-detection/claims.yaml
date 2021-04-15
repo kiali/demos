@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: claims
-          image: kiali/demo_fraud_claims:v1
+          image: quay.io/kiali/demo_fraud_claims:v1
           imagePullPolicy: Always
           ports:
             - containerPort: 50061

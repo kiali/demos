@@ -69,7 +69,7 @@ execute() {
     -v "${KUBECONFIG}":/root/.kube/config:ro \
     ${ADD_HOST_ARG:-} \
     ${MINIKUBE_CONFIG_VOL_ARG:-} \
-    quay.io/kiali/scale-mesh-demo:latest \
+    quay.io/kiali/demo_scale_mesh:latest \
     --extra-vars "mesh_type=${MESH_TYPE}" \
     --extra-vars "number_namespaces=${NUMBER_NAMESPACES}" \
     --extra-vars "number_apps=${NUMBER_APPS}" \

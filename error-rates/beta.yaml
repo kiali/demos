@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: a
-          image: kiali/demo_error_rates_client:v1
+          image: quay.io/kiali/demo_error_rates_client:v1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8888
@@ -48,7 +48,7 @@ spec:
     spec:
       containers:
         - name: b-client
-          image: kiali/demo_error_rates_client:v1
+          image: quay.io/kiali/demo_error_rates_client:v1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8888
@@ -78,7 +78,7 @@ spec:
     spec:
       containers:
         - name: c-client
-          image: kiali/demo_error_rates_client:v1
+          image: quay.io/kiali/demo_error_rates_client:v1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8888
@@ -108,7 +108,7 @@ spec:
     spec:
       containers:
         - name: d-client
-          image: kiali/demo_error_rates_client:v1
+          image: quay.io/kiali/demo_error_rates_client:v1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8888
@@ -138,7 +138,7 @@ spec:
     spec:
       containers:
         - name: e-client
-          image: kiali/demo_error_rates_client:v1
+          image: quay.io/kiali/demo_error_rates_client:v1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8888
@@ -168,7 +168,7 @@ spec:
     spec:
       containers:
         - name: f-client
-          image: kiali/demo_error_rates_client:v1
+          image: quay.io/kiali/demo_error_rates_client:v1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8888
@@ -198,7 +198,7 @@ spec:
     spec:
       containers:
         - name: v-server
-          image: kiali/demo_error_rates_server:v1
+          image: quay.io/kiali/demo_error_rates_server:v1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8888
@@ -243,7 +243,7 @@ spec:
     spec:
       containers:
         - name: w-server
-          image: kiali/demo_error_rates_server:v1
+          image: quay.io/kiali/demo_error_rates_server:v1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8888
@@ -286,7 +286,7 @@ spec:
     spec:
       containers:
         - name: x-server
-          image: kiali/demo_error_rates_server:v1
+          image: quay.io/kiali/demo_error_rates_server:v1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8888
@@ -329,7 +329,7 @@ spec:
     spec:
       containers:
         - name: y-server
-          image: kiali/demo_error_rates_server:v1
+          image: quay.io/kiali/demo_error_rates_server:v1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8888
@@ -372,7 +372,7 @@ spec:
     spec:
       containers:
         - name: z-server
-          image: kiali/demo_error_rates_server:v1
+          image: quay.io/kiali/demo_error_rates_server:v1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8888
