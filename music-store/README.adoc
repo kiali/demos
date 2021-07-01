@@ -1,6 +1,6 @@
 = Music Store Demo
 
-A demonstration about how traffic rules are applied depending the configuration of gateways/hosts in VirtualServices. This rules can be managed and observed by Kiali. 
+A demonstration about how traffic rules are applied on internal and external traffic. These scenarios can be managed and observed by Kiali. 
 
 == Platform Install
 
@@ -97,12 +97,15 @@ spec:
       connections: []" | kubectl apply -f -          
 ----
 
-Configure the following entries in the /etc/hosts to consume the services:
+Configure the following environment variables to consume the services:
 
 [source,bash]
 ----
-echo "$(minikube ip) ui.music.store" | sudo tee -a /etc/hosts
-echo "$(minikube ip) backend.music.store" | sudo tee -a /etc/hosts
+export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}')
+export INGRESS_HOST=$(minikube ip)
+export GATEWAY_URL=$INGRESS_HOST:$INGRESS_PORT
+export MUSIC_STORE_UI=http://$GATEWAY_URL/
+export MUSIC_STORE_BACKEND=http://$GATEWAY_URL/api
 ----
 
 Create the following Istio routing resources:
@@ -113,7 +116,7 @@ echo "apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
   name: music-store
-  namespace: istio-system
+  namespace: music-store
 spec:
   selector:
     istio: ingressgateway
@@ -123,8 +126,7 @@ spec:
         name: http
         protocol: HTTP
       hosts:
-        - ui.music.store
-        - backend.music.store" | kubectl apply -f -
+        - \"*\"" | kubectl apply -f -
 
 echo "apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -133,76 +135,42 @@ metadata:
   namespace: music-store
 spec:
   hosts:
-    - ui.music.store
+    - \"*\"
   gateways:
-    - istio-system/music-store
+    - music-store
   http:
     - match:
         - uri:
             exact: /      
       route:
         - destination:
-            host: music-store-ui
-            subset: v1
+            host: music-store-ui            
             port:
-              number: 8080" | kubectl apply -f -
-         
-echo "apiVersion: networking.istio.io/v1alpha3
-kind: DestinationRule
-metadata:
-  name: music-store-ui
-  namespace: music-store
-spec:
-  host: music-store-ui
-  subsets:
-  - name: v1
-    labels:
-      version: v1" | kubectl apply -f -
-
-echo "apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: music-store-backend
-  namespace: music-store
-spec:
-  hosts:    
-    - backend.music.store
-  gateways:    
-    - istio-system/music-store    
-  http:
+              number: 8080
     - match:
         - uri:
             prefix: /api
       route:
         - destination:
-            host: music-store-backend
-            subset: v1
+            host: music-store-backend            
             port:
-              number: 8080" | kubectl apply -f -
-         
-echo "apiVersion: networking.istio.io/v1alpha3
-kind: DestinationRule
-metadata:
-  name: music-store-backend
-  namespace: music-store
-spec:
-  host: music-store-backend
-  subsets:
-  - name: v1
-    labels:
-      version: v1" | kubectl apply -f -
+              number: 8080" | kubectl apply -f -        
 ----
 
 == Music Store Demo Design
 
-Generate some load to consume both the UI and the backend from outside the mesh (notice that the UI consumes the backend too):
+Generate some requests to both the UI and the backend from outside the mesh (notice that the UI consumes the backend too).
 
 [source,bash]
 ----
-export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}')
-
-fortio load -qps 1 -t 300s http://ui.music.store:$INGRESS_PORT/ &
-fortio load -qps 1 -t 300s http://backend.music.store:$INGRESS_PORT/api &
+for i in {1..100}; 
+do 
+  echo "UI request $i"
+  curl $MUSIC_STORE_UI | jq
+  echo "Backend request $i"
+  curl $MUSIC_STORE_BACKEND | jq
+  sleep 1
+done
 ----
 
 Inspect the graph in Kiali and expect the following topology:
@@ -218,106 +186,125 @@ The next step is to add a traffic management rule, for example a fault injection
 echo "apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: music-store-backend
+  name: music-store-ui
   namespace: music-store
 spec:
   hosts:
-    - backend.music.store
+    - \"*\"
   gateways:
-    - istio-system/music-store    
+    - music-store
   http:
-    - fault:
+    - match:
+        - uri:
+            exact: /      
+      route:
+        - destination:
+            host: music-store-ui            
+            port:
+              number: 8080
+    - match:
+        - uri:
+            prefix: /api
+      fault:
         abort:
           httpStatus: 500
           percentage:
             value: 100
-      match:
-        - uri:
-            prefix: /api
       route:
         - destination:
-            host: music-store-backend
-            subset: v1
+            host: music-store-backend            
             port:
-              number: 8080" | kubectl apply -f -
+              number: 8080" | kubectl apply -f -   
 ----
 
 Inspect the graph in Kiali:
 
 image:doc/s2.png[Scenario 2]
 
-Notice that the rule is applying to the external client only but the internal client (the UI) is working good. 
+Notice that the rule is applying to the external client only but the internal client (the UI) is still working good. 
 
-This behaviour is expected because in the backend's virtual service there are some things missing to apply the rule to internal traffic.
+This behaviour is expected because in the backend's VirtualService there is a missing configuration for the rule to affect internal traffic.
 
-Apply the following virtual service that adds a new entry in the hosts list (the internal service of the backend):
-
-[source,bash]
-----
-echo "apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: music-store-backend
-  namespace: music-store
-spec:
-  hosts:
-    - music-store-backend.music-store.svc.cluster.local
-    - backend.music.store
-  gateways:    
-    - istio-system/music-store    
-  http:
-    - fault:
-        abort:
-          httpStatus: 500
-          percentage:
-            value: 100
-      match:
-        - uri:
-            prefix: /api
-      route:
-        - destination:
-            host: music-store-backend
-            subset: v1
-            port:
-              number: 8080" | kubectl apply -f - 
-----
-
-Inpect the graph in Kiali and observe that the rule is still not applying, it is still working, and that is because another configuration is missing.
-
-In the virtual service, the only gateway that is configured is the gateway that is related to the ingress gateway (external traffic getting into the mesh), so internal traffic is not being controlled by this rule, to fix this situation, an special value "mesh" can be configured in the gateways list as follows:
+In the VirtualService, the only gateway that is configured is the one that is related to the Ingress Gateway (external traffic getting into the mesh), so internal traffic is not being controlled by this rule, to fix this situation, an special value "mesh" can be configured in the gateways list as follows:
 
 [source,bash]
 ----
 echo "apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: music-store-backend
+  name: music-store-ui
   namespace: music-store
 spec:
   hosts:
-    - music-store-backend.music-store.svc.cluster.local
-    - backend.music.store
-  gateways:    
+    - \"*\"
+  gateways:
+    - music-store
     - mesh
-    - istio-system/music-store    
   http:
-    - fault:
+    - match:
+        - uri:
+            exact: /      
+      route:
+        - destination:
+            host: music-store-ui            
+            port:
+              number: 8080
+    - match:
+        - uri:
+            prefix: /api
+      fault:
         abort:
           httpStatus: 500
           percentage:
             value: 100
-      match:
-        - uri:
-            prefix: /api
       route:
         - destination:
-            host: music-store-backend
-            subset: v1
+            host: music-store-backend            
             port:
-              number: 8080" | kubectl apply -f -  
+              number: 8080" | kubectl apply -f -   
 ----
 
-Inpect the graph in Kiali and observe that the rule is applying for both external and internal calls:
+The previous command won't work and that is because as the error indicates, the "mesh" gateway is not allowed to be used when a wildcard host (*) is also configured, so to fix this situation, apply the following configuration that changes the wildcard for the two possible hosts that consumes the backend:
+
+[source,bash]
+----
+echo "apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: music-store-ui
+  namespace: music-store
+spec:
+  hosts:
+    - $(minikube ip)
+    - music-store-backend.music-store.svc.cluster.local
+  gateways:
+    - music-store
+    - mesh
+  http:
+    - match:
+        - uri:
+            exact: /      
+      route:
+        - destination:
+            host: music-store-ui            
+            port:
+              number: 8080
+    - match:
+        - uri:
+            prefix: /api
+      fault:
+        abort:
+          httpStatus: 500
+          percentage:
+            value: 100
+      route:
+        - destination:
+            host: music-store-backend            
+            port:
+              number: 8080" | kubectl apply -f -   
+----
+
+Inpect the graph in Kiali again and observe that the rule is applying for both external and internal calls:
 
 image:doc/s3.png[Scenario 3]
 
