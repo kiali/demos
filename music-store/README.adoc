@@ -15,13 +15,6 @@ Start a Minikube instance:
 minikube start --memory=8g --cpus=4
 ----
 
-Install OLM (required to install the microservices):
-
-[source,bash]
-----
-minikube addons enable olm
-----
-
 Install Istio and its addons:
 
 [source,bash]
@@ -34,67 +27,15 @@ kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.10/samp
 kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.10/samples/addons/kiali.yaml
 ----
 
-Install https://github.com/leandroberetta/mimik[Mimik] (a tool to create generic microservices and connect them to form service meshes):
-
-[source,bash]
-----
-echo "apiVersion: operators.coreos.com/v1alpha1
-kind: CatalogSource
-metadata:
-  name: mimik-catalog
-  namespace: olm
-spec:
-  sourceType: grpc
-  image: quay.io/leandroberetta/mimik-operator-index:v0.0.1" | kubectl apply -f -
-
-echo "apiVersion: operators.coreos.com/v1alpha1
-kind: Subscription
-metadata:
-  name: mimik-subscription
-  namespace: operators 
-spec:
-  channel: alpha
-  installPlanApproval: Automatic
-  name: mimik-operator
-  source: mimik-catalog
-  sourceNamespace: olm" | kubectl apply -f -
-----
-
-A very simple microservice architecture will be used to demonstrate the concepts (a backend and a UI):
+A very simple microservice architecture based on https://github.com/leandroberetta/mimik[Mimik] will be used to demonstrate the concepts:
 
 [source,bash]
 ----
 kubectl create namespace music-store
 kubectl label namespace music-store istio-injection=enabled
 
-echo "apiVersion: mimik.veicot.io/v1alpha1
-kind: Mimik
-metadata:
-  name: music-store-ui-v1
-  namespace: music-store
-spec:
-  service: music-store-ui
-  version: v1
-  endpoints:
-    - path: /
-      method: GET
-      connections:
-        - service: music-store-backend
-          port: 8080
-          path: api
-          method: GET" | kubectl apply -f -
-echo "apiVersion: mimik.veicot.io/v1alpha1
-kind: Mimik
-metadata:
-  name: music-store-backend-v1
-  namespace: music-store
-spec:
-  service: music-store-backend
-  version: v1
-  endpoints:
-    - path: /api
-      method: GET
-      connections: []" | kubectl apply -f -          
+kubectl apply -f ui.yaml -n music-store
+kubectl apply -f backend.yaml -n music-store
 ----
 
 Configure the following environment variables to consume the services:
@@ -112,7 +53,8 @@ Create the following Istio routing resources:
 
 [source,bash]
 ----
-echo "apiVersion: networking.istio.io/v1alpha3
+cat <<EOF | kubectl apply -f -
+apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
   name: music-store
@@ -126,25 +68,25 @@ spec:
         name: http
         protocol: HTTP
       hosts:
-        - \"*\"" | kubectl apply -f -
-
-echo "apiVersion: networking.istio.io/v1alpha3
+        - "*"
+---        
+apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
   name: music-store-ui
   namespace: music-store
 spec:
   hosts:
-    - \"*\"
+    - "*"
   gateways:
     - music-store
   http:
     - match:
         - uri:
-            exact: /      
+            exact: /
       route:
         - destination:
-            host: music-store-ui            
+            host: music-store-ui       
             port:
               number: 8080
     - match:
@@ -152,9 +94,10 @@ spec:
             prefix: /api
       route:
         - destination:
-            host: music-store-backend            
+            host: music-store-backend
             port:
-              number: 8080" | kubectl apply -f -        
+              number: 8080
+EOF
 ----
 
 == Music Store Demo Design
@@ -183,14 +126,15 @@ The next step is to add a traffic management rule, for example a fault injection
 
 [source,bash]
 ----
-echo "apiVersion: networking.istio.io/v1alpha3
+cat <<EOF | kubectl apply -f -
+apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
   name: music-store-ui
   namespace: music-store
 spec:
   hosts:
-    - \"*\"
+    - "*"
   gateways:
     - music-store
   http:
@@ -214,7 +158,8 @@ spec:
         - destination:
             host: music-store-backend            
             port:
-              number: 8080" | kubectl apply -f -   
+              number: 8080
+EOF
 ----
 
 Inspect the graph in Kiali:
@@ -229,14 +174,15 @@ In the VirtualService, the only gateway that is configured is the one that is re
 
 [source,bash]
 ----
-echo "apiVersion: networking.istio.io/v1alpha3
+cat <<EOF | kubectl apply -f -
+apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
   name: music-store-ui
   namespace: music-store
 spec:
   hosts:
-    - \"*\"
+    - "*"
   gateways:
     - music-store
     - mesh
@@ -261,14 +207,16 @@ spec:
         - destination:
             host: music-store-backend            
             port:
-              number: 8080" | kubectl apply -f -   
+              number: 8080
+EOF
 ----
 
 The previous command won't work and that is because as the error indicates, the "mesh" gateway is not allowed to be used when a wildcard host (*) is also configured, so to fix this situation, apply the following configuration that changes the wildcard for the two possible hosts that consumes the backend:
 
 [source,bash]
 ----
-echo "apiVersion: networking.istio.io/v1alpha3
+cat <<EOF | kubectl apply -f -
+apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
   name: music-store-ui
@@ -301,10 +249,11 @@ spec:
         - destination:
             host: music-store-backend            
             port:
-              number: 8080" | kubectl apply -f -   
+              number: 8080
+EOF 
 ----
 
-Inpect the graph in Kiali again and observe that the rule is applying for both external and internal calls:
+Inpect the graph in Kiali again and observe that the rule is applying for both external and internal calls to the backend:
 
 image:doc/s3.png[Scenario 3]
 
