@@ -34,8 +34,8 @@ A very simple microservice architecture based on https://github.com/leandroberet
 kubectl create namespace music-store
 kubectl label namespace music-store istio-injection=enabled
 
-kubectl apply -f ui.yaml -n music-store
-kubectl apply -f backend.yaml -n music-store
+kubectl apply -f https://raw.githubusercontent.com/leandroberetta/demos/master/music-store/ui.yaml -n music-store
+kubectl apply -f https://raw.githubusercontent.com/leandroberetta/demos/master/music-store/backend.yaml -n music-store
 ----
 
 Configure the following environment variables to consume the services:
