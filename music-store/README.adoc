@@ -38,6 +38,14 @@ kubectl apply -f https://raw.githubusercontent.com/leandroberetta/demos/master/m
 kubectl apply -f https://raw.githubusercontent.com/leandroberetta/demos/master/music-store/backend.yaml -n music-store
 ----
 
+Wait for the music-store pods to become available:
+
+[source,bash]
+----
+kubectl wait --for condition=available deployment/music-store-backend-v1 -n music-store
+kubectl wait --for condition=available deployment/music-store-ui-v1 -n music-store
+----
+
 Configure the following environment variables to consume the services:
 
 [source,bash]
@@ -170,7 +178,7 @@ Notice that the rule is applying to the external client only but the internal cl
 
 This behaviour is expected because in the backend's VirtualService there is a missing configuration for the rule to affect internal traffic.
 
-In the VirtualService, the only gateway that is configured is the one that is related to the Ingress Gateway (external traffic getting into the mesh), so internal traffic is not being controlled by this rule, to fix this situation, an special value "mesh" can be configured in the gateways list as follows:
+In the VirtualService, the only gateway that is configured is the one that is related to the Ingress Gateway (external traffic getting into the mesh). This means internal traffic is not being controlled by this rule. To fix this situation, a special value "mesh" can be configured in the gateways list as follows:
 
 [source,bash]
 ----
@@ -211,7 +219,13 @@ spec:
 EOF
 ----
 
-The previous command won't work and that is because as the error indicates, the "mesh" gateway is not allowed to be used when a wildcard host (*) is also configured, so to fix this situation, apply the following configuration that changes the wildcard for the two possible hosts that consumes the backend:
+The previous command should fail with the following error:
+
+```
+admission webhook "validation.istio.io" denied the request: configuration is invalid: wildcard host * is not allowed for virtual services bound to the mesh gateway
+```
+
+As the error indicates, the "mesh" gateway is not allowed to be used when a wildcard host ("*") is also configured. To fix this situation, change the above command by replacing the wildcard with the two possible hosts that consume the backend:
 
 [source,bash]
 ----
@@ -253,7 +267,7 @@ spec:
 EOF 
 ----
 
-Inpect the graph in Kiali again and observe that the rule is applying for both external and internal calls to the backend:
+Inspect the graph in Kiali again and observe that the rule is applying for both external and internal calls to the backend:
 
 image:doc/s3.png[Scenario 3]
 
