@@ -27,6 +27,8 @@ kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.10/samp
 kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.10/samples/addons/kiali.yaml
 ----
 
+If there are errors trying to install the addons, try running the command again. There may be some timing issues which will be resolved when the command is run again.
+
 A very simple microservice architecture based on https://github.com/leandroberetta/mimik[Mimik] will be used to demonstrate the concepts:
 
 [source,bash]
@@ -42,8 +44,8 @@ Wait for the music-store pods to become available:
 
 [source,bash]
 ----
-kubectl wait --for condition=available deployment/music-store-backend-v1 -n music-store
-kubectl wait --for condition=available deployment/music-store-ui-v1 -n music-store
+kubectl wait --timeout 60s --for condition=available deployment/music-store-backend-v1 -n music-store
+kubectl wait --timeout 60s --for condition=available deployment/music-store-ui-v1 -n music-store
 ----
 
 Configure the following environment variables to consume the services:
@@ -120,7 +122,7 @@ do
   curl $MUSIC_STORE_UI | jq
   echo "Backend request $i"
   curl $MUSIC_STORE_BACKEND | jq
-  sleep 1
+  sleep 5
 done
 ----
 
@@ -264,10 +266,9 @@ spec:
             host: music-store-backend            
             port:
               number: 8080
-EOF 
+EOF
 ----
 
 Inspect the graph in Kiali again and observe that the rule is applying for both external and internal calls to the backend:
 
 image:doc/s3.png[Scenario 3]
-
