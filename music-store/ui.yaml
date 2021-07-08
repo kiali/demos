@@ -1,0 +1,94 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app: music-store-ui
+    version: v1
+  name: music-store-ui-v1
+  namespace: music-store
+data:
+  music-store-ui-v1.json: '[{"path":"/","method":"GET","connections":[{"service":"music-store-backend","port":8080,"path":"api","method":"GET"}]}]'
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: music-store-ui
+    version: v1
+  name: music-store-ui
+  namespace: music-store
+spec:
+  ports:
+  - name: http
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: music-store-ui
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: music-store-ui
+    version: v1
+  name: music-store-ui-v1
+  namespace: music-store
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: music-store-ui
+      version: v1
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "true"
+      labels:
+        app: music-store-ui
+        version: v1
+    spec:
+      containers:
+      - env:
+        - name: MIMIK_SERVICE_NAME
+          value: music-store-ui
+        - name: MIMIK_SERVICE_PORT
+          value: "8080"
+        - name: MIMIK_ENDPOINTS_FILE
+          value: /data/music-store-ui-v1.json
+        - name: MIMIK_LABELS_FILE
+          value: /tmp/etc/pod_labels
+        image: quay.io/leandroberetta/mimik:latest
+        imagePullPolicy: Always
+        name: mimik
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /tmp/etc
+          name: pod-info
+        - mountPath: /data
+          name: endpoints
+      volumes:
+      - downwardAPI:
+          defaultMode: 420
+          items:
+          - fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.labels
+            path: pod_labels
+        name: pod-info
+      - configMap:
+          defaultMode: 420
+          items:
+          - key: music-store-ui-v1.json
+            path: music-store-ui-v1.json
+          name: music-store-ui-v1
+        name: endpoints
