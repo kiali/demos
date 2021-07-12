@@ -149,6 +149,7 @@ resource "null_resource" "generate_workload_entry_files" {
 
   triggers = {
     workload_entry_template_content = "${each.key}: ${each.value.content}"
+    // TODO: Is there a trigger that doesn't cause a cycle we can use to run this whenever the vm changes?
   }
 
   provisioner "local-exec" {
@@ -461,10 +462,6 @@ locals {
       app     = "ratings",
       version = "v1"
     }
-    ratings-v2 = {
-      app     = "ratings",
-      version = "v2"
-    }
     reviews-v1 = {
       app     = "reviews",
       version = "v1"
@@ -545,6 +542,8 @@ EOF
   apps = toset([for workload in values(local.workloads) : workload.app])
 
   common_vm_tags = ["app"]
+
+  ssh_key = var.ssh_key == "" ? file(var.ssh_key_filepath) : var.ssh_key
 }
 
 
@@ -571,7 +570,7 @@ resource "google_compute_instance" "workload_vm" {
   machine_type        = "n1-standard-1"
 
   metadata = {
-    ssh-keys = var.ssh_key
+    ssh-keys = "${var.ssh_username}:${local.ssh_key}"
   }
 
   metadata_startup_script = each.value
@@ -642,7 +641,7 @@ resource "google_compute_instance" "bastion" {
   machine_type        = "f1-micro"
 
   metadata = {
-    ssh-keys = var.ssh_key
+    ssh-keys = "${var.ssh_username}:${local.ssh_key}"
   }
 
   name = "bastion"

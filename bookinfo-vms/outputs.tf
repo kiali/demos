@@ -29,6 +29,6 @@ output "private_ips" {
 }
 
 output "bookinfo_url" {
-  value = "http://${data.kubernetes_service.ingress-gateway-service.status.0.load_balancer.0.ingress.0.ip}/productpage"
+  value       = "http://${data.kubernetes_service.ingress-gateway-service.status.0.load_balancer.0.ingress.0.ip}/productpage"
   description = "URL to access the bookinfo productpage"
 }

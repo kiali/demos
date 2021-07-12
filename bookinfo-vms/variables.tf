@@ -15,7 +15,14 @@ variable "zone" {
 
 variable "ssh_key" {
   type        = string
-  description = "Your public ssh key that will be used to access the VMs remotely."
+  description = "Your public ssh key that will be used to access the VMs remotely. Takes precedence over ssh_key_filepath."
+  default     = ""
+}
+
+variable "ssh_key_filepath" {
+  type        = string
+  description = "The path to your public ssh key that will be used to access the VMs remotely."
+  default     = ""
 }
 
 variable "ssh_username" {
