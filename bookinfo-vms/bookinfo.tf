@@ -77,7 +77,7 @@ resource "kubectl_manifest" "vm_namespace" {
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: vms
+  name: bookinfo
   labels:
     istio-injection: enabled
 YAML
@@ -338,7 +338,7 @@ spec:
   hosts:
     - "*"
   gateways:
-    - vms/bookinfo-gateway
+    - ${kubectl_manifest.vm_namespace.name}/bookinfo-gateway
   http:
     - match:
         - uri:
@@ -353,7 +353,7 @@ spec:
             prefix: /static
       route:
         - destination:
-            host: productpage.vms.svc.cluster.local
+            host: productpage.${kubectl_manifest.vm_namespace.name}.svc.cluster.local
 YAML
 
   depends_on = [
