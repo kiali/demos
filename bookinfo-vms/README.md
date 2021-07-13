@@ -1,6 +1,6 @@
 # Terraform GCP VM Workload Example
 
-This folder contains an example of a bookinfo istio deployment running on VMs in GCP. Its primary purpose is to demonstrate and test kiali features with VM workloads and not to be a reference for how to integrate VM workloads with Istio. It will deploy the following:
+This folder contains an example of a bookinfo istio deployment running on VMs in GCP. Its primary purpose is to demonstrate and test kiali features with VM workloads. It is not meant to be a reference for how to integrate VM workloads with Istio. It will deploy the following:
 
 - GKE cluster
 - Istio within the cluster
