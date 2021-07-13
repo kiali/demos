@@ -4,7 +4,8 @@ This folder contains an example of a bookinfo istio deployment running on VMs in
 
 - GKE cluster
 - Istio within the cluster
-- VMs to run bookinfo
+- VMs running bookinfo
+- bookinfo within kubernetes
 - VPC - single network for the vms and kube nodes
 
 Requests to the bookinfo services should be spread between the vms and the kubernetes deployments for each app.
