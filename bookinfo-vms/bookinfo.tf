@@ -211,7 +211,7 @@ YAML
 }
 
 resource "kubectl_manifest" "bookinfo_deployment" {
-  for_each = local.workloads
+  for_each = var.deploy_in_kube ? local.workloads : {}
 
   wait_for_rollout = true
 

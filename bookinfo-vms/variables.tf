@@ -50,3 +50,9 @@ variable "deploy_bastion" {
   description = "If set to true, a bastion host will be deployed providing access to the bookinfo vms."
   default     = false
 }
+
+variable "deploy_in_kube" {
+  type        = bool
+  description = "If true, deploys the bookinfo apps inside the kubernetes cluster in addition to the vms."
+  default     = true
+}
