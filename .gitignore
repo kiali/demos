@@ -41,3 +41,6 @@ travels/docker/travel_portal/travel_portal
 .terraform
 terraform.tfstate*
 terraform.tfvars
+
+# These should be downloaded by the user or terraform and not checked into git
+bookinfo-vms/charts

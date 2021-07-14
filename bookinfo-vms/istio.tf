@@ -1,3 +1,9 @@
+resource "null_resource" "download_istio_charts" {
+  provisioner "local-exec" {
+    command     = "scripts/download-istio.sh ${path.module}"
+    interpreter = ["/bin/bash", "-c"]
+  }
+}
 
 resource "helm_release" "istio_base" {
   atomic           = true
@@ -10,6 +16,7 @@ resource "helm_release" "istio_base" {
   depends_on = [
     google_container_cluster.primary,
     google_container_node_pool.primary_nodes,
+    null_resource.download_istio_charts,
   ]
 }
 
@@ -90,7 +97,7 @@ spec:
 YAML
 
   depends_on = [
-    helm_release.istio_operator
+    helm_release.istio_operator,
   ]
 }
 
