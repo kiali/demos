@@ -1,3 +1,17 @@
+// When a new version is released and old charts dir exists
+// it doesn't get cleaned up by tf destroy and this will throw an
+// error because it'll pick up old version of charts during plan
+// but new version will get downloaded after. Deleting the charts
+// at destroy ensures that the version info won't be inconsistent
+// during the plan process.
+resource "null_resource" "delete_istio_charts" {
+  provisioner "local-exec" {
+    command     = "rm -rf ${path.module}/charts"
+    interpreter = ["/bin/bash", "-c"]
+    when        = destroy
+  }
+}
+
 resource "null_resource" "download_istio_charts" {
   provisioner "local-exec" {
     command     = "scripts/download-istio.sh ${path.module}"
@@ -184,6 +198,16 @@ resource "helm_release" "prometheus" {
     google_container_cluster.primary,
     google_container_node_pool.primary_nodes
   ]
+
+  set {
+    name  = "server.global.scrape_interval"
+    value = "15s"
+  }
+
+  set {
+    name  = "extraScrapeConfigs"
+    value = local.scrape_configs
+  }
 }
 
 ## Kiali

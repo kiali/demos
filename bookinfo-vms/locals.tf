@@ -94,4 +94,16 @@ EOF
   common_vm_tags = ["app"]
 
   ssh_key = var.ssh_key == "" ? file(var.ssh_key_filepath) : var.ssh_key
+
+  # The workload names can be used here as scrape targets because
+  # Google Cloud DNS creates internal hostnames for each of the vms.
+  scrape_configs = <<YAML
+- job_name: bookinfo-vms
+  metrics_path: '/stats/prometheus'
+  static_configs:
+  - targets:
+%{for workload in keys(local.workloads)~}
+    - '${workload}:15020'
+%{endfor}
+YAML
 }

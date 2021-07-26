@@ -110,15 +110,10 @@ spec:
     labels:
       app: ${each.value.app}
       version: ${each.value.version}
-      workload-type: vm
+      service.istio.io/canonical-revision: ${each.value.version}
   template:
     serviceAccount: ${kubectl_manifest.vm_service_account.name}
     network: "${google_compute_network.vpc.name}"
-    labels:
-      app: ${each.value.app}
-      version: ${each.value.version}
-      workload-type: vm
-
 YAML
 
 }
@@ -316,8 +311,8 @@ spec:
   network: "${google_compute_network.vpc.name}"
   labels:
     app: "${each.value.app}"
-    version: "${each.value.version}"
-    workload-type: vm
+    version: ${each.value.version}
+    service.istio.io/canonical-revision: ${each.value.version}
 
 YAML
 
