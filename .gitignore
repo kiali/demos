@@ -36,3 +36,11 @@ travels/docker/travel_agency/travels/travels
 travels/docker/travel_control/travel_control
 travels/docker/travel_control/html
 travels/docker/travel_portal/travel_portal
+
+# Terraform
+.terraform
+terraform.tfstate*
+terraform.tfvars
+
+# These should be downloaded by the user or terraform and not checked into git
+bookinfo-vms/charts
