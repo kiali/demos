@@ -4,11 +4,13 @@ Demo based on [Travels](../travels) application to show the federation capabilit
 
 ## Demo Design
 
-This demo creates two independent service meshes on the same OpenShift cluster (it could be separate clusters too) and federates them to import/export services in both meshes.
+This demo creates two independent meshes on the same OpenShift cluster (for convenience but they can be split into different clusters as well) and federates them importing/exporting services in both meshes.
 
-First, the east mesh will import the discounts service from west mesh. Finally, with a VirtualService all services deployed in the east mesh will consume both instances of discounts service.
+First, the *east* mesh will import the *discounts* service from *west* mesh. Finally, with a VirtualService all services deployed in the *east* mesh will consume both instances of the *discounts* service.
 
-As this is a federation, and the service meshes are independent, there will be two instances of Kiali to observe the full topology:
+As this is a federation, and the service meshes are independent, there will be two instances of Kiali.
+
+Open both Kiali instances side by side to observe the full topology:
 
 ![federated-travels](./federated-travels.png)
 
@@ -44,13 +46,13 @@ oc config use-context crc-admin
 
 ### OpenShift Service Mesh 2.1
 
-Subscribe to the required operators:
+Subscribe to the required operators (Jaeger, Kiali and OpenShift Service Mesh):
 
 ```bash
 oc apply -f https://raw.githubusercontent.com/kiali/demos/master/federated-travels/ossm-subs.yaml
 ```
 
-Install two independent service meshes (east and west):
+Install two independent meshes (*east* and *west*):
 
 ```bash
 oc create namespace east-mesh-system
@@ -60,7 +62,7 @@ oc create namespace west-mesh-system
 oc apply -n west-mesh-system -f west/west-ossm.yaml
 ```
 
-Wait for both control plane to be ready and create in each mesh namespace a configmap containing the root certifcate of the other mesh:
+Wait for both control planes to be ready and create in each mesh namespace a configmap containing a root certificate that is used to validate client certificates in the trust domain used by the other mesh:
 
 ```bash
 oc get configmap istio-ca-root-cert -o jsonpath='{.data.root-cert\.pem}' -n east-mesh-system > east-cert.pem
@@ -77,7 +79,11 @@ oc apply -n east-mesh-system -f east/east-federation.yaml
 oc apply -n west-mesh-system -f west/west-federation.yaml
 ```
 
+For more information about how federation works, visit the [https://docs.openshift.com/container-platform/4.9/service_mesh/v2x/ossm-federation.html](documentation)
+
 ## Application Install
+
+Create the application resources:
 
 ```bash
 oc create namespace east-travel-agency
