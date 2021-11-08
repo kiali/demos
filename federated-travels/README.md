@@ -1,18 +1,6 @@
-# Federated Travels application with OpenShift Service Mesh
+# Federated Travels with OpenShift Service Mesh
 
 Demo based on [Travels](../travels) application to show the federation capabilities of OpenShift Service Mesh.
-
-## Demo Design
-
-This demo creates two independent meshes on the same OpenShift cluster (for convenience but they can be split into different clusters as well) and federates them importing/exporting services in both meshes.
-
-First, the *east* mesh will import the *discounts* service from *west* mesh. Finally, with a VirtualService all services deployed in the *east* mesh will consume both instances of the *discounts* service.
-
-As this is a federation, and the service meshes are independent, there will be two instances of Kiali.
-
-Open both Kiali instances side by side to observe the full topology:
-
-![federated-travels](./federated-travels.png)
 
 ## Platform Install
 
@@ -62,7 +50,23 @@ oc create namespace west-mesh-system
 oc apply -n west-mesh-system -f west/west-ossm.yaml
 ```
 
-Wait for both control planes to be ready and create in each mesh namespace a configmap containing a root certificate that is used to validate client certificates in the trust domain used by the other mesh:
+Create the namespaces for the Travels application in both meshes:
+
+```bash
+oc create namespace east-travel-agency
+oc create namespace east-travel-portal
+oc create namespace east-travel-control
+oc create namespace west-travel-agency
+```
+
+Wait for both control planes to be ready:
+
+```bash
+oc wait --for condition=Ready -n east-mesh-system smmr/default --timeout 300s
+oc wait --for condition=Ready -n west-mesh-system smmr/default --timeout 300s
+```
+
+Create in each mesh namespace a configmap containing a root certificate that is used to validate client certificates in the trust domain used by the other mesh
 
 ```bash
 oc get configmap istio-ca-root-cert -o jsonpath='{.data.root-cert\.pem}' -n east-mesh-system > east-cert.pem
@@ -86,18 +90,28 @@ For more information about how federation works, visit the [https://docs.openshi
 Create the application resources:
 
 ```bash
-oc create namespace east-travel-agency
-oc create namespace east-travel-portal
-oc create namespace east-travel-control
-
 oc apply -n east-travel-agency -f east-travel-agency.yaml
 oc apply -n east-travel-portal -f east-travel-portal.yaml
 oc apply -n east-travel-control -f east-travel-control.yaml
-
-oc create namespace west-travel-agency
-
 oc apply -n west-travel-agency -f west-travel-agency.yaml
 ```
+
+## Demo Design
+
+This demo creates two independent meshes (*east* and *west*) on the same OpenShift cluster and federates them to import/export services in both meshes.
+
+The majority of the services will be deployed on the *east* mesh and the *discounts* service will be deployed on both *east* and *west* meshes.
+
+The *east* mesh will import the *discounts* service from the *west* mesh. The services from *east* mesh will consume both instances of *discounts*.
+
+Each mesh will have a Kiali instance: 
+
+* East Kiali: https://kiali-east-mesh-system.apps-crc.testing
+* West Kiali: https://kiali-west-mesh-system.apps-crc.testing
+
+To observe the full topology, open both side by side, log in as kubeadmin user and go to the graph section:
+
+![federated-travels](./federated-travels.png)
 
 ## Cleanup
 
