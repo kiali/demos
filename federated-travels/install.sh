@@ -31,7 +31,7 @@ oc create namespace west-travel-agency
 oc wait --for condition=Ready -n east-mesh-system smmr/default --timeout 300s
 oc wait --for condition=Ready -n west-mesh-system smmr/default --timeout 300s
 
-# Create in each mesh namespace a configmap containing a root certificate that is used to validate client certificates in the trust domain used by the other mesh
+# Create a configmap in each mesh namespace containing the root certificate that is used to validate client certificates in the trust domain used by the other mesh
 oc get configmap istio-ca-root-cert -o jsonpath='{.data.root-cert\.pem}' -n east-mesh-system > east-cert.pem
 oc create configmap east-ca-root-cert --from-file=root-cert.pem=east-cert.pem -n west-mesh-system
 oc get configmap istio-ca-root-cert -o jsonpath='{.data.root-cert\.pem}' -n west-mesh-system > west-cert.pem
