@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: control
+spec:
+  selector:
+    matchLabels:
+      app: control
+      version: v1
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "true"
+        readiness.status.sidecar.istio.io/applicationPorts: ""
+      labels:
+        app: control
+        version: v1
+    spec:
+      containers:
+        - name: control
+          image: quay.io/kiali/demo_travels_control:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          securityContext:
+            privileged: false
+          env:
+            - name: PORTAL_SERVICES
+              value: "voyages.fr;http://voyages.east-travel-portal:8000,viaggi.it;http://viaggi.east-travel-portal:8000,travels.uk;http://travels.east-travel-portal:8000"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: control
+  labels:
+    app: control
+spec:
+  ports:
+    - name: http
+      port: 8080
+  selector:
+    app: control

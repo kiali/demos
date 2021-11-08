@@ -1,0 +1,83 @@
+# Copyright 2017 Istio Authors
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+##################################################################################################
+# Discounts services
+##################################################################################################
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: discounts-v1
+spec:
+  selector:
+    matchLabels:
+      app: discounts
+      version: v1
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "true"
+        readiness.status.sidecar.istio.io/applicationPorts: ""
+        proxy.istio.io/config: |
+          tracing:
+            zipkin:
+              address: zipkin.west-mesh-system:9411
+            sampling: 10
+            custom_tags:
+              http.header.portal:
+                header:
+                  name: portal
+              http.header.device:
+                header:
+                  name: device
+              http.header.user:
+                header:
+                  name: user
+              http.header.travel:
+                header:
+                  name: travel
+      labels:
+        app: discounts
+        version: v1
+    spec:
+      containers:
+        - name: discounts
+          image: quay.io/kiali/demo_travels_discounts:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          securityContext:
+            privileged: false
+          env:
+            - name: CURRENT_SERVICE
+              value: "discounts"
+            - name: CURRENT_VERSION
+              value: "v1"
+            - name: LISTEN_ADDRESS
+              value: ":8000"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: discounts
+  labels:
+    app: discounts
+spec:
+  ports:
+    - name: http
+      port: 8000
+  selector:
+    app: discounts
+---

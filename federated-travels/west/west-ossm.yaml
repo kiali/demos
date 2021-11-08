@@ -1,0 +1,55 @@
+apiVersion: maistra.io/v2
+kind: ServiceMeshControlPlane
+metadata:
+  name: west-mesh
+  namespace: west-mesh-system
+spec:
+  version: v2.1
+  runtime:
+    defaults:
+      container:
+        imagePullPolicy: Always
+  gateways:
+    additionalEgress:
+      egress-east-mesh:
+        enabled: true
+        requestedNetworkView:
+        - network-east-mesh
+        routerMode: sni-dnat
+        service:
+          metadata:
+            labels:
+              federation.maistra.io/proxy: egress-east-mesh
+          ports:
+          - port: 15443
+            name: tls
+          - port: 8188
+            name: http-discovery
+    additionalIngress:
+      ingress-east-mesh:
+        enabled: true
+        routerMode: sni-dnat
+        service:
+          type: LoadBalancer
+          metadata:
+            labels:
+              federation.maistra.io/proxy: ingress-east-mesh
+          ports:
+          - port: 15443
+            name: tls
+          - port: 8188
+            name: https-discovery     
+  security:
+    trust:
+      domain: west-mesh.local
+---
+apiVersion: maistra.io/v1
+kind: ServiceMeshMemberRoll
+metadata:
+  name: default
+  namespace: west-mesh-system
+spec:
+  members:
+  - west-travel-agency
+  - west-travel-portal
+  - west-travel-control

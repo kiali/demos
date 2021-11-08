@@ -1,0 +1,38 @@
+---
+kind: ServiceMeshPeer
+apiVersion: federation.maistra.io/v1
+metadata:
+  name: east-mesh
+  namespace: west-mesh-system
+spec:
+  remote:
+    addresses:
+    - ingress-west-mesh.east-mesh-system.svc.cluster.local
+    discoveryPort: 8188
+    servicePort: 15443
+  gateways:
+    ingress:
+      name: ingress-east-mesh
+    egress:
+      name: egress-east-mesh
+  security:
+    trustDomain: east-mesh.local
+    clientID: east-mesh.local/ns/east-mesh-system/sa/egress-west-mesh-service-account
+    certificateChain:
+      kind: ConfigMap
+      name: east-ca-root-cert
+---
+kind: ExportedServiceSet
+apiVersion: federation.maistra.io/v1
+metadata:
+  name: east-mesh
+  namespace: west-mesh-system
+spec:
+  exportRules:  
+  - type: NameSelector
+    nameSelector:
+      namespace: west-travel-agency
+      name: discounts
+      alias:
+        namespace: travel-agency
+        name: discounts      

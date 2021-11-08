@@ -1,0 +1,552 @@
+# Copyright 2017 Istio Authors
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+##################################################################################################
+# Mysql db services
+# credentials: root/password
+##################################################################################################
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysql-credentials
+type: Opaque
+data:
+  rootpasswd: cGFzc3dvcmQ=
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysqldb
+  labels:
+    app: mysqldb
+spec:
+  ports:
+    - port: 3306
+      name: tcp
+  selector:
+    app: mysqldb
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysqldb-v1
+  labels:
+    app: mysqldb
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysqldb
+      version: v1
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "true"
+      labels:
+        app: mysqldb
+        version: v1
+    spec:
+      containers:
+        - name: mysqldb
+          image: quay.io/kiali/demo_travels_mysqldb:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-credentials
+                  key: rootpasswd
+          args: ["--default-authentication-plugin","mysql_native_password"]
+          volumeMounts:
+            - name: var-lib-mysql
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: var-lib-mysql
+          emptyDir:
+---
+##################################################################################################
+# Cars services
+##################################################################################################
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: cars-v1
+spec:
+  selector:
+    matchLabels:
+      app: cars
+      version: v1
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "true"
+        readiness.status.sidecar.istio.io/applicationPorts: ""
+        proxy.istio.io/config: |
+          tracing:
+            zipkin:
+              address: zipkin.east-mesh-system:9411
+            sampling: 10
+            custom_tags:
+              http.header.portal:
+                header:
+                  name: portal
+              http.header.device:
+                header:
+                  name: device
+              http.header.user:
+                header:
+                  name: user
+              http.header.travel:
+                header:
+                  name: travel
+      labels:
+        app: cars
+        version: v1
+    spec:
+      containers:
+        - name: cars
+          image: quay.io/kiali/demo_travels_cars:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          securityContext:
+            privileged: false
+          env:
+            - name: CURRENT_SERVICE
+              value: "cars"
+            - name: CURRENT_VERSION
+              value: "v1"
+            - name: LISTEN_ADDRESS
+              value: ":8000"
+            - name: DISCOUNTS_SERVICE
+              value: "http://discounts.east-travel-agency:8000"
+            - name: MYSQL_SERVICE
+              value: "mysqldb.east-travel-agency:3306"
+            - name: MYSQL_USER
+              value: "root"
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-credentials
+                  key: rootpasswd
+            - name: MYSQL_DATABASE
+              value: "test"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cars
+  labels:
+    app: cars
+spec:
+  ports:
+    - name: http
+      port: 8000
+  selector:
+    app: cars
+---
+##################################################################################################
+# Discounts services
+##################################################################################################
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: discounts-v1
+spec:
+  selector:
+    matchLabels:
+      app: discounts
+      version: v1
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "true"
+        readiness.status.sidecar.istio.io/applicationPorts: ""
+        proxy.istio.io/config: |
+          tracing:
+            zipkin:
+              address: zipkin.east-mesh-system:9411
+            sampling: 10
+            custom_tags:
+              http.header.portal:
+                header:
+                  name: portal
+              http.header.device:
+                header:
+                  name: device
+              http.header.user:
+                header:
+                  name: user
+              http.header.travel:
+                header:
+                  name: travel
+      labels:
+        app: discounts
+        version: v1
+    spec:
+      containers:
+        - name: discounts
+          image: quay.io/kiali/demo_travels_discounts:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          securityContext:
+            privileged: false
+          env:
+            - name: CURRENT_SERVICE
+              value: "discounts"
+            - name: CURRENT_VERSION
+              value: "v1"
+            - name: LISTEN_ADDRESS
+              value: ":8000"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: discounts
+  labels:
+    app: discounts
+spec:
+  ports:
+    - name: http
+      port: 8000
+  selector:
+    app: discounts
+---
+##################################################################################################
+# Flights services
+##################################################################################################
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: flights-v1
+spec:
+  selector:
+    matchLabels:
+      app: flights
+      version: v1
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "true"
+        readiness.status.sidecar.istio.io/applicationPorts: ""
+        proxy.istio.io/config: |
+          tracing:
+            zipkin:
+              address: zipkin.east-mesh-system:9411
+            sampling: 10
+            custom_tags:
+              http.header.portal:
+                header:
+                  name: portal
+              http.header.device:
+                header:
+                  name: device
+              http.header.user:
+                header:
+                  name: user
+              http.header.travel:
+                header:
+                  name: travel
+      labels:
+        app: flights
+        version: v1
+    spec:
+      containers:
+        - name: flights
+          image: quay.io/kiali/demo_travels_flights:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          securityContext:
+            privileged: false
+          env:
+            - name: CURRENT_SERVICE
+              value: "flights"
+            - name: CURRENT_VERSION
+              value: "v1"
+            - name: LISTEN_ADDRESS
+              value: ":8000"
+            - name: DISCOUNTS_SERVICE
+              value: "http://discounts.east-travel-agency:8000"
+            - name: MYSQL_SERVICE
+              value: "mysqldb.east-travel-agency:3306"
+            - name: MYSQL_USER
+              value: "root"
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-credentials
+                  key: rootpasswd
+            - name: MYSQL_DATABASE
+              value: "test"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flights
+  labels:
+    app: flights
+spec:
+  ports:
+    - name: http
+      port: 8000
+  selector:
+    app: flights
+---
+##################################################################################################
+# Hotels services
+##################################################################################################
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: hotels-v1
+spec:
+  selector:
+    matchLabels:
+      app: hotels
+      version: v1
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "true"
+        readiness.status.sidecar.istio.io/applicationPorts: ""
+        proxy.istio.io/config: |
+          tracing:
+            zipkin:
+              address: zipkin.east-mesh-system:9411
+            sampling: 10
+            custom_tags:
+              http.header.portal:
+                header:
+                  name: portal
+              http.header.device:
+                header:
+                  name: device
+              http.header.user:
+                header:
+                  name: user
+              http.header.travel:
+                header:
+                  name: travel
+      labels:
+        app: hotels
+        version: v1
+    spec:
+      containers:
+        - name: hotels
+          image: quay.io/kiali/demo_travels_hotels:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          securityContext:
+            privileged: false
+          env:
+            - name: CURRENT_SERVICE
+              value: "hotels"
+            - name: CURRENT_VERSION
+              value: "v1"
+            - name: LISTEN_ADDRESS
+              value: ":8000"
+            - name: DISCOUNTS_SERVICE
+              value: "http://discounts.east-travel-agency:8000"
+            - name: MYSQL_SERVICE
+              value: "mysqldb.east-travel-agency:3306"
+            - name: MYSQL_USER
+              value: "root"
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-credentials
+                  key: rootpasswd
+            - name: MYSQL_DATABASE
+              value: "test"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hotels
+  labels:
+    app: hotels
+spec:
+  ports:
+    - name: http
+      port: 8000
+  selector:
+    app: hotels
+---
+##################################################################################################
+# Insurances services
+##################################################################################################
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: insurances-v1
+spec:
+  selector:
+    matchLabels:
+      app: insurances
+      version: v1
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "true"
+        readiness.status.sidecar.istio.io/applicationPorts: ""
+      labels:
+        app: insurances
+        version: v1
+    spec:
+      containers:
+        - name: insurances
+          image: quay.io/kiali/demo_travels_insurances:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          securityContext:
+            privileged: false
+          env:
+            - name: CURRENT_SERVICE
+              value: "insurances"
+            - name: CURRENT_VERSION
+              value: "v1"
+            - name: LISTEN_ADDRESS
+              value: ":8000"
+            - name: DISCOUNTS_SERVICE
+              value: "http://discounts.east-travel-agency:8000"
+            - name: MYSQL_SERVICE
+              value: "mysqldb.east-travel-agency:3306"
+            - name: MYSQL_USER
+              value: "root"
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-credentials
+                  key: rootpasswd
+            - name: MYSQL_DATABASE
+              value: "test"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: insurances
+  labels:
+    app: insurances
+spec:
+  ports:
+    - name: http
+      port: 8000
+  selector:
+    app: insurances
+---
+##################################################################################################
+# Travels services
+##################################################################################################
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: travels-v1
+spec:
+  selector:
+    matchLabels:
+      app: travels
+      version: v1
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "true"
+        readiness.status.sidecar.istio.io/applicationPorts: ""
+        proxy.istio.io/config: |
+          tracing:
+            zipkin:
+              address: zipkin.east-mesh-system:9411
+            sampling: 10
+            custom_tags:
+              http.header.portal:
+                header:
+                  name: portal
+              http.header.device:
+                header:
+                  name: device
+              http.header.user:
+                header:
+                  name: user
+              http.header.travel:
+                header:
+                  name: travel
+      labels:
+        app: travels
+        version: v1
+    spec:
+      containers:
+        - name: travels
+          image: quay.io/kiali/demo_travels_travels:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          securityContext:
+            privileged: false
+          env:
+            - name: CURRENT_SERVICE
+              value: "travels"
+            - name: CURRENT_VERSION
+              value: "v1"
+            - name: LISTEN_ADDRESS
+              value: ":8000"
+            - name: FLIGHTS_SERVICE
+              value: "http://flights.east-travel-agency:8000"
+            - name: HOTELS_SERVICE
+              value: "http://hotels.east-travel-agency:8000"
+            - name: CARS_SERVICE
+              value: "http://cars.east-travel-agency:8000"
+            - name: INSURANCES_SERVICE
+              value: "http://insurances.east-travel-agency:8000"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: travels
+  labels:
+    app: travels
+spec:
+  ports:
+    - name: http
+      port: 8000
+  selector:
+    app: travels
+---
+kind: VirtualService
+apiVersion: networking.istio.io/v1alpha3
+metadata:
+  name: discounts
+  namespace: east-travel-agency
+spec:
+  hosts:
+    - discounts.east-travel-agency.svc.cluster.local
+  http:
+    - route:
+        - destination:
+            host: discounts.east-travel-agency.svc.west-mesh-imports.local
+          weight: 50
+        - destination:
+            host: discounts.east-travel-agency.svc.cluster.local
+          weight: 50
