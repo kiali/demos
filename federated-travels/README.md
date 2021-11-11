@@ -44,10 +44,10 @@ Install two independent meshes (*east* and *west*):
 
 ```bash
 oc create namespace east-mesh-system
-oc apply -n east-mesh-system -f east/east-ossm.yaml
+oc apply -n east-mesh-system -f https://raw.githubusercontent.com/kiali/demos/master/federated-travels/east/east-ossm.yaml
 
 oc create namespace west-mesh-system
-oc apply -n west-mesh-system -f west/west-ossm.yaml
+oc apply -n west-mesh-system -f https://raw.githubusercontent.com/kiali/demos/master/federated-travels/west/west-ossm.yaml
 ```
 
 Create the namespaces for the Travels application:
@@ -79,8 +79,8 @@ oc create configmap west-ca-root-cert --from-file=root-cert.pem=west-cert.pem -n
 Configure the federation resources for travels application:
 
 ```bash
-oc apply -n east-mesh-system -f east/east-federation.yaml
-oc apply -n west-mesh-system -f west/west-federation.yaml
+oc apply -n east-mesh-system -f https://raw.githubusercontent.com/kiali/demos/master/federated-travels/east/east-federation.yaml
+oc apply -n west-mesh-system -f https://raw.githubusercontent.com/kiali/demos/master/federated-travels/west/west-federation.yaml
 ```
 For more information about how federation works, visit the [https://docs.openshift.com/container-platform/4.9/service_mesh/v2x/ossm-federation.html](documentation)
 
@@ -89,10 +89,10 @@ For more information about how federation works, visit the [https://docs.openshi
 Create the application resources:
 
 ```bash
-oc apply -n east-travel-agency -f east-travel-agency.yaml
-oc apply -n east-travel-portal -f east-travel-portal.yaml
-oc apply -n east-travel-control -f east-travel-control.yaml
-oc apply -n west-travel-agency -f west-travel-agency.yaml
+oc apply -n east-travel-agency -f https://raw.githubusercontent.com/kiali/demos/master/federated-travels/east/east-travel-agency.yaml
+oc apply -n east-travel-portal -f https://raw.githubusercontent.com/kiali/demos/master/federated-travels/east/east-travel-portal.yaml
+oc apply -n east-travel-control -f https://raw.githubusercontent.com/kiali/demos/master/federated-travels/east/east-travel-control.yaml
+oc apply -n west-travel-agency -f https://raw.githubusercontent.com/kiali/demos/master/federated-travels/west/west-travel-agency.yaml
 ```
 
 ## Demo Design
