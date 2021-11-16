@@ -82,7 +82,7 @@ Configure the federation resources for travels application:
 oc apply -n east-mesh-system -f https://raw.githubusercontent.com/kiali/demos/master/federated-travels/east/east-federation.yaml
 oc apply -n west-mesh-system -f https://raw.githubusercontent.com/kiali/demos/master/federated-travels/west/west-federation.yaml
 ```
-For more information about how federation works, visit the [https://docs.openshift.com/container-platform/4.9/service_mesh/v2x/ossm-federation.html](documentation)
+For more information about how federation works, visit the [documentation](https://docs.openshift.com/container-platform/4.9/service_mesh/v2x/ossm-federation.html).
 
 ## Application Install
 
