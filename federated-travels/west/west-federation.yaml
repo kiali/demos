@@ -35,4 +35,4 @@ spec:
       name: discounts
       alias:
         namespace: travel-agency
-        name: discounts      
+        name: discounts

@@ -545,7 +545,7 @@ spec:
   http:
     - route:
         - destination:
-            host: discounts.east-travel-agency.svc.west-mesh-imports.local
+            host: discounts.travel-agency.svc.west-mesh-imports.local
           weight: 50
         - destination:
             host: discounts.east-travel-agency.svc.cluster.local

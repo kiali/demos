@@ -34,6 +34,3 @@ spec:
       importAsLocal: false
       namespace: travel-agency
       name: discounts
-      alias:        
-        namespace: east-travel-agency
-        name: discounts
