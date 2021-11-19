@@ -533,20 +533,3 @@ spec:
       port: 8000
   selector:
     app: travels
----
-kind: VirtualService
-apiVersion: networking.istio.io/v1alpha3
-metadata:
-  name: discounts
-  namespace: east-travel-agency
-spec:
-  hosts:
-    - discounts.east-travel-agency.svc.cluster.local
-  http:
-    - route:
-        - destination:
-            host: discounts.travel-agency.svc.west-mesh-imports.local
-          weight: 50
-        - destination:
-            host: discounts.east-travel-agency.svc.cluster.local
-          weight: 50

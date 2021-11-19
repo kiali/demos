@@ -1,0 +1,35 @@
+---
+kind: ExportedServiceSet
+apiVersion: federation.maistra.io/v1
+metadata:
+  name: east-mesh
+  namespace: west-mesh-system
+spec:
+  exportRules:  
+  - type: NameSelector
+    nameSelector:
+      namespace: west-travel-agency
+      name: discounts
+      alias:
+        namespace: travel-agency
+        name: discounts
+  - type: NameSelector
+    nameSelector:
+      namespace: west-travel-agency
+      name: cars
+      alias:
+        namespace: travel-agency
+        name: cars        
+---
+kind: ImportedServiceSet
+apiVersion: federation.maistra.io/v1
+metadata:
+  name: east-mesh
+  namespace: west-mesh-system
+spec:
+  importRules:
+  - type: NameSelector
+    nameSelector:
+      importAsLocal: false
+      namespace: travel-agency
+      name: mysqldb

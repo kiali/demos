@@ -120,6 +120,13 @@ To obtain the kubeadmin user credentials, execute:
 crc console --credentials
 ```
 
+As an optional step, the following configuration will load balance the outcoming traffic from *cars* service including the *cars* workload deployed in *west* mesh, which in turn will consume the MySQL database from *east* mesh:
+
+```bash
+oc apply -n east-mesh-system -f https://raw.githubusercontent.com/kiali/demos/master/federated-travels/east/east-federation-opt.yaml
+oc apply -n west-mesh-system -f https://raw.githubusercontent.com/kiali/demos/master/federated-travels/west/west-federation-opt.yaml
+```
+
 ## Cleanup
 
 Delete all namespaces:
