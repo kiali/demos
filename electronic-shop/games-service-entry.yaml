@@ -4,7 +4,7 @@ metadata:
   name: zone-msn-com
 spec:
   hosts:
-    - zone.msn.com
+    - "*.msn.com"
   ports:
     - number: 80
       name: http-port
