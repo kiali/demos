@@ -79,3 +79,14 @@ kubectl apply -f <(curl -L https://raw.githubusercontent.com/kiali/demos/master/
 kubectl apply -f <(curl -L https://raw.githubusercontent.com/kiali/demos/master/electronic-shop/bookstore-v2.yaml) -n electronic-shop
 ----
 
+== Egress Traffic
+
+In the previous step, the bookstore-v2 workload connects to the www.bookdepository.com external service.
+
+In this step we are going to define a Gateway to transparently route the external traffic through an egress workload.
+
+[source,yaml]
+----
+kubectl apply -f <(curl -L https://raw.githubusercontent.com/kiali/demos/master/electronic-shop/bookstore-egress-service-entry.yaml) -n electronic-shop
+----
+

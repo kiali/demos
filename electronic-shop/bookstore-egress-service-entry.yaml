@@ -1,0 +1,100 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: www-bookdepository-com
+spec:
+  hosts:
+    - www.bookdepository.com
+  ports:
+    - number: 80
+      name: http-port
+      protocol: HTTP
+      targetPort: 443
+    - number: 443
+      name: https
+      protocol: HTTPS
+  resolution: DNS
+  location: MESH_EXTERNAL
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: gw-bookdepository
+spec:
+  selector:
+    istio: egressgateway
+  servers:
+    - port:
+        number: 80
+        name: https-port-for-tls-origination
+        protocol: HTTPS
+      hosts:
+        - www.bookdepository.com
+      tls:
+        mode: ISTIO_MUTUAL
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: dr-bookdepository
+spec:
+  host: istio-egressgateway.istio-system.svc.cluster.local
+  subsets:
+    - name: bookdepository
+      trafficPolicy:
+        loadBalancer:
+          simple: ROUND_ROBIN
+        portLevelSettings:
+        - port:
+            number: 80
+          tls:
+            mode: ISTIO_MUTUAL
+            sni: www.bookdepository.com
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: vs-bookdepository
+spec:
+  hosts:
+    - www.bookdepository.com
+  gateways:
+    - gw-bookdepository
+    - mesh
+  http:
+    - match:
+        - gateways:
+            - mesh
+          port: 80
+      route:
+        - destination:
+            host: istio-egressgateway.istio-system.svc.cluster.local
+            subset: bookdepository
+            port:
+              number: 80
+          weight: 100
+    - match:
+        - gateways:
+            - gw-bookdepository
+          port: 80
+      route:
+        - destination:
+            host: www.bookdepository.com
+            port:
+              number: 443
+          weight: 100
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: originate-tls-for-bookdepository
+spec:
+  host: www.bookdepository.com
+  trafficPolicy:
+    loadBalancer:
+      simple: ROUND_ROBIN
+    portLevelSettings:
+      - port:
+          number: 443
+        tls:
+          mode: SIMPLE # initiates HTTPS for connections to www.bookdepository.com
