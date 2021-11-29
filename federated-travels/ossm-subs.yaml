@@ -10,7 +10,6 @@ spec:
   name: kiali-ossm
   source: redhat-operators
   sourceNamespace: openshift-marketplace
-  startingCSV: kiali-operator.v1.36.5
 ---
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
@@ -23,7 +22,6 @@ spec:
   name: jaeger-product
   source: redhat-operators
   sourceNamespace: openshift-marketplace
-  startingCSV: jaeger-operator.v1.24.1
 ---
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
@@ -36,4 +34,3 @@ spec:
   name: servicemeshoperator
   source: redhat-operators
   sourceNamespace: openshift-marketplace
-  startingCSV: servicemeshoperator.v2.1.0
