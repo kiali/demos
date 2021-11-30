@@ -2,21 +2,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mimik-generator
+  name: topology-generator
   labels:
-    app: mimik-generator
+    app: topology-generator
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mimik-generator
+      app: topology-generator
   template:
     metadata:
       labels:
-        app: mimik-generator
+        app: topology-generator
     spec:
       containers:
-      - name: mimik-generator
+      - name: topology-generator
         image: quay.io/leandroberetta/mimik-generator:v0.0.1
         imagePullPolicy: Always
         ports:
@@ -25,10 +25,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: mimik-generator
+  name: topology-generator
 spec:
   selector:
-    app: mimik-generator
+    app: topology-generator
   ports:
     - protocol: TCP
       port: 8080
