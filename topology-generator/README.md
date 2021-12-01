@@ -17,14 +17,14 @@ Create the application resources:
 
 ```bash
 kubectl create ns topology-generator
-kubectl apply -n topology-generator https://raw.githubusercontent.com/kiali/demos/master/topology-generator/generator.yaml 
+kubectl apply -n topology-generator -f https://raw.githubusercontent.com/kiali/demos/master/topology-generator/build/generator/generator.yaml 
 ```
 
 ## Demo Design
 
 This demo exposes a web application where with some parameters, a command is produced to be executed in the terminal against any cluster:
 
-![generator](./generator.png)
+![generator](./doc/generator.png)
 
 Visit the application through a proxy:
 
@@ -36,7 +36,7 @@ Configure the parameters, click on "Generate", copy the command and execute it i
 
 As a result, the topology will be created to be observed and managed by Kiali:
 
-![kiali](./kiali.png)
+![kiali](./doc/kiali.png)
 
 ## Cleanup
 
@@ -49,6 +49,6 @@ kubectl delete ns --selector=generated-by=mimik
 Delete the topology generator:
 
 ```bash
-kubectl delete namespace topology-generator
+kubectl delete ns topology-generator
 ```
 
