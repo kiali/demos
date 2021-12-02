@@ -62,7 +62,11 @@ func generateTraffic(service *api.Service, client *http.Client, quit chan struct
 		default:
 			for _, endpoint := range service.Endpoints {
 				req, _ := http.NewRequest(endpoint.Method, fmt.Sprintf("http://localhost:%d", 8080), nil)
-				client.Do(req)
+				resp, err := client.Do(req)
+				if err != nil {
+					log.Println(err)
+				}
+				defer resp.Body.Close()
 			}
 
 			time.Sleep(1 * time.Second)
