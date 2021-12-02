@@ -90,3 +90,14 @@ In this step we are going to define a Gateway to transparently route the externa
 kubectl apply -f <(curl -L https://raw.githubusercontent.com/kiali/demos/master/electronic-shop/bookstore-egress-service-entry.yaml) -n electronic-shop
 ----
 
+== Multiple destinations using Egress gateways
+
+In real scenarios, cluster workloads may not have direct access to Internet, so any external call should be routed using egress.
+
+In this step we are going to demonstrate how egress gateways can manage multiple service entries. We will create a new music-v4 workload that will connect to the edition.cnn.com external service.
+
+[source,yaml]
+----
+kubectl apply -f <(curl -L https://raw.githubusercontent.com/kiali/demos/master/electronic-shop/music-egress-service-entry.yaml) -n electronic-shop
+kubectl apply -f <(curl -L https://raw.githubusercontent.com/kiali/demos/master/electronic-shop/music-v4.yaml) -n electronic-shop
+----
