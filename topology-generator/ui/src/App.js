@@ -10,14 +10,8 @@ function App() {
 
     const generateTopology = (e) => {
         e.preventDefault();
-        console.log(JSON.stringify({
-            "namespaces": namespaces,
-            "services": services,
-            "connections": connections,
-            "randomConnections": randomConnections
-        }));
-        fetch("/generate", 
-            { 
+        fetch("/generate",
+            {
                 method: 'post',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -27,11 +21,10 @@ function App() {
                     "randomConnections": randomConnections
                 })
             })
-            .then(res => res.json())
+            .then(response => response.json())
             .then(
-                (result) => {
-                    console.log(result);
-                    setTopology(result);
+                (topology) => {
+                    setTopology(topology);
                 },
                 (error) => {
                     console.log(error);
@@ -84,11 +77,7 @@ function App() {
                     <div className="col-8">
                         <textarea className="form-control" style={{ border: "1px solid rgba(0,0,0,.125)" }} rows="30" value={"cat <<EOF | kubectl create -f - \n" + JSON.stringify(topology, null, 2) + "\nEOF"} />
                     </div>
-
-                </div>
-                <div className="mb-3">
-
-                </div>
+                </div>                
             </div>
         </>
     );

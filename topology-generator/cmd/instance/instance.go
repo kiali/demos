@@ -15,8 +15,6 @@ import (
 )
 
 func main() {
-	log.Println("starting Mimik instance...")
-
 	instance, _ := service.NewService(
 		os.Getenv("MIMIK_SERVICE_NAME"),
 		os.Getenv("MIMIK_SERVICE_PORT"),

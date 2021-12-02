@@ -13,8 +13,9 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 )
 
-func CreateTopology(numNamespaces, numServices, numConnections, numRandomConnections int) corev1.List {
-	topology := generator.Generate(numServices, numConnections, numNamespaces, numRandomConnections)
+// GenerateTopology generates a topology and the Kubernetes resources to create it
+func GenerateTopology(numNamespaces, numServices, numConnections, numRandomConnections int) corev1.List {
+	topology := generator.GenerateTopology(numServices, numConnections, numNamespaces, numRandomConnections)
 	list := corev1.List{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "List",
@@ -50,6 +51,7 @@ func CreateTopology(numNamespaces, numServices, numConnections, numRandomConnect
 	return list
 }
 
+// NamespaceForMimik creates a namespace
 func NamespaceForMimik(namespace string) *corev1.Namespace {
 	return &corev1.Namespace{
 		ObjectMeta: metav1.ObjectMeta{
@@ -59,6 +61,7 @@ func NamespaceForMimik(namespace string) *corev1.Namespace {
 	}
 }
 
+// ConfigMapForMimik creates a ConfigMap for an instance
 func ConfigMapForMimik(s api.Service, namespace string) *corev1.ConfigMap {
 	jsonData, _ := json.Marshal(s.Endpoints)
 	cm := &corev1.ConfigMap{
@@ -72,6 +75,7 @@ func ConfigMapForMimik(s api.Service, namespace string) *corev1.ConfigMap {
 	return cm
 }
 
+// ServiceForMimik creates a Service for an instance
 func ServiceForMimik(s api.Service, namespace string) *corev1.Service {
 	svc := &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
@@ -93,6 +97,7 @@ func ServiceForMimik(s api.Service, namespace string) *corev1.Service {
 	return svc
 }
 
+// DeploymentForMimik creates a Deployment for an instance
 func DeploymentForMimik(s api.Service, namespace string, tg bool) *appsv1.Deployment {
 	labels := labelsForMimik(s.Name, s.Version)
 	replicas := int32(1)

@@ -9,12 +9,17 @@ import (
 	"github.com/leandroberetta/mimik/pkg/api"
 )
 
-func Generate(numServices, numConnections, numNamespaces, numRandomConnections int) map[string][]api.Service {
+// GenerateTopology generates a topology based on parameteres
+func GenerateTopology(numServices, numConnections, numNamespaces, numRandomConnections int) map[string][]api.Service {
 	m := make(map[string][]api.Service)
+
 	for i := 1; i <= numNamespaces; i++ {
-		log.Printf("generating services for namespace: %s", fmt.Sprintf("n%d", i))
-		m[fmt.Sprintf("n%d", i)] = GenerateServices(numServices, numConnections)
+		n := generateNamespaceName(i)
+		log.Printf("generating services for namespace: %s", n)
+		m[n] = GenerateServices(numServices, numConnections)
 	}
+
+	// If there is one namespace, skip random connections
 	if len(m) > 1 {
 		GenerateRandomConnections(m, numRandomConnections)
 	}
@@ -22,6 +27,7 @@ func Generate(numServices, numConnections, numNamespaces, numRandomConnections i
 	return m
 }
 
+// GenerateRandomConnections connects services from different namespaces that do not contain connections to other services to avoid infinite loop calls
 func GenerateRandomConnections(topology map[string][]api.Service, numRandomConnections int) {
 	rand.Seed(time.Now().UnixNano())
 
@@ -78,15 +84,7 @@ func GenerateRandomConnections(topology map[string][]api.Service, numRandomConne
 	}
 }
 
-func getRandomNamespace(from, to int) string {
-	numNamespace := from + rand.Intn(to)
-	return fmt.Sprintf("n%d", numNamespace)
-}
-
-func getRandomService(services []api.Service) int {
-	return rand.Intn(len(services))
-}
-
+// GenerateServices generates services for a namespace
 func GenerateServices(numServices, numConnections int) []api.Service {
 	last := 1
 	ns := []api.Service{}
@@ -121,4 +119,17 @@ func GenerateServices(numServices, numConnections int) []api.Service {
 	}
 
 	return ns
+}
+
+func generateNamespaceName(numNamespace int) string {
+	return fmt.Sprintf("n%d", numNamespace)
+}
+
+func getRandomNamespace(from, to int) string {
+	numNamespace := from + rand.Intn(to)
+	return generateNamespaceName(numNamespace)
+}
+
+func getRandomService(services []api.Service) int {
+	return rand.Intn(len(services))
 }

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 
@@ -31,7 +30,6 @@ func loadEndpoints(fileName string, endpoints *[]api.Endpoint) error {
 
 func EndpointHandler(service api.Service, client httpClient) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		log.Println("Executing request...")
 		resp := api.Response{Name: service.Name, Version: service.Version, StatusCode: http.StatusNotFound}
 		ch := make(chan api.Response)
 		headers := getHeaders(r.Header)
@@ -68,7 +66,7 @@ func getHeaders(header http.Header) map[string]string {
 }
 
 func handleReq(url string, conn api.Connection, headers map[string]string, client httpClient, ch chan api.Response) {
-	req, err := http.NewRequest(conn.Method, url, nil)
+	req, _ := http.NewRequest(conn.Method, url, nil)
 	for key, value := range headers {
 		req.Header.Set(key, value)
 	}

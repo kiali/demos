@@ -53,7 +53,7 @@ func generateTopologyHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	topology := resources.CreateTopology(generator.Namespaces, generator.Services, generator.Connections, generator.RandomConnections)
+	topology := resources.GenerateTopology(generator.Namespaces, generator.Services, generator.Connections, generator.RandomConnections)
 
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(topology)

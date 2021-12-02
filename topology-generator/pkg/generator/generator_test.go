@@ -7,7 +7,7 @@ import (
 )
 
 func TestBasicTopology(t *testing.T) {
-	topology := Generate(1, 1, 1, 1)
+	topology := GenerateTopology(1, 1, 1, 1)
 
 	assert.NotNil(t, topology)
 	assert.Len(t, topology, 1)

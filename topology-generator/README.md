@@ -1,6 +1,10 @@
 # Topology Generator
 
-Application to generate a topology according to some parameters like:
+The generator creates a topology based on different instances of the same application called Mimik. 
+
+Basically what Mimik does is to imitate a service that listens to certain paths and methods, and connects these with upstream connections (that usually are Mimik instances too) forming a service mesh.
+
+The topology is generated based on some parameters like:
 
 * Number of namespaces
 * Number of services per namespace
@@ -9,7 +13,7 @@ Application to generate a topology according to some parameters like:
 
 ## Platform Install
 
-This demo has been tested using [Minikube](https://istio.io/latest/docs/setup/platform-setup/minikube/) and [Istio 1.12 Demo Profile](https://istio.io/latest/docs/setup/install/istioctl/#install-a-different-profile).
+This demo has been tested using [Minikube](https://istio.io/latest/docs/setup/platform-setup/minikube/) and [Istio 1.12](https://istio.io/latest/docs/setup/getting-started/#install).
 
 ## Application Install
 
@@ -17,7 +21,7 @@ Create the application resources:
 
 ```bash
 kubectl create ns topology-generator
-kubectl apply -n topology-generator -f https://raw.githubusercontent.com/kiali/demos/master/topology-generator/build/generator/generator.yaml 
+kubectl apply -n topology-generator -f https://raw.githubusercontent.com/kiali/demos/master/topology-generator/deploy/generator.yaml 
 ```
 
 ## Demo Design
