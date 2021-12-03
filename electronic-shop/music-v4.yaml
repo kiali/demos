@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: music-v4
+spec:
+  selector:
+    matchLabels:
+      app: music
+      version: v4
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        readiness.status.sidecar.istio.io/applicationPorts: ""
+      labels:
+        app: music
+        version: v4
+    spec:
+      containers:
+        - name: bookstore
+          image: quay.io/kiali/demo_error_rates_server:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8888
+          securityContext:
+            privileged: false
+          env:
+            - name: CODE_REQUESTS
+              value: "200,8;201,1;202,1"
+            - name: SERVER_NAME
+              value: "music-v4"
+            - name: SERVER_URL
+              value: "http://edition.cnn.com"
