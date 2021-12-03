@@ -81,3 +81,96 @@ spec:
   selector:
     app: discounts
 ---
+##################################################################################################
+# Cars services
+##################################################################################################
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: cars-v1
+spec:
+  selector:
+    matchLabels:
+      app: cars
+      version: v1
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "true"
+        readiness.status.sidecar.istio.io/applicationPorts: ""
+        proxy.istio.io/config: |
+          tracing:
+            zipkin:
+              address: zipkin.west-mesh-system:9411
+            sampling: 10
+            custom_tags:
+              http.header.portal:
+                header:
+                  name: portal
+              http.header.device:
+                header:
+                  name: device
+              http.header.user:
+                header:
+                  name: user
+              http.header.travel:
+                header:
+                  name: travel
+      labels:
+        app: cars
+        version: v1
+    spec:
+      containers:
+        - name: cars
+          image: quay.io/kiali/demo_travels_cars:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          securityContext:
+            privileged: false
+          env:
+            - name: CURRENT_SERVICE
+              value: "cars"
+            - name: CURRENT_VERSION
+              value: "v1"
+            - name: LISTEN_ADDRESS
+              value: ":8000"
+            - name: DISCOUNTS_SERVICE
+              value: "http://discounts.west-travel-agency:8000"
+            - name: MYSQL_SERVICE
+              value: "mysqldb.travel-agency.svc.east-mesh-imports.local:3306"
+            - name: MYSQL_USER
+              value: "root"
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-credentials
+                  key: rootpasswd
+            - name: MYSQL_DATABASE
+              value: "test"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cars
+  labels:
+    app: cars
+spec:
+  ports:
+    - name: http
+      port: 8000
+  selector:
+    app: cars
+---
+##################################################################################################
+# Mysql db services
+# credentials: root/password
+##################################################################################################
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysql-credentials
+type: Opaque
+data:
+  rootpasswd: cGFzc3dvcmQ=

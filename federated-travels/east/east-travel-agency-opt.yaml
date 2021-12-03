@@ -1,0 +1,17 @@
+---
+kind: VirtualService
+apiVersion: networking.istio.io/v1alpha3
+metadata:
+  name: cars
+  namespace: east-travel-agency
+spec:
+  hosts:
+  - cars.east-travel-agency.svc.cluster.local
+  http:
+  - route:
+      - destination:
+          host: cars.travel-agency.svc.west-mesh-imports.local
+        weight: 50
+      - destination:
+          host: cars.east-travel-agency.svc.cluster.local
+        weight: 50

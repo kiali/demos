@@ -541,12 +541,12 @@ metadata:
   namespace: east-travel-agency
 spec:
   hosts:
-    - discounts.east-travel-agency.svc.cluster.local
+  - discounts.east-travel-agency.svc.cluster.local
   http:
-    - route:
-        - destination:
-            host: discounts.travel-agency.svc.west-mesh-imports.local
-          weight: 50
-        - destination:
-            host: discounts.east-travel-agency.svc.cluster.local
-          weight: 50
+  - route:
+      - destination:
+          host: discounts.travel-agency.svc.west-mesh-imports.local
+        weight: 50
+      - destination:
+          host: discounts.east-travel-agency.svc.cluster.local
+        weight: 50
