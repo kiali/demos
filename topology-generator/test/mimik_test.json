@@ -1,0 +1,40 @@
+[
+    {
+        "name": "Get songs",
+        "path": "/",
+        "method": "GET",
+        "connections": [
+            {
+                "name": "songs-service",
+                "port": "8080",
+                "path": "songs",
+                "method": "GET"
+            }
+        ]
+    },
+    {
+        "name": "Get song with id 1",
+        "path": "/songs/1",
+        "method": "GET",
+        "connections": [
+            {
+                "name": "songs-service",
+                "port": "8080",
+                "path": "songs/1",
+                "method": "GET"
+            },
+            {
+                "name": "hits-service",
+                "port": "8080",
+                "path": "hits/1",
+                "method": "POST"
+            }
+        ]
+    },
+    {
+        "name": "Health",
+        "path": "/health",
+        "method": "GET",
+        "connections": []
+    }
+]
