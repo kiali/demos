@@ -22,14 +22,6 @@ func NewService(name, port, fileName, version string) (api.Service, error) {
 
 func loadEndpoints(fileName string, endpoints *[]api.Endpoint) error {
 	file, err := os.Open(fileName)
-	defer file.Close()
-	bytes, err := ioutil.ReadAll(file)
-	err = json.Unmarshal(bytes, endpoints)
-	return err
-}
-
-func loadEndpoints(fileName string, endpoints *[]api.Endpoint) error {
-	file, err := os.Open(fileName)
 	if err != nil {
 		return err
 	}
