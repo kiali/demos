@@ -28,6 +28,23 @@ func loadEndpoints(fileName string, endpoints *[]api.Endpoint) error {
 	return err
 }
 
+func loadEndpoints(fileName string, endpoints *[]api.Endpoint) error {
+	file, err := os.Open(fileName)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+	bytes, err := ioutil.ReadAll(file)
+	if err != nil {
+		return err
+	}
+	err = json.Unmarshal(bytes, endpoints)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func EndpointHandler(service api.Service, client httpClient) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		resp := api.Response{Name: service.Name, Version: service.Version, StatusCode: http.StatusNotFound}
