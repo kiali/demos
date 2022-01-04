@@ -22,10 +22,19 @@ func NewService(name, port, fileName, version string) (api.Service, error) {
 
 func loadEndpoints(fileName string, endpoints *[]api.Endpoint) error {
 	file, err := os.Open(fileName)
+	if err != nil {
+		return err
+	}
 	defer file.Close()
 	bytes, err := ioutil.ReadAll(file)
+	if err != nil {
+		return err
+	}
 	err = json.Unmarshal(bytes, endpoints)
-	return err
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func EndpointHandler(service api.Service, client httpClient) http.HandlerFunc {
