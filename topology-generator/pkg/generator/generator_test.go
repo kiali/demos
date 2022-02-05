@@ -3,11 +3,21 @@ package generator
 import (
 	"testing"
 
+	"github.com/leandroberetta/mimik/pkg/api"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestBasicTopology(t *testing.T) {
-	topology := GenerateTopology(1, 1, 1, 1)
+	generator := api.Generator{
+		Services:          1,
+		Namespaces:        1,
+		Connections:       1,
+		RandomConnections: 1,
+	}
+
+	config := api.NewDefaultConfigurations()
+
+	topology := GenerateTopology(generator, config)
 
 	assert.NotNil(t, topology)
 	assert.Len(t, topology, 1)

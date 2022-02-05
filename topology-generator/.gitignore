@@ -1,0 +1,8 @@
+# build binary
+
+generator
+instance
+
+# generated Deploy Json
+
+deploy.json

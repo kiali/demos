@@ -31,7 +31,10 @@ func main() {
 		Handler: r,
 	}
 	log.Println("serving at :8080")
-	go srv.ListenAndServe()
+
+	if err := srv.ListenAndServe(); err != nil {
+		log.Fatalf("Starting Server error: %v", err)
+	}
 
 	tc := make(chan struct{})
 	if tg := os.Getenv("MIMIK_TRAFFIC_GENERATOR"); tg != "" {
@@ -47,7 +50,10 @@ func main() {
 	log.Println("shutting down")
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
 	defer cancel()
-	srv.Shutdown(ctx)
+
+	if err := srv.Shutdown(ctx); err != nil {
+		log.Fatalf("Shutdown Server error: %v", err)
+	}
 
 	log.Println("shutdown complete")
 	os.Exit(0)

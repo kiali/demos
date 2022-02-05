@@ -10,18 +10,19 @@ import (
 )
 
 // GenerateTopology generates a topology based on parameteres
-func GenerateTopology(numServices, numConnections, numNamespaces, numRandomConnections int) map[string][]api.Service {
+func GenerateTopology(generator api.Generator, config api.Configurations) map[string][]api.Service {
 	m := make(map[string][]api.Service)
 
-	for i := 1; i <= numNamespaces; i++ {
+	for i := 1; i <= generator.Namespaces; i++ {
 		n := generateNamespaceName(i)
+
 		log.Printf("generating services for namespace: %s", n)
-		m[n] = GenerateServices(numServices, numConnections)
+		m[n] = GenerateServices(generator.Services, generator.Connections, config)
 	}
 
 	// If there is one namespace, skip random connections
 	if len(m) > 1 {
-		GenerateRandomConnections(m, numRandomConnections)
+		GenerateRandomConnections(m, generator.RandomConnections)
 	}
 
 	return m
@@ -85,7 +86,7 @@ func GenerateRandomConnections(topology map[string][]api.Service, numRandomConne
 }
 
 // GenerateServices generates services for a namespace
-func GenerateServices(numServices, numConnections int) []api.Service {
+func GenerateServices(numServices, numConnections int, config api.Configurations) []api.Service {
 	last := 1
 	ns := []api.Service{}
 	for i := 1; i <= numServices; i++ {
@@ -99,6 +100,7 @@ func GenerateServices(numServices, numConnections int) []api.Service {
 					Connections: []api.Connection{},
 				},
 			},
+			C: config,
 		}
 		log.Printf("generating service: %s", s.Name)
 		if last < numServices {

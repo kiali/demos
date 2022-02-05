@@ -3,19 +3,22 @@ package resources
 import (
 	"encoding/json"
 	"fmt"
+	"log"
+	"strings"
 
 	"github.com/leandroberetta/mimik/pkg/api"
-	"github.com/leandroberetta/mimik/pkg/generator"
+	generators "github.com/leandroberetta/mimik/pkg/generator"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 )
 
 // GenerateTopology generates a topology and the Kubernetes resources to create it
-func GenerateTopology(numNamespaces, numServices, numConnections, numRandomConnections int) corev1.List {
-	topology := generator.GenerateTopology(numServices, numConnections, numNamespaces, numRandomConnections)
+func GenerateTopology(generator api.Generator, config api.Configurations) corev1.List {
+	topology := generators.GenerateTopology(generator, config)
 	list := corev1.List{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "List",
@@ -27,7 +30,7 @@ func GenerateTopology(numNamespaces, numServices, numConnections, numRandomConne
 	for namespace, services := range topology {
 		tg := true
 
-		ns := NamespaceForMimik(namespace)
+		ns := NamespaceForMimik(namespace, config)
 		ns.SetGroupVersionKind(schema.GroupVersionKind{Kind: "Namespace", Group: "", Version: "v1"})
 		list.Items = append(list.Items, runtime.RawExtension{Object: ns})
 
@@ -52,13 +55,29 @@ func GenerateTopology(numNamespaces, numServices, numConnections, numRandomConne
 }
 
 // NamespaceForMimik creates a namespace
-func NamespaceForMimik(namespace string) *corev1.Namespace {
+func NamespaceForMimik(namespace string, C api.Configurations) *corev1.Namespace {
 	return &corev1.Namespace{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:   namespace,
-			Labels: map[string]string{"istio-injection": "enabled", "generated-by": "mimik"},
+			Labels: InjectionLabel(C),
 		},
 	}
+}
+
+// InjectionLabel get injection Labels
+func InjectionLabel(C api.Configurations) map[string]string {
+	injectionLabel := C.InjectionLabel
+	kv := strings.Split(injectionLabel, ":")
+
+	if len(kv) != 2 {
+		log.Fatalln("Get Injection Label error")
+	}
+
+	labels := make(map[string]string)
+	labels[kv[0]] = kv[1]
+	labels["generated-by"] = "mimik"
+
+	return labels
 }
 
 // ConfigMapForMimik creates a ConfigMap for an instance
@@ -100,7 +119,9 @@ func ServiceForMimik(s api.Service, namespace string) *corev1.Service {
 // DeploymentForMimik creates a Deployment for an instance
 func DeploymentForMimik(s api.Service, namespace string, tg bool) *appsv1.Deployment {
 	labels := labelsForMimik(s.Name, s.Version)
-	replicas := int32(1)
+	annotations := annotationsForMimik(s.C)
+	resources := deploymentResource(s.C)
+	replicas := int32(s.C.Replicas)
 	deploy := &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      getNameWithVersion(s.Name, s.Version),
@@ -115,12 +136,12 @@ func DeploymentForMimik(s api.Service, namespace string, tg bool) *appsv1.Deploy
 			Template: corev1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
 					Labels:      labels,
-					Annotations: map[string]string{"sidecar.istio.io/inject": "true"},
+					Annotations: annotations,
 				},
 				Spec: corev1.PodSpec{
 					Containers: []corev1.Container{{
-						Image: "quay.io/leandroberetta/mimik:v0.0.2",
-						Name:  "mimik",
+						Image: fmt.Sprintf("%s:%s", s.C.ImageTag, s.C.ImageVersion),
+						Name:  s.C.Name,
 						Env: []corev1.EnvVar{
 							{
 								Name:  "MIMIK_SERVICE_NAME",
@@ -139,6 +160,7 @@ func DeploymentForMimik(s api.Service, namespace string, tg bool) *appsv1.Deploy
 								Value: "/tmp/etc/pod_labels",
 							},
 						},
+						Resources:       resources,
 						ImagePullPolicy: corev1.PullAlways,
 						VolumeMounts: []corev1.VolumeMount{
 							{
@@ -211,4 +233,47 @@ func getNameWithVersion(name, version string) string {
 
 func labelsForMimik(name, version string) map[string]string {
 	return map[string]string{"app": name, "version": version}
+}
+
+func annotationsForMimik(C api.Configurations) map[string]string {
+	config := map[string]string{
+		"sidecar.istio.io/inject":      C.EnableInjection,
+		"sidecar.istio.io/proxyCPU":    C.IstioProxyRequestCPU,
+		"sidecar.istio.io/proxyMemory": C.IstioProxyRequestMemory,
+	}
+	return config
+}
+
+func deploymentResource(C api.Configurations) corev1.ResourceRequirements {
+
+	resourceCPU, err := resource.ParseQuantity(C.MimikRequestCPU)
+	if err != nil {
+		log.Fatalf("ParseQuantity error: %v", err)
+	}
+
+	resourceMemory, err := resource.ParseQuantity(C.MimikRequestMemory)
+	if err != nil {
+		log.Fatalf("ParseQuantity error: %v", err)
+	}
+
+	resourceLimitsCPU, err := resource.ParseQuantity(C.MimikLimitCPU)
+	if err != nil {
+		log.Fatalf("ParseQuantity error: %v", err)
+	}
+
+	resourceLimitsMemory, err := resource.ParseQuantity(C.MimikLimitMemory)
+	if err != nil {
+		log.Fatalf("ParseQuantity error: %v", err)
+	}
+
+	return corev1.ResourceRequirements{
+		Requests: corev1.ResourceList{
+			corev1.ResourceCPU:    resourceCPU,
+			corev1.ResourceMemory: resourceMemory,
+		},
+		Limits: corev1.ResourceList{
+			corev1.ResourceCPU:    resourceLimitsCPU,
+			corev1.ResourceMemory: resourceLimitsMemory,
+		},
+	}
 }
