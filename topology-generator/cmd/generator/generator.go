@@ -26,7 +26,9 @@ func main() {
 	}
 
 	log.Println("serving at :8080")
-	go srv.ListenAndServe()
+	if err := srv.ListenAndServe(); err != nil {
+		log.Fatalf("Starting Server error: %v", err)
+	}
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
@@ -35,7 +37,9 @@ func main() {
 	log.Println("shutting down")
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
 	defer cancel()
-	srv.Shutdown(ctx)
+	if err := srv.Shutdown(ctx); err != nil {
+		log.Fatalf("Server shutdown error: %v", err)
+	}
 
 	log.Println("shutdown complete")
 	os.Exit(0)
@@ -56,5 +60,9 @@ func generateTopologyHandler(w http.ResponseWriter, r *http.Request) {
 	topology := resources.GenerateTopology(generator.Namespaces, generator.Services, generator.Connections, generator.RandomConnections)
 
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(topology)
+	if err := json.NewEncoder(w).Encode(topology); err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 }
