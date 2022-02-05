@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/leandroberetta/mimik/pkg/api"
-	"github.com/leandroberetta/mimik/pkg/generator"
+	generators "github.com/leandroberetta/mimik/pkg/generator"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -14,8 +14,8 @@ import (
 )
 
 // GenerateTopology generates a topology and the Kubernetes resources to create it
-func GenerateTopology(numNamespaces, numServices, numConnections, numRandomConnections int) corev1.List {
-	topology := generator.GenerateTopology(numServices, numConnections, numNamespaces, numRandomConnections)
+func GenerateTopology(generator api.Generator) corev1.List {
+	topology := generators.GenerateTopology(generator)
 	list := corev1.List{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "List",
