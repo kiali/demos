@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"log"
 
 	"github.com/leandroberetta/mimik/pkg/api"
 	"github.com/leandroberetta/mimik/pkg/controller"
@@ -53,5 +54,7 @@ func init() {
 func main() {
 	flag.Parse()
 
-	controller.Run(generatorConfig, mode)
+	if err := controller.Run(generatorConfig, mode); err != nil {
+		log.Fatalf("Running Error: %v", err)
+	}
 }
