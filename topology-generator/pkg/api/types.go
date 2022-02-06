@@ -1,8 +1,9 @@
 package api
 
 const (
-	MODE_SERVER = "s"
-	MODE_LOCAL  = "l"
+	MODE_SERVER  = "s"
+	MODE_LOCAL   = "l"
+	MODE_DEFAULT = ""
 )
 
 var GlobalConfig Configurations

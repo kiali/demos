@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"log"
 
 	"github.com/leandroberetta/mimik/pkg/api"
 	"github.com/leandroberetta/mimik/pkg/controller"
@@ -54,14 +53,5 @@ func init() {
 func main() {
 	flag.Parse()
 
-	if mode == api.MODE_SERVER || mode == "" {
-		if err := controller.RunServer(); err != nil {
-			log.Fatalf("Running Server error: %v", err)
-		}
-	} else {
-		if err := controller.RunCLI(generatorConfig); err != nil {
-			log.Fatalf("Running CLI error: %v", err)
-		}
-	}
-
+	controller.Run(generatorConfig, mode)
 }
