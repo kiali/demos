@@ -1,5 +1,12 @@
 package api
 
+const (
+	MODE_SERVER = "s"
+	MODE_LOCAL  = "l"
+)
+
+var GlobalConfig Configurations
+
 type Endpoint struct {
 	Name        string       `json:"name"`
 	Path        string       `json:"path"`
