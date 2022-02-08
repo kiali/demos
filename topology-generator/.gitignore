@@ -1,8 +1,5 @@
 # build binary
-
-#generator
-instance
+topogen
 
 # generated Deploy Json
-
 deploy.json

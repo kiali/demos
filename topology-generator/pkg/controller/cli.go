@@ -9,13 +9,7 @@ import (
 	"github.com/kiali/demos/topology-generator/pkg/resources"
 )
 
-var path string
-
-func init() {
-	path, _ = os.Getwd()
-}
-
-func RunCLI(generatorConfig api.Generator) error {
+func RunCLI(generatorConfig api.Generator, path string) error {
 	log.Println("Running in Local mode")
 	log.Printf("Generating config:\n %+v", generatorConfig)
 	log.Printf("Generating deploy config:\n %+v", api.GlobalConfig)
@@ -28,9 +22,9 @@ func RunCLI(generatorConfig api.Generator) error {
 		return err
 	}
 
-	log.Printf("Writing Json to %s", path+"/deploy.json\n")
+	log.Printf("Writing Json to %s", path)
 
-	f, err := os.OpenFile(path+"/deploy.json", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0755)
+	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0755)
 	if err != nil {
 		return err
 	}

@@ -11,6 +11,10 @@ The topology is generated based on some parameters like:
 * Number of connections between services in the same namespace
 * Number of random connections between services in different namespaces
 
+## Details
+
+You can refer to [docs](doc/commands/topogen.md) to learn how to use topology-generator.
+
 ## Platform Install
 
 This demo has been tested using [Minikube](https://istio.io/latest/docs/setup/platform-setup/minikube/) and [Istio 1.12](https://istio.io/latest/docs/setup/getting-started/#install).
@@ -54,91 +58,4 @@ Delete the topology generator:
 
 ```bash
 kubectl delete ns topology-generator
-```
-
-## CLI Install
-
-Generator `deploy.json` locally with Command Line:
-
-```shell
-
-git clone https://github.com/kiali/demos.git
-
-cd demos/topology-generator
-
-make build-generator
-
-```
-
-Add generator binary to your PATH
-
-## CLI Usage
-
-### CLI Mode
-
-Run in CLI Mode:
-
-``` shell
-generator -m l
-```
-
-#### Configure CLI Generate Options
-
-Configure Generated Namespaces, Services, Connections, RandomConnections:
-
-For example:
-
-Generate namespaces = 3, services = 4, connections = 10, random connections = 8":
-
-``` shell
-generator -m l -n 3 -s 4 -c 10 -r 8
-```
-
-### Server Mode
-
-Run in Server Mode:
-
-``` shell
-generator -m s
-
-# Server mode is the default mode, you can just run generator directly.
-
-generator
-```
-
-### Configure Deployment Settings
-
-> deployment settings are both supported in `server mode` and `cli mode`
-
-Configure Injection Labels like `istio.io/rev:1-10-3`:
-
-> Injection Label like `istio.io/rev:1-10-3` is used in canary release of istio.
-> 1-10-3 means the version which istio is running.
-
-``` shell
-generator -injectionlabel "istio.io/rev:1-10-3"
-```
-
-Configure instance `image tag name` and `version`:
-
-``` shell
-generator -image "quay.io/leandroberetta/mimik" -version "v0.0.2"
-```
-
-Configure Istio-Proxy Request CPU and Request Memory:
-
-``` shell
-generator -pcpu "50m" -pmem "128Mi"
-```
-
-Configure Mimik Request Memory/CPU and Limit Memory/CPU:
-
-``` shell
-generator -lcpu "200m" -lmem "256Mi" -rcpu "25m" -rmem "64Mi"
-```
-
-Configure Replicas Numbers for Mimik:
-
-``` shell
-generator -replica 2
 ```

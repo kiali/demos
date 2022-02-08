@@ -2,7 +2,11 @@ package controller
 
 import (
 	"context"
+	"embed"
+	_ "embed"
 	"encoding/json"
+	"fmt"
+	"io/fs"
 	"log"
 	"net/http"
 	"os"
@@ -14,19 +18,66 @@ import (
 	"github.com/kiali/demos/topology-generator/pkg/resources"
 )
 
-func RunServer() error {
+//go:embed *
+var currentDir embed.FS
+
+var buildDir, staticDir fs.FS
+
+func RunServer(port int) error {
+
+	log.Println("----------------------")
 	log.Println("Running in Server mode")
+
+	log.Println("----------------------")
+	log.Println("Embed build dir")
+
+	var err error
+	buildDir, err = fs.Sub(currentDir, "build")
+	if err != nil {
+		log.Fatalf("Error: %v", err)
+	}
+	log.Println("----------------------")
+
+	log.Println("Embed static dir")
+	staticDir, err = fs.Sub(buildDir, "static")
+	if err != nil {
+		log.Fatalf("Error: %v", err)
+	}
+	log.Println("----------------------")
+
+	// log.Println("Read Dir build: ")
+	// dirEntries, _ := currentDir.ReadDir("build")
+	// for _, de := range dirEntries {
+	// 	log.Println(de.Name(), de.IsDir())
+	// }
+	// log.Println("---------")
+
+	// log.Println("Read Dir build/static: ")
+	// entries, _ := fs.ReadDir(buildDir, "static")
+	// for _, de := range entries {
+	// 	log.Println(de.Name(), de.IsDir())
+	// }
+	// log.Println("---------")
+
+	// log.Println("Read Dir build/static/css: ")
+	// entries, _ = fs.ReadDir(staticDir, "css")
+	// for _, de := range entries {
+	// 	log.Println(de.Name(), de.IsDir())
+	// }
+	// log.Println("---------")
+
 	r := mux.NewRouter()
 	r.Path("/generate").HandlerFunc(generateTopologyHandler)
-	r.Path("/").Handler(http.FileServer(http.Dir("./ui/build/")))
-	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./ui/build/static"))))
+	r.Path("/").Handler(http.FileServer(http.FS(buildDir)))
+	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.FS(staticDir))))
+	serverPort := fmt.Sprintf(":%d", port)
 
 	srv := &http.Server{
-		Addr:    ":8080",
+		Addr:    serverPort,
 		Handler: r,
 	}
 
-	log.Println("serving at :8080")
+	log.Println("serving at " + serverPort)
 	if err := srv.ListenAndServe(); err != nil {
 		return err
 	}
