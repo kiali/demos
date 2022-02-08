@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	"github.com/leandroberetta/mimik/pkg/api"
-	"github.com/leandroberetta/mimik/pkg/service"
+	"github.com/kiali/demos/topology-generator/pkg/api"
+	"github.com/kiali/demos/topology-generator/pkg/service"
 )
 
 func main() {

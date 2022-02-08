@@ -1,6 +1,6 @@
 # build binary
 
-generator
+#generator
 instance
 
 # generated Deploy Json

@@ -6,8 +6,8 @@ import (
 	"log"
 	"strings"
 
-	"github.com/leandroberetta/mimik/pkg/api"
-	generators "github.com/leandroberetta/mimik/pkg/generator"
+	"github.com/kiali/demos/topology-generator/pkg/api"
+	generators "github.com/kiali/demos/topology-generator/pkg/generator"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"

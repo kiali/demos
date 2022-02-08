@@ -3,7 +3,7 @@ package generator
 import (
 	"testing"
 
-	"github.com/leandroberetta/mimik/pkg/api"
+	"github.com/kiali/demos/topology-generator/pkg/api"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -4,8 +4,8 @@ import (
 	"flag"
 	"log"
 
-	"github.com/leandroberetta/mimik/pkg/api"
-	"github.com/leandroberetta/mimik/pkg/controller"
+	"github.com/kiali/demos/topology-generator/pkg/api"
+	"github.com/kiali/demos/topology-generator/pkg/controller"
 )
 
 var name, istioProxyRequestCPU, istioProxyRequestMemory, mimikRequestCPU,

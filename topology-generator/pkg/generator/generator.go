@@ -6,7 +6,7 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/leandroberetta/mimik/pkg/api"
+	"github.com/kiali/demos/topology-generator/pkg/api"
 )
 
 // GenerateTopology generates a topology based on parameteres

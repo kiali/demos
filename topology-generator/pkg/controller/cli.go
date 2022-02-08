@@ -5,8 +5,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/leandroberetta/mimik/pkg/api"
-	"github.com/leandroberetta/mimik/pkg/resources"
+	"github.com/kiali/demos/topology-generator/pkg/api"
+	"github.com/kiali/demos/topology-generator/pkg/resources"
 )
 
 var path string

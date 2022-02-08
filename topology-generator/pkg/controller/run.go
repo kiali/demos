@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"github.com/leandroberetta/mimik/pkg/api"
+	"github.com/kiali/demos/topology-generator/pkg/api"
 )
 
 func Run(generatorConfig api.Generator, mode string) error {

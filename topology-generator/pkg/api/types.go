@@ -31,18 +31,18 @@ type Service struct {
 }
 
 type Configurations struct {
-	Name                    string // "mimik"
+	Name                    string
 	IstioProxyRequestCPU    string
 	IstioProxyRequestMemory string
 	MimikRequestCPU         string
 	MimikRequestMemory      string
 	MimikLimitCPU           string
 	MimikLimitMemory        string
-	EnableInjection         string //"true"
-	ImageTag                string //"quay.io/leandroberetta/mimik"
-	ImageVersion            string //"v0.0.2"
+	EnableInjection         string
+	ImageTag                string
+	ImageVersion            string
 	InjectionLabel          string
-	Replicas                int // 1
+	Replicas                int
 }
 
 func NewConfigurations(name string, istioProxyRequestCPU string, istioProxyRequestMemory string, mimikRequestCPU string,
