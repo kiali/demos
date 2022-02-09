@@ -17,8 +17,9 @@ spec:
     spec:
       containers:
       - name: topology-generator
-        image: quay.io/leandroberetta/mimik-generator:v0.0.1
+        image: quay.io/leandroberetta/topogen:v0.0.1
         imagePullPolicy: Always
+        command: ["server"]
         ports:
         - containerPort: 8080
 ---

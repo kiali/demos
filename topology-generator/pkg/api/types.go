@@ -74,7 +74,7 @@ func NewDefaultConfigurations() Configurations {
 		MimikLimitCPU:           "200m",
 		MimikLimitMemory:        "256Mi",
 		EnableInjection:         "true",
-		ImageTag:                "quay.io/leandroberetta/mimik",
+		ImageTag:                "quay.io/leandroberetta/topogen",
 		ImageVersion:            "v0.0.2",
 		Replicas:                1,
 		InjectionLabel:          "istio-injection:enabled",
