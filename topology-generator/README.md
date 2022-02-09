@@ -59,3 +59,38 @@ Delete the topology generator:
 ```bash
 kubectl delete ns topology-generator
 ```
+
+## Build and Use Binary
+
+Build `topogen` binary:
+
+```bash
+make build-binary
+```
+
+Add built binary called `topogen` to your PATH,
+
+Run `topogen -v` to see if it works.
+
+
+## Build and Use Docker Image
+
+Build Docker locally:
+
+```bash
+make build-image
+```
+
+Use Instance:
+
+```bash
+docker run xxxxxx instance
+```
+
+Use Web Server:
+
+```bash
+docker run xxxxxx server
+# Start server in specific port and expose it
+docker run -p [port]:[port] xxxxxx server -p [port]
+```
