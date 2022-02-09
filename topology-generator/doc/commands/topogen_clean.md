@@ -1,6 +1,6 @@
 ## topogen clean
 
-Clean the generated topology in the Cluster.
+Clean the generated topology in the Cluster
 
 ### Synopsis
 

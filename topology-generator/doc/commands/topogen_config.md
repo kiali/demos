@@ -1,6 +1,6 @@
 ## topogen config
 
-Generate topology config with commands.
+Generate topology config with commands
 
 ### Synopsis
 
@@ -16,7 +16,7 @@ topogen config [flags]
   -c, --connection int            Number of Connections created (default 5)
   -e, --enable-injection string   Enable injection or not (default "true")
   -h, --help                      help for config
-  -i, --image string              Image tag name (default "quay.io/leandroberetta/mimik")
+  -i, --image string              Image tag name (default "quay.io/leandroberetta/topogen")
   -j, --injection-label string    Injection Label (default "istio-injection:enabled")
       --lcpu string               Mimik Limit CPU (default "200m")
       --lmem string               Mimik Limit Memory (default "256Mi")
@@ -30,7 +30,7 @@ topogen config [flags]
       --replica int               Number of Replicas created (default 1)
       --rmem string               Mimik Request Memory (default "64Mi")
   -s, --service int               Number of Services created (default 5)
-  -v, --version string            Image version (default "v0.0.2")
+  -v, --version string            Image version (default "v0.0.1")
 ```
 
 ### SEE ALSO

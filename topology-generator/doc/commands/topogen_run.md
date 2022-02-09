@@ -1,6 +1,6 @@
 ## topogen run
 
-Deploy and Run the generated config to Cluster.
+Deploy and Run the generated config to Cluster
 
 ### Synopsis
 

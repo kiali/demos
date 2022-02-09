@@ -1,6 +1,6 @@
 ## topogen instance
 
-The instance running in topology.
+The instance running in topology
 
 ### Synopsis
 
