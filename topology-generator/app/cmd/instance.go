@@ -25,7 +25,7 @@ import (
 // instanceCmd represents the instance command
 var instanceCmd = &cobra.Command{
 	Use:   "instance",
-	Short: "The instance running in topology.",
+	Short: "The instance running in topology",
 	Long:  `Run this command to start the instance running in the Cluster.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if err := controller.RunInstance(); err != nil {

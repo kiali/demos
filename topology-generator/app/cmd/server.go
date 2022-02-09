@@ -25,7 +25,7 @@ import (
 // serverCmd represents the server command
 var serverCmd = &cobra.Command{
 	Use:   "server",
-	Short: "The web server for UI of Topology Generator.",
+	Short: "The web server for UI of Topology Generator",
 	Long:  `The web server for the UI of Topology Generator.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if err := controller.RunServer(serverPort); err != nil {

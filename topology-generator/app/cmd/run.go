@@ -27,7 +27,7 @@ import (
 // runCmd represents the run command
 var runCmd = &cobra.Command{
 	Use:   "run",
-	Short: "Deploy and Run the generated config to Cluster.",
+	Short: "Deploy and Run the generated config to Cluster",
 	Long:  `Run this command to deploy and run the generated config to the Cluster.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		k := kubectl.New(&kubectl.Config{Bin: binary})

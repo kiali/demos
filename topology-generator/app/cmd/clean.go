@@ -27,7 +27,7 @@ import (
 // cleanCmd represents the clean command
 var cleanCmd = &cobra.Command{
 	Use:   "clean",
-	Short: "Clean the generated topology in the Cluster.",
+	Short: "Clean the generated topology in the Cluster",
 	Long:  `Run this command to clean the generated topology in the Cluster.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		k := kubectl.New(&kubectl.Config{Bin: binary})

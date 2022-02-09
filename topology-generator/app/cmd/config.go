@@ -27,7 +27,7 @@ import (
 // configCmd represents the config command
 var configCmd = &cobra.Command{
 	Use:   "config",
-	Short: "Generate topology config with commands.",
+	Short: "Generate topology config with commands",
 	Long:  `Generate topology config with commands with Options.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if err := controller.RunCLI(generatorConfig, path); err != nil {
