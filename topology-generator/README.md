@@ -13,8 +13,6 @@ The topology is generated based on some parameters like:
 
 ## Commands
 
-You can refer to [docs](doc/commands/topogen.md) to learn how to use topology-generator.
-
 ```bash
 topogen (topology-generator) is a powerful tool for building complex topology 💪, 
         you can choose to create specific topology with commands or in the UI 🌈.
@@ -75,6 +73,7 @@ docker run xxxxxx server
 docker run -p [port]:[port] xxxxxx server -p [port]
 ```
 
+You can refer to [docs](doc/commands/topogen.md) to learn how to use topology-generator.
 
 ## Platform Install
 
