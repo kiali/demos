@@ -19,7 +19,7 @@ spec:
       - name: topology-generator
         image: quay.io/leandroberetta/topogen:v0.0.1
         imagePullPolicy: Always
-        command: ["server"]
+        args: ["server"]
         ports:
         - containerPort: 8080
 ---

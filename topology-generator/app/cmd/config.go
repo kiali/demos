@@ -30,6 +30,17 @@ var configCmd = &cobra.Command{
 	Short: "Generate topology config with commands",
 	Long:  `Generate topology config with commands with Options.`,
 	Run: func(cmd *cobra.Command, args []string) {
+
+		generatorConfig = api.Generator{
+			Namespaces:        namespaces,
+			Services:          services,
+			Connections:       connections,
+			RandomConnections: randomconnections,
+		}
+
+		api.GlobalConfig = api.NewConfigurations(name, istioProxyRequestCPU, istioProxyRequestMemory, mimikRequestCPU,
+			mimikRequestMemory, mimikLimitCPU, mimikLimitMemory, version, image, enableInjection, replicas, injectionlabel)
+
 		if err := controller.RunCLI(generatorConfig, path); err != nil {
 			log.Fatalf("Run Command Error: %v", err)
 		}
@@ -60,11 +71,4 @@ func init() {
 	configCmd.Flags().IntVarP(&connections, "connection", "c", 5, "Number of Connections created")
 	configCmd.Flags().IntVarP(&randomconnections, "random", "r", 5, "Number of RandomConnections created")
 	configCmd.Flags().StringVarP(&path, "path", "p", defaultPath, "Generated Config Path")
-
-	generatorConfig = api.Generator{
-		Namespaces:        namespaces,
-		Services:          services,
-		Connections:       connections,
-		RandomConnections: randomconnections,
-	}
 }

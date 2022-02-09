@@ -18,6 +18,7 @@ package cmd
 import (
 	"log"
 
+	"github.com/kiali/demos/topology-generator/pkg/api"
 	"github.com/kiali/demos/topology-generator/pkg/controller"
 	"github.com/spf13/cobra"
 )
@@ -28,6 +29,9 @@ var serverCmd = &cobra.Command{
 	Short: "The web server for UI of Topology Generator",
 	Long:  `The web server for the UI of Topology Generator.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		api.GlobalConfig = api.NewConfigurations(name, istioProxyRequestCPU, istioProxyRequestMemory, mimikRequestCPU,
+			mimikRequestMemory, mimikLimitCPU, mimikLimitMemory, version, image, enableInjection, replicas, injectionlabel)
+
 		if err := controller.RunServer(serverPort); err != nil {
 			log.Fatalf("Run Server Error: %v", err)
 		}

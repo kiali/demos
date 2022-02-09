@@ -122,7 +122,8 @@ func DeploymentForMimik(s api.Service, namespace string, tg bool) *appsv1.Deploy
 	annotations := annotationsForMimik(s.C)
 	resources := deploymentResource(s.C)
 	replicas := int32(s.C.Replicas)
-	command := []string{"instance"}
+	// command := []string{"instance"}
+	args := []string{"instance"}
 	deploy := &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      getNameWithVersion(s.Name, s.Version),
@@ -141,9 +142,10 @@ func DeploymentForMimik(s api.Service, namespace string, tg bool) *appsv1.Deploy
 				},
 				Spec: corev1.PodSpec{
 					Containers: []corev1.Container{{
-						Image:   fmt.Sprintf("%s:%s", s.C.ImageTag, s.C.ImageVersion),
-						Name:    s.C.Name,
-						Command: command,
+						Image: fmt.Sprintf("%s:%s", s.C.ImageTag, s.C.ImageVersion),
+						Name:  s.C.Name,
+						// Command: command,
+						Args: args,
 						Env: []corev1.EnvVar{
 							{
 								Name:  "MIMIK_SERVICE_NAME",

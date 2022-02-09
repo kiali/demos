@@ -18,7 +18,6 @@ package cmd
 import (
 	"log"
 
-	"github.com/kiali/demos/topology-generator/pkg/api"
 	"github.com/spf13/cobra"
 )
 
@@ -38,9 +37,4 @@ func Execute() {
 	if err != nil {
 		log.Fatalf("Error: %v", err)
 	}
-}
-
-func init() {
-	api.GlobalConfig = api.NewConfigurations(name, istioProxyRequestCPU, istioProxyRequestMemory, mimikRequestCPU,
-		mimikRequestMemory, mimikLimitCPU, mimikLimitMemory, version, image, enableInjection, replicas, injectionlabel)
 }

@@ -79,6 +79,8 @@ Build Docker locally:
 
 ```bash
 make build-image
+# build image in specific image name and version
+make build-image image=xxx version=xxx
 ```
 
 Use Instance:

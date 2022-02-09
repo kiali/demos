@@ -1,6 +1,6 @@
 # variables in Makefile
 version := v0.0.1
-image_tag := quay.io/leandroberetta/topogen
+image := quay.io/leandroberetta/topogen
 dockerfile := build/Dockerfile
 
 # build generator binary
@@ -21,11 +21,11 @@ build-ui:
 
 # build docker image
 build-image: clean build-ui
-	docker build -t $(image_tag):$(version) -f $(dockerfile) .
+	docker build -t $(image):$(version) -f $(dockerfile) .
 
 # clean built ui files
 clean-ui:
-	rm -rf ui/build ui/node_modules
+	rm -rf ui/build
 	rm -rf pkg/controller/build
 
 # clean generated files
