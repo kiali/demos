@@ -9,6 +9,12 @@ build-binary: clean build-ui
 	go build app/topogen.go
 	rm -rf pkg/controller/build
 
+# build generator binary in image
+build-binary-image: 
+	cp -r ui/build pkg/controller/
+	go build app/topogen.go
+	rm -rf pkg/controller/build
+
 # build ui in production
 build-ui:
 	cd ui && yarn && yarn build
