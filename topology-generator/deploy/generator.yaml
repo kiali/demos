@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: topology-generator
-        image: quay.io/leandroberetta/topogen:v0.0.1
+        image: hkccr.ccs.tencentyun.com/bitliu/topogen:v0.0.3
         imagePullPolicy: Always
         args: ["server"]
         ports:
