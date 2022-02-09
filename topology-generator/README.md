@@ -15,6 +15,29 @@ The topology is generated based on some parameters like:
 
 You can refer to [docs](doc/commands/topogen.md) to learn how to use topology-generator.
 
+```bash
+topogen (topology-generator) is a powerful tool for building complex topology 💪, 
+        you can choose to create specific topology with commands or in the UI 🌈.
+
+Usage:
+  topogen [command]
+
+Available Commands:
+  clean       Clean the generated topology in the Cluster
+  completion  Generate the autocompletion script for the specified shell
+  config      Generate topology config with commands
+  doc         Generate the latest commmands docs
+  help        Help about any command
+  instance    The instance running in topology
+  run         Deploy and Run the generated config to Cluster
+  server      The web server for UI of Topology Generator
+
+Flags:
+  -h, --help   help for topogen
+
+Use "topogen [command] --help" for more information about a command.
+```
+
 ## Platform Install
 
 This demo has been tested using [Minikube](https://istio.io/latest/docs/setup/platform-setup/minikube/) and [Istio 1.12](https://istio.io/latest/docs/setup/getting-started/#install).
