@@ -52,7 +52,7 @@ func cleanNamespacesBySelector() error {
 		return err
 	}
 
-	log.Printf("Logging: \n +%v", string(out))
+	log.Printf("Clean Resources By Selector: \n +%v", string(out))
 	return nil
 }
 
@@ -74,7 +74,7 @@ func cleanNamespacesByFile() error {
 		return err
 	}
 
-	log.Printf("Logging: \n +%v", string(out))
+	log.Printf("Clean Resources By File: \n +%v", string(out))
 	return nil
 }
 
