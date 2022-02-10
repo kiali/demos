@@ -15,6 +15,9 @@ import (
 )
 
 func RunInstance() error {
+	log.Println("------------------------")
+	log.Println("Running in Instance mode")
+	log.Println("------------------------")
 	instance, _ := service.NewService(
 		os.Getenv("MIMIK_SERVICE_NAME"),
 		os.Getenv("MIMIK_SERVICE_PORT"),
@@ -33,9 +36,7 @@ func RunInstance() error {
 
 	log.Println("serving at :8080")
 
-	if err := srv.ListenAndServe(); err != nil {
-		return err
-	}
+	go srv.ListenAndServe()
 
 	tc := make(chan struct{})
 	if tg := os.Getenv("MIMIK_TRAFFIC_GENERATOR"); tg != "" {

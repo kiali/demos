@@ -30,22 +30,52 @@ var cleanCmd = &cobra.Command{
 	Short: "Clean the generated topology in the Cluster",
 	Long:  `Run this command to clean the generated topology in the Cluster.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		k := kubectl.New(&kubectl.Config{Bin: binary})
-		generatedFile, err := os.Open(path)
+		log.Printf("Start to clean generated Topology, it may takes some time, please wait.\n")
+		var err error
 
-		if err != nil {
-			log.Fatalf("Read generated file error: %v", err)
+		if err = cleanNamespacesByFile(); err != nil {
+			if err = cleanNamespacesBySelector(); err != nil {
+				log.Fatalf("Clean generated mesh error: %v", err)
+			}
 		}
-
-		defer generatedFile.Close()
-
-		var out []byte
-		bytes, _ := ioutil.ReadAll(generatedFile)
-		if out, err = k.Delete(bytes); err != nil {
-			log.Fatalf("Run generated file error: %v", err)
-		}
-		log.Printf("Logging: \n +%v", string(out))
 	},
+}
+
+// cleanNamespacesBySelector clean resources by selector
+func cleanNamespacesBySelector() error {
+	var out []byte
+	var err error
+
+	k := kubectl.New(&kubectl.Config{Bin: binary})
+
+	if out, err = k.DeleteBySelector("generated-by=mimik"); err != nil {
+		return err
+	}
+
+	log.Printf("Logging: \n +%v", string(out))
+	return nil
+}
+
+// cleanNamespacesBySelector clean resources by file
+func cleanNamespacesByFile() error {
+	var out []byte
+
+	k := kubectl.New(&kubectl.Config{Bin: binary})
+	generatedFile, err := os.Open(path)
+
+	if err != nil {
+		return err
+	}
+
+	defer generatedFile.Close()
+
+	bytes, _ := ioutil.ReadAll(generatedFile)
+	if out, err = k.Delete(bytes); err != nil {
+		return err
+	}
+
+	log.Printf("Logging: \n +%v", string(out))
+	return nil
 }
 
 func init() {

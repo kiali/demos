@@ -23,6 +23,10 @@ build-ui:
 build-image: clean build-ui
 	docker build -t $(image):$(version) -f $(dockerfile) .
 
+# push docker image
+push-image:
+	docker push $(image):$(version)
+
 # clean built ui files
 clean-ui:
 	rm -rf ui/build

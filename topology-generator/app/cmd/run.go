@@ -30,6 +30,8 @@ var runCmd = &cobra.Command{
 	Short: "Deploy and Run the generated config to Cluster",
 	Long:  `Run this command to deploy and run the generated config to the Cluster.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		log.Printf("Start to run generated Topology, it may takes some time, please wait.\n")
+
 		k := kubectl.New(&kubectl.Config{Bin: binary})
 		generatedFile, err := os.Open(path)
 
