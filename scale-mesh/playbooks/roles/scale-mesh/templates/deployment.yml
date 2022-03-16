@@ -19,6 +19,9 @@ spec:
         kialiScaleMesh: "true"
         app: {{ item.0.app }}
         version:  workload{{ item.0.name | regex_replace('service') }}-{{ item.1 }}
+{% if custom_labels_map | length > 0 %}
+        {{ custom_labels_map | to_nice_yaml(indent=0) | trim | indent(8) }}
+{% endif %}
     spec:
       containers:
         - name: workload{{ item.0.name | regex_replace('service') }}-{{ item.1 }}

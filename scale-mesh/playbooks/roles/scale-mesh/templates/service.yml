@@ -6,6 +6,9 @@ metadata:
   labels:
     kialiScaleMesh: "true"
     app: {{ item.app }}
+{% if custom_labels_map | length > 0 %}
+    {{ custom_labels_map | to_nice_yaml(indent=0) | trim | indent(4) }}
+{% endif %}
 spec:
   ports:
   - port: 80
