@@ -18,6 +18,8 @@ DEFAULT_TG_DURATION="0s"
 DEFAULT_TG_RATE="1"
 DEFAULT_TG_SILENT="false"
 
+DEFAULT_CUSTOM_LABELS=""
+
 # Only used when creating SMM resources within a Maistra environment
 DEFAULT_CONTROL_PLANE_NAMESPACE="istio-system"
 
@@ -79,7 +81,8 @@ execute() {
     --extra-vars "tg_rate=${TG_RATE}" \
     --extra-vars "tg_silent=${TG_SILENT}" \
     --extra-vars "control_plane_namespace=${CONTROL_PLANE_NAMESPACE}" \
-    --extra-vars "state=${STATE}"
+    --extra-vars "state=${STATE}" \
+    --extra-vars "custom_labels=${CUSTOM_LABELS}"
 }
 
 # Change to the directory where this script is and set our env
@@ -94,6 +97,7 @@ while [[ $# -gt 0 ]]; do
     -a|--apps)                      NUMBER_APPS="${2}"; shift; shift ;;
     -ah|--api-hostname)             API_HOSTNAME="${2}"; shift; shift ;;
     -ai|--api-ip)                   API_HOSTIP="${2}"; shift; shift ;;
+    -cl|--custom-labels)            CUSTOM_LABELS="${2}"; shift; shift;;
     -dorp|--docker-or-podman)       DORP="${2}"; shift; shift ;;
     -k|--kubectl)                   KUBECTL="${2}"; shift; shift ;;
     -kc|--kube-config)              KUBECONFIG="${2}"; shift; shift ;;
@@ -121,6 +125,8 @@ Valid options:
   -ai|--api-ip
       The k8s API IP - if you pass in --api-hostname option, you must provide it's IP using this option.
       If not specified, an attempt to auto-discover it will be made.
+  -cl|--custom-labels
+      A comma separated list of key=value pairs to be applied as labels to the generated pods and services.
   -dorp|--docker-or-podman
       Indicates if you want to use 'docker' or 'podman'.
       Default: ${DEFAULT_DORP}
@@ -192,6 +198,7 @@ done
 : ${TG_DURATION:=${DEFAULT_TG_DURATION}}
 : ${TG_RATE:=${DEFAULT_TG_RATE}}
 : ${TG_SILENT:=${DEFAULT_TG_SILENT}}
+: ${CUSTOM_LABELS:=${DEFAULT_CUSTOM_LABELS}}
 
 if [ "$_CMD" == "install" ]; then
   STATE="present"

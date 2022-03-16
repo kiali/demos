@@ -46,6 +46,14 @@
     apps: "{{apps}} + ['{{ item }}']"
   with_sequence: start=1 end={{number_apps}} format=%d
 
+- name: Generate the custom labels map
+  set_fact:
+    custom_labels_map: "{{ dict(_label_names|zip(_label_values)) }}"
+  vars:
+    _label_list: "{{ custom_labels.split(',')|map('trim')|select()|list }}"
+    _label_names: "{{ _label_list|map('regex_replace', '^(.*?)=(.*)$', '\\1')|map('trim')|list }}"
+    _label_values: "{{ _label_list|map('regex_replace', '^(.*?)=(.*)$', '\\2')|map('trim')|list }}"
+
 - name: Create service and namespace dict
   set_fact:
   args:

@@ -7,6 +7,9 @@ number_apps: 5
 number_versions: 2
 number_services: 5
 
+# custom labels (comma-separated list of key=value pairs) that can be applied to the pods and services
+custom_labels: ""
+
 full_route: ""
 versions: []
 services: []
