@@ -2,7 +2,7 @@
 
 A Microservices demo based on Istio Service Mesh tool. 
 
-This goal of this demo is to demostrate link:https:/istio.io/[Istio] cappabilities observed and managed by https://kiali.io[Kiali] tool.
+This goal of this demo is to demonstrate link:https:/istio.io/[Istio] capabilities observed and managed by https://kiali.io[Kiali] tool.
 
 == Platform Install
 
@@ -67,7 +67,7 @@ This demo creates two groups of services to simulate a travel portal scenario.
 
 In a first namespace called *travel-portal* there will be deployed several travel shops, where typically users access to search and book flights, hotels, cars or insurances.
 
-There will be several shops to simulate that business of every portal may be different. There will be different characteristics of types of travels, channel (web, mobile), or target (new or existings customers).
+There will be several shops to simulate that business of every portal may be different. There will be different characteristics of types of travels, channel (web, mobile), or target (new or existing customers).
 
 These workloads may generate different type of traffic to imitate different real scenarios.
 
@@ -110,6 +110,36 @@ A typical flow consists of following steps:
 All traffic and relation between services and workloads can be visualized using Kiali:
 
 image:doc/Kiali-Travel-Graph.png[Kiali Dashboard]
+
+== Chaos Engineering
+
+The _flights_ service can be made to behave badly for some types fo requests based on devices (web mobile), user type (new/registered) and/or portal (uk, it & fr).  
+To add delay into the service the following env variable must be set:
+
+* CHAOS_MONKEY=true       - Set to true to _true_ on the delay (required) 
+* CHAOS_MONKEY_SLEEP=4000 - Set the delay in ms (e.g. 1000 for 1s) (required) 
+
+You must also set one or more of the following variables:
+
+* CHAOS_MONKEY_DEVICE  - Set the device, e.g. mobile or web 
+* CHAOS_MONKEY_PORTAL  - Set the portal, e.g. travels.uk, viaggi.it or voyages.fr 
+* CHAOS_MONKEY_USER    - Set to new or registered 
+
+Example of how to make the flights service respond with 4 seconds delay for all mobile users:
+
+[source,yaml]
+---
+kubectl set env deploy flights-v1 CHAOS_MONKEY=true CHAOS_MONKEY_SLEEP=4000 CHAOS_MONKEY_DEVICE=mobile -n travel-agency
+---
+Tip: If you want all requests to be affected, you need to ensure all requests from the portals are from mobile users by moving the _Device's_ yellow switch to the right for all 3 portals. 
+
+Remove the delay by removing the env varable:
+
+[source,yaml]
+---
+kubectl set env deploy flights-v1 CHAOS_MONKEY- -n travel-agency 
+---
+
 
 == Feedback
 
