@@ -113,11 +113,12 @@ image:doc/Kiali-Travel-Graph.png[Kiali Dashboard]
 
 == Chaos Engineering
 
-The _flights_ service can be made to behave badly for some types fo requests based on devices (web mobile), user type (new/registered) and/or portal (uk, it & fr).  
+The _flights_ service can be made to behave badly for some types fo requests based on devices (web mobile), user type (new/registered) and/or portal (travels.uk, viaggi.it & voyages.fr).  
+
 To add delay into the service the following env variable must be set:
 
-* CHAOS_MONKEY=true       - Set to true to _true_ on the delay (required) 
-* CHAOS_MONKEY_SLEEP=4000 - Set the delay in ms (e.g. 1000 for 1s) (required) 
+* CHAOS_MONKEY=true       - Set to _true_ to enable a delay 
+* CHAOS_MONKEY_SLEEP=4000 - Set the delay in ms (e.g. 1000 for 1s) 
 
 You must also set one or more of the following variables:
 
@@ -128,17 +129,17 @@ You must also set one or more of the following variables:
 Example of how to make the flights service respond with 4 seconds delay for all mobile users:
 
 [source,yaml]
----
+----
 kubectl set env deploy flights-v1 CHAOS_MONKEY=true CHAOS_MONKEY_SLEEP=4000 CHAOS_MONKEY_DEVICE=mobile -n travel-agency
----
+----
 Tip: If you want all requests to be affected, you need to ensure all requests from the portals are from mobile users by moving the _Device's_ yellow switch to the right for all 3 portals. 
 
 Remove the delay by removing the env varable:
 
 [source,yaml]
----
+----
 kubectl set env deploy flights-v1 CHAOS_MONKEY- -n travel-agency 
----
+----
 
 
 == Feedback
