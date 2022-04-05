@@ -3,13 +3,28 @@ version := v0.0.1
 image := quay.io/leandroberetta/topogen
 dockerfile := build/Dockerfile
 
-# build generator binary
+# build multiarch topogen binary
+build-multiarch-binary: build-binary-linux build-binary-darwin
+
+# build topogen binary
 build-binary: clean build-ui
 	cp -r ui/build pkg/controller/
-	go build app/topogen.go
+	go build app/topogen.go -o topogen
 	rm -rf pkg/controller/build
 
-# build generator binary in image
+# build linux topogen binary
+build-binary-linux: clean build-ui
+	cp -r ui/build pkg/controller/
+	CGO_ENABLED=0  GOOS=linux  GOARCH=amd64 go build -o topogen.linux app/topogen.go 
+	rm -rf pkg/controller/build
+
+# build darwin topogen binary
+build-binary-darwin: clean build-ui
+	cp -r ui/build pkg/controller/
+	CGO_ENABLED=0 GOOS=darwin  GOARCH=amd64 go build -o topogen.darwin app/topogen.go 
+	rm -rf pkg/controller/build
+
+# build topogen docker image
 build-binary-image: 
 	cp -r ui/build pkg/controller/
 	go build app/topogen.go
@@ -34,7 +49,7 @@ clean-ui:
 
 # clean generated files
 clean-gen:
-	rm -rf topogen deploy.json
+	rm -rf topogen deploy.json topogen.linux topogen.darwin
 
 # clean all 
 clean: clean-ui clean-gen
