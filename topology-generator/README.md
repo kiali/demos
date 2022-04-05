@@ -21,13 +21,11 @@ Usage:
   topogen [command]
 
 Available Commands:
-  clean       Clean the generated topology in the Cluster
   completion  Generate the autocompletion script for the specified shell
-  config      Generate topology config with commands
   doc         Generate the latest commmands docs
+  generate    Generate topology config with commands
   help        Help about any command
   instance    The instance running in topology
-  run         Deploy and Run the generated config to Cluster
   server      The web server for UI of Topology Generator
 
 Flags:

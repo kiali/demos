@@ -9,7 +9,7 @@ const (
 
 var generatorConfig api.Generator
 
-var path, binary string
+var path string
 
 var name, istioProxyRequestCPU, istioProxyRequestMemory, mimikRequestCPU,
 	mimikRequestMemory, mimikLimitCPU, mimikLimitMemory, image, enableInjection, injectionlabel, version string
