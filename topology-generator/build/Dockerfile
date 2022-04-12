@@ -4,14 +4,14 @@ WORKDIR /go/src/app
 
 COPY ./ .
 RUN go get -d -v ./...
-RUN go build cmd/instance/instance.go
+RUN make build-binary-image
 
 FROM registry.access.redhat.com/ubi8/ubi-minimal:8.5
 
 WORKDIR /
 
-COPY --from=build /go/src/app/instance /instance
+COPY --from=build /go/src/app/topogen /topogen
 
 EXPOSE 8080
 
-ENTRYPOINT ["/instance"]
+ENTRYPOINT ["/topogen"]

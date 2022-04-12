@@ -1,0 +1,5 @@
+# build binary
+topogen
+
+# generated Deploy Json
+deploy.json

@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/leandroberetta/mimik/pkg/api"
+	"github.com/kiali/demos/topology-generator/pkg/api"
 )
 
 func TestMakeValidURL(t *testing.T) {

@@ -1,4 +1,4 @@
-package main
+package controller
 
 import (
 	"context"
@@ -10,11 +10,14 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	"github.com/leandroberetta/mimik/pkg/api"
-	"github.com/leandroberetta/mimik/pkg/service"
+	"github.com/kiali/demos/topology-generator/pkg/api"
+	"github.com/kiali/demos/topology-generator/pkg/service"
 )
 
-func main() {
+func RunInstance() error {
+	log.Println("------------------------")
+	log.Println("Running in Instance mode")
+	log.Println("------------------------")
 	instance, _ := service.NewService(
 		os.Getenv("MIMIK_SERVICE_NAME"),
 		os.Getenv("MIMIK_SERVICE_PORT"),
@@ -30,7 +33,9 @@ func main() {
 		Addr:    ":8080",
 		Handler: r,
 	}
+
 	log.Println("serving at :8080")
+
 	go srv.ListenAndServe()
 
 	tc := make(chan struct{})
@@ -47,10 +52,13 @@ func main() {
 	log.Println("shutting down")
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
 	defer cancel()
-	srv.Shutdown(ctx)
+
+	if err := srv.Shutdown(ctx); err != nil {
+		return err
+	}
 
 	log.Println("shutdown complete")
-	os.Exit(0)
+	return nil
 }
 
 func generateTraffic(service *api.Service, client *http.Client, quit chan struct{}) {

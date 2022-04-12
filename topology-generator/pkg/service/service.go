@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/leandroberetta/mimik/pkg/api"
+	"github.com/kiali/demos/topology-generator/pkg/api"
 )
 
 type httpClient interface {
