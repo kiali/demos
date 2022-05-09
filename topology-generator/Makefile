@@ -9,7 +9,7 @@ build-multiarch-binary: build-binary-linux build-binary-darwin build-binary-wind
 # build topogen binary
 build-binary: clean build-ui
 	cp -r ui/build pkg/controller/
-	go build app/topogen.go -o topogen
+	go build -o topogen app/topogen.go
 	rm -rf pkg/controller/build
 
 # build linux topogen binary
