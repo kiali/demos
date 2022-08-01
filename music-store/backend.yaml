@@ -64,7 +64,7 @@ spec:
           value: /data/music-store-backend-v1.json
         - name: MIMIK_LABELS_FILE
           value: /tmp/etc/pod_labels
-        image: quay.io/kiali/demo_mimik:latest
+        image: quay.io/kiali/demo_music_store_mimik:latest
         imagePullPolicy: Always
         name: mimik
         ports:
