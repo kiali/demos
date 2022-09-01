@@ -41,7 +41,12 @@ spec:
           ports:
             - containerPort: 8000
           securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
             privileged: false
+            readOnlyRootFilesystem: true
           env:
             - name: LISTEN_ADDRESS
               value: ":8000"
@@ -110,7 +115,12 @@ spec:
           ports:
             - containerPort: 8000
           securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
             privileged: false
+            readOnlyRootFilesystem: true
           env:
             - name: LISTEN_ADDRESS
               value: ":8000"
@@ -179,7 +189,12 @@ spec:
           ports:
             - containerPort: 8000
           securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
             privileged: false
+            readOnlyRootFilesystem: true
           env:
             - name: LISTEN_ADDRESS
               value: ":8000"

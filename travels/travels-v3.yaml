@@ -41,7 +41,12 @@ spec:
           ports:
             - containerPort: 8000
           securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
             privileged: false
+            readOnlyRootFilesystem: true
           env:
             - name: CURRENT_SERVICE
               value: "travels"

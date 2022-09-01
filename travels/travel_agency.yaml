@@ -122,7 +122,12 @@ spec:
           ports:
             - containerPort: 8000
           securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
             privileged: false
+            readOnlyRootFilesystem: true
           env:
             - name: CURRENT_SERVICE
               value: "cars"
@@ -203,7 +208,12 @@ spec:
           ports:
             - containerPort: 8000
           securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
             privileged: false
+            readOnlyRootFilesystem: true
           env:
             - name: CURRENT_SERVICE
               value: "discounts"
@@ -271,7 +281,12 @@ spec:
           ports:
             - containerPort: 8000
           securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
             privileged: false
+            readOnlyRootFilesystem: true
           env:
             - name: CURRENT_SERVICE
               value: "flights"
@@ -352,7 +367,12 @@ spec:
           ports:
             - containerPort: 8000
           securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
             privileged: false
+            readOnlyRootFilesystem: true
           env:
             - name: CURRENT_SERVICE
               value: "hotels"
@@ -415,7 +435,12 @@ spec:
           ports:
             - containerPort: 8000
           securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
             privileged: false
+            readOnlyRootFilesystem: true
           env:
             - name: CURRENT_SERVICE
               value: "insurances"
@@ -496,7 +521,12 @@ spec:
           ports:
             - containerPort: 8000
           securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
             privileged: false
+            readOnlyRootFilesystem: true
           env:
             - name: CURRENT_SERVICE
               value: "travels"
