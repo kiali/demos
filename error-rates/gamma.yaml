@@ -1,0 +1,396 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: a-client
+spec:
+  selector:
+    matchLabels:
+      app: a-client
+      version: v1
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        readiness.status.sidecar.istio.io/applicationPorts: ""
+      labels:
+        app: a-client
+        version: v1
+    spec:
+      containers:
+        - name: a
+          image: quay.io/kiali/demo_error_rates_client:v1
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8899
+          securityContext:
+            privileged: false
+          env:
+            - name: SERVER_URL
+              value: ""
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: b-client
+spec:
+  selector:
+    matchLabels:
+      app: b-client
+      version: v1
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        readiness.status.sidecar.istio.io/applicationPorts: ""
+      labels:
+        app: b-client
+        version: v1
+    spec:
+      containers:
+        - name: b-client
+          image: quay.io/kiali/demo_error_rates_client:v1
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8899
+          securityContext:
+            privileged: false
+          env:
+            - name: SERVER_URL
+              value: ""
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: c-client
+spec:
+  selector:
+    matchLabels:
+      app: c-client
+      version: v1
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        readiness.status.sidecar.istio.io/applicationPorts: ""
+      labels:
+        app: c-client
+        version: v1
+    spec:
+      containers:
+        - name: c-client
+          image: quay.io/kiali/demo_error_rates_client:v1
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8899
+          securityContext:
+            privileged: false
+          env:
+            - name: SERVER_URL
+              value: ""
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: d-client
+spec:
+  selector:
+    matchLabels:
+      app: d-client
+      version: v1
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        readiness.status.sidecar.istio.io/applicationPorts: ""
+      labels:
+        app: d-client
+        version: v1
+    spec:
+      containers:
+        - name: d-client
+          image: quay.io/kiali/demo_error_rates_client:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8899
+          securityContext:
+            privileged: false
+          env:
+            - name: SERVER_URL
+              value: ""
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: e-client
+spec:
+  selector:
+    matchLabels:
+      app: e-client
+      version: v1
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        readiness.status.sidecar.istio.io/applicationPorts: ""
+      labels:
+        app: e-client
+        version: v1
+    spec:
+      containers:
+        - name: e-client
+          image: quay.io/kiali/demo_error_rates_client:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8899
+          securityContext:
+            privileged: false
+          env:
+            - name: SERVER_URL
+              value: ""
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: f-client
+spec:
+  selector:
+    matchLabels:
+      app: f-client
+      version: v1
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        readiness.status.sidecar.istio.io/applicationPorts: ""
+      labels:
+        app: f-client
+        version: v1
+    spec:
+      containers:
+        - name: f-client
+          image: quay.io/kiali/demo_error_rates_client:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8899
+          securityContext:
+            privileged: false
+          env:
+            - name: SERVER_URL
+              value: ""
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: v-server
+spec:
+  selector:
+    matchLabels:
+      app: v-server
+      version: v1
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        readiness.status.sidecar.istio.io/applicationPorts: ""
+      labels:
+        app: v-server
+        version: v1
+    spec:
+      containers:
+        - name: v-server
+          image: quay.io/kiali/demo_error_rates_server:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8899
+          securityContext:
+            privileged: false
+          env:
+            - name: CODE_REQUESTS
+              value: "200,10"
+            - name: SERVER_URL
+              value: ""
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: v-server
+  labels:
+    app: v-server
+spec:
+  ports:
+    - name: http
+      port: 8899
+  selector:
+    app: v-server
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: w-server
+spec:
+  selector:
+    matchLabels:
+      app: w-server
+      version: v1
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        readiness.status.sidecar.istio.io/applicationPorts: ""
+      labels:
+        app: w-server
+        version: v1
+    spec:
+      containers:
+        - name: w-server
+          image: quay.io/kiali/demo_error_rates_server:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8899
+          securityContext:
+            privileged: false
+          env:
+            - name: CODE_REQUESTS
+              value: "503,5;200,5"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: w-server
+  labels:
+    app: w-server
+spec:
+  ports:
+    - name: http
+      port: 8899
+  selector:
+    app: w-server
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: x-server
+spec:
+  selector:
+    matchLabels:
+      app: x-server
+      version: v1
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        readiness.status.sidecar.istio.io/applicationPorts: ""
+      labels:
+        app: x-server
+        version: v1
+    spec:
+      containers:
+        - name: x-server
+          image: quay.io/kiali/demo_error_rates_server:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8899
+          securityContext:
+            privileged: false
+          env:
+            - name: CODE_REQUESTS
+              value: "200,9;404,1"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: x-server
+  labels:
+    app: x-server
+spec:
+  ports:
+    - name: http
+      port: 8899
+  selector:
+    app: x-server
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: y-server
+spec:
+  selector:
+    matchLabels:
+      app: y-server
+      version: v1
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        readiness.status.sidecar.istio.io/applicationPorts: ""
+      labels:
+        app: y-server
+        version: v1
+    spec:
+      containers:
+        - name: y-server
+          image: quay.io/kiali/demo_error_rates_server:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8899
+          securityContext:
+            privileged: false
+          env:
+            - name: CODE_REQUESTS
+              value: "200,9;500,1"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: y-server
+  labels:
+    app: y-server
+spec:
+  ports:
+    - name: http
+      port: 8899
+  selector:
+    app: y-server
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: z-server
+spec:
+  selector:
+    matchLabels:
+      app: z-server
+      version: v1
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        readiness.status.sidecar.istio.io/applicationPorts: ""
+      labels:
+        app: z-server
+        version: v1
+    spec:
+      containers:
+        - name: z-server
+          image: quay.io/kiali/demo_error_rates_server:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8899
+          securityContext:
+            privileged: false
+          env:
+            - name: CODE_REQUESTS
+              value: "200,8;201,1;202,1"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: z-server
+  labels:
+    app: z-server
+spec:
+  ports:
+    - name: http
+      port: 8899
+  selector:
+    app: z-server

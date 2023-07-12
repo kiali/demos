@@ -10,18 +10,21 @@ Additional configurations are needed in a case of installing on https://istio.io
 
 == Quick Start
 
-Create `alpha` and `beta` namespaces. Add `istio-injection` label and deploy demo app.
+Create `alpha`, `beta` and `gamma` namespaces. Add `istio-injection` label and deploy demo app.
 
 [source,yaml]
 ----
 kubectl create namespace alpha
 kubectl create namespace beta
+kubectl create namespace gamma
 
 kubectl label namespace alpha istio-injection=enabled
 kubectl label namespace beta istio-injection=enabled
+kubectl label namespace gamma istio-injection=enabled
 
 kubectl apply -f <(curl -L https://raw.githubusercontent.com/kiali/demos/master/error-rates/alpha.yaml) -n alpha
 kubectl apply -f <(curl -L https://raw.githubusercontent.com/kiali/demos/master/error-rates/beta.yaml) -n beta
+kubectl apply -f <(curl -L https://raw.githubusercontent.com/kiali/demos/master/error-rates/gamma.yaml) -n gamma
 
 ----
 
@@ -39,14 +42,19 @@ Undeploy the example:
 ----
 kubectl delete -f <(curl -L https://raw.githubusercontent.com/kiali/demos/master/error-rates/alpha.yaml) -n alpha
 kubectl delete -f <(curl -L https://raw.githubusercontent.com/kiali/demos/master/error-rates/beta.yaml) -n beta
+kubectl delete -f <(curl -L https://raw.githubusercontent.com/kiali/demos/master/error-rates/beta.yaml) -n gamma
 
 kubectl delete namespace alpha
 kubectl delete namespace beta
+kubectl delete namespace gamma
 ----
 
 == Error Rates Demo Design
 
-This demo creates two namespaces (alpha, and beta) with the same topology of microservices.
+This demo creates three namespaces (alpha, beta and gamma) with the same topology of microservices.
+
+The gamma namespace is not designed to have traffic, only configuration, and can be ignored or used
+for additional testing.  To add traffic edit gamma.yaml and set SERVER_URL env vars as needed.
 
 A namespace will have three servers (x-server, y-server and z-server) that may simulate a predictable error rate.
 
