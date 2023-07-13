@@ -11,4 +11,4 @@ kubectl label namespace gamma istio-injection=enabled
 
 kubectl apply -f alpha.yaml -n alpha
 kubectl apply -f beta.yaml -n beta
-kubectl apply -f beta.yaml -n gamma
+kubectl apply -f gamma.yaml -n gamma

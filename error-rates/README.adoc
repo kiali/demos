@@ -42,7 +42,7 @@ Undeploy the example:
 ----
 kubectl delete -f <(curl -L https://raw.githubusercontent.com/kiali/demos/master/error-rates/alpha.yaml) -n alpha
 kubectl delete -f <(curl -L https://raw.githubusercontent.com/kiali/demos/master/error-rates/beta.yaml) -n beta
-kubectl delete -f <(curl -L https://raw.githubusercontent.com/kiali/demos/master/error-rates/beta.yaml) -n gamma
+kubectl delete -f <(curl -L https://raw.githubusercontent.com/kiali/demos/master/error-rates/gamma.yaml) -n gamma
 
 kubectl delete namespace alpha
 kubectl delete namespace beta
