@@ -2,6 +2,7 @@ FROM quay.io/centos/centos:8
 
 LABEL maintainer="kiali-dev@googlegroups.com"
 
+ARG TARGETARCH
 ENV CLIENT_HOME=/opt/client \
     PATH=$CLIENT_HOME:$PATH
 
