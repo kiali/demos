@@ -1,0 +1,13 @@
+FROM quay.io/centos/centos:8
+
+LABEL maintainer="kiali-dev@googlegroups.com"
+
+ARG TARGETARCH
+ENV SERVER_HOME=/opt/server \
+    PATH=$SERVER_HOME:$PATH
+
+WORKDIR $SERVER_HOME
+
+COPY server-${TARGETARCH} $SERVER_HOME/server
+
+ENTRYPOINT ["/opt/server/server"]

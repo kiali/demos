@@ -1,0 +1,112 @@
+ROOTDIR=$(CURDIR)
+OUTDIR=${ROOTDIR}/_output
+GO ?= go
+PROJECT_GOPATH ?= ${OUTDIR}/go
+GO_BUILD_FLAGS ?=
+CGO_ENABLED ?= 0
+GOOS ?= $(shell ${GO} env GOOS)
+GOARCH ?= $(shell ${GO} env GOARCH)
+GO_BUILD_ENVVARS = \
+	CGO_ENABLED=$(CGO_ENABLED)
+QUAY_SERVER ?= quay.io/kiali/demo_error_rates_server:v1
+QUAY_CLIENT ?= quay.io/kiali/demo_error_rates_client:v1
+TARGET_ARCHS ?= amd64 arm64
+
+.clean:
+	rm -rf ${OUTDIR}/docker
+	rm -rf ${OUTDIR}/go
+	rmdir ${OUTDIR}
+
+.create_outdir:
+	@mkdir -p ${OUTDIR}
+
+.build-multiarch-client:
+	for arch in ${TARGET_ARCHS}; do \
+		echo "Building client for arch [$${arch}]"; \
+		cd ${ROOTDIR}/client && ${GO_BUILD_ENVVARS} GOOS=linux GOARCH=$${arch} ${GO} build \
+			-o ${PROJECT_GOPATH}/bin/client-$${arch} ${GO_BUILD_FLAGS}; \
+	done
+
+.build-multiarch-server:
+	for arch in ${TARGET_ARCHS}; do \
+		echo "Building server for arch [$${arch}]"; \
+		cd ${ROOTDIR}/server && ${GO_BUILD_ENVVARS} GOOS=linux GOARCH=$${arch} ${GO} build \
+			-o ${PROJECT_GOPATH}/bin/server-$${arch} ${GO_BUILD_FLAGS}; \
+	done
+
+.build-multiarch: .build-multiarch-client .build-multiarch-server
+
+.prepare-image-files: .create_outdir
+	@echo "Preparing container image files"
+	@mkdir -p ${OUTDIR}/docker
+	@cp -r ${ROOTDIR}/docker/* ${OUTDIR}/docker
+	@cp ${PROJECT_GOPATH}/bin/client-* ${OUTDIR}/docker
+	@cp ${PROJECT_GOPATH}/bin/server-* ${OUTDIR}/docker
+
+# Ensure "docker buildx" is available and enabled. For more details, see: https://github.com/docker/buildx/blob/master/README.md
+# This does a few things:
+#  1. Makes sure docker is in PATH
+#  2. Downloads and installs buildx if no version of buildx is installed yet
+#  3. Makes sure any installed buildx is a required version or newer
+#  4. Makes sure the user has enabled buildx (either by default or by setting DOCKER_CLI_EXPERIMENTAL env var to 'enabled')
+#  Thus, this target will only ever succeed if a required (or newer) version of 'docker buildx' is available and enabled.
+.ensure-docker-buildx:
+	@if ! which docker > /dev/null 2>&1; then echo "'docker' is not in your PATH."; exit 1; fi
+	@required_buildx_version="0.4.2"; \
+	if ! DOCKER_CLI_EXPERIMENTAL="enabled" docker buildx version > /dev/null 2>&1 ; then \
+	  buildx_download_url="https://github.com/docker/buildx/releases/download/v$${required_buildx_version}/buildx-v$${required_buildx_version}.${GOOS}-${GOARCH}"; \
+	  echo "You do not have 'docker buildx' installed. Will now download from [$${buildx_download_url}] and install it to [${HOME}/.docker/cli-plugins]."; \
+	  mkdir -p ${HOME}/.docker/cli-plugins; \
+	  curl -L --output ${HOME}/.docker/cli-plugins/docker-buildx "$${buildx_download_url}"; \
+	  chmod a+x ${HOME}/.docker/cli-plugins/docker-buildx; \
+	  installed_version="$$(DOCKER_CLI_EXPERIMENTAL="enabled" docker buildx version || echo "unknown")"; \
+	  if docker buildx version > /dev/null 2>&1; then \
+	    echo "'docker buildx' has been installed and is enabled [version=$${installed_version}]"; \
+	  else \
+	    echo "An attempt to install 'docker buildx' has been made but it either failed or is not enabled by default. [version=$${installed_version}]"; \
+	    echo "Set DOCKER_CLI_EXPERIMENTAL=enabled to enable it."; \
+	    exit 1; \
+	  fi \
+	fi; \
+	current_buildx_version="$$(DOCKER_CLI_EXPERIMENTAL=enabled docker buildx version 2>/dev/null | sed -E 's/.*v([0-9]+\.[0-9]+\.[0-9]+).*/\1/g')"; \
+	is_valid_buildx_version="$$(if [ "$$(printf $${required_buildx_version}\\n$${current_buildx_version} | sort -V | head -n1)" == "$${required_buildx_version}" ]; then echo "true"; else echo "false"; fi)"; \
+	if [ "$${is_valid_buildx_version}" == "true" ]; then \
+	  echo "A valid version of 'docker buildx' is available: $${current_buildx_version}"; \
+	else \
+	  echo "You have an older version of 'docker buildx' that is not compatible. Please upgrade to at least v$${required_buildx_version}"; \
+	  exit 1; \
+	fi; \
+	if docker buildx version > /dev/null 2>&1; then \
+	  echo "'docker buildx' is enabled"; \
+	else \
+	  echo "'docker buildx' is not enabled. Set DOCKER_CLI_EXPERIMENTAL=enabled if you want to use it."; \
+	  exit 1; \
+	fi
+
+# Ensure a local builder for multi-arch build. For more details, see: https://github.com/docker/buildx/blob/master/README.md#building-multi-platform-images
+.ensure-buildx-builder: .ensure-docker-buildx
+	@if ! docker buildx inspect demo-builder > /dev/null 2>&1; then \
+	  echo "The buildx builder instance named 'demo-builder' does not exist. Creating one now."; \
+	  if ! docker buildx create --name=demo-builder --driver-opt=image=moby/buildkit:v0.8.0; then \
+	    echo "Failed to create the buildx builder 'demo-builder'"; \
+	    exit 1; \
+	  fi \
+	fi; \
+	if [[ $$(uname -s) == "Linux" ]]; then \
+	  echo "Ensuring QEMU is set up for this Linux host"; \
+	  if ! docker run --privileged --rm quay.io/kiali/binfmt:latest --install all; then \
+	    echo "Failed to ensure QEMU is set up. This build will be allowed to continue, but it may fail at a later step."; \
+	  fi \
+	fi
+
+.push-multiarch-client:
+	@echo "Pushing client multiarch image to quay"
+	docker buildx build --push --pull --no-cache --builder=demo-builder $(foreach arch,${TARGET_ARCHS},--platform=linux/${arch}) $(foreach tag,${QUAY_CLIENT},--tag=${tag}) -f ${OUTDIR}/docker/Dockerfile-client ${OUTDIR}/docker
+
+.push-multiarch-server:
+	@echo "Pushing server multiarch image to quay"
+	docker buildx build --push --pull --no-cache --builder=demo-builder $(foreach arch,${TARGET_ARCHS},--platform=linux/${arch}) $(foreach tag,${QUAY_SERVER},--tag=${tag}) -f ${OUTDIR}/docker/Dockerfile-server ${OUTDIR}/docker
+
+.push-multiarch: .push-multiarch-client .push-multiarch-server
+
+push-multiarch: .build-multiarch .prepare-image-files .ensure-buildx-builder .push-multiarch
