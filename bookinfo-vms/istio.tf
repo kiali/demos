@@ -230,7 +230,7 @@ resource "helm_release" "kiali" {
   }
 
   set {
-    name  = "deployment.logger.log_level"
+    name  = "server.observability.logger.log_level"
     value = "trace"
   }
 }
