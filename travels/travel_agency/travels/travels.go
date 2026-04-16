@@ -67,6 +67,13 @@ var (
 	chaosMonkeySleep = 500 * time.Millisecond // Milliseconds to wait if chaosMonkey is enabled
 	chaosMonkeyCity  = ""
 	chaosMonkeyUser  = ""
+
+	// Trace propagator configured to support both B3 and W3C TraceContext formats
+	tracePropagator = propagation.NewCompositeTextMapPropagator(
+		b3.New(b3.WithInjectEncoding(b3.B3MultipleHeader|b3.B3SingleHeader)),
+		propagation.TraceContext{},
+		propagation.Baggage{},
+	)
 )
 
 func setup() {
@@ -295,13 +302,8 @@ func propagateHeaders(a *http.Request, b *http.Request) {
 	}
 
 	// Extract trace context from inbound request and inject it outbound.
-	propagator := propagation.NewCompositeTextMapPropagator(
-		b3.New(b3.WithInjectEncoding(b3.B3MultipleHeader|b3.B3SingleHeader)),
-		propagation.TraceContext{},
-		propagation.Baggage{},
-	)
-	ctx := propagator.Extract(a.Context(), propagation.HeaderCarrier(a.Header))
-	propagator.Inject(ctx, propagation.HeaderCarrier(b.Header))
+	ctx := tracePropagator.Extract(a.Context(), propagation.HeaderCarrier(a.Header))
+	tracePropagator.Inject(ctx, propagation.HeaderCarrier(b.Header))
 }
 
 func main() {
