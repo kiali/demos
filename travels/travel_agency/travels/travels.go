@@ -6,6 +6,8 @@ import (
 	"flag"
 	"github.com/golang/glog"
 	"github.com/gorilla/mux"
+	"go.opentelemetry.io/contrib/propagators/b3"
+	"go.opentelemetry.io/otel/propagation"
 	"net/http"
 	"os"
 	"strconv"
@@ -15,56 +17,56 @@ import (
 
 type City struct {
 	City string `json:"city"`
-	Lat string `json:"lat"`
-	Lng string `json:"lng"`
+	Lat  string `json:"lat"`
+	Lng  string `json:"lng"`
 }
 
 type Flight struct {
-	Airline string `json:"airline"`
-	Price float32 `json:"price"`
+	Airline string  `json:"airline"`
+	Price   float32 `json:"price"`
 }
 
 type Hotel struct {
-	Hotel string `json:"hotel"`
+	Hotel string  `json:"hotel"`
 	Price float32 `json:"price"`
 }
 
 type Car struct {
-	CarModel string `json:"carModel"`
-	Price float32 `json:"price"`
+	CarModel string  `json:"carModel"`
+	Price    float32 `json:"price"`
 }
 
 type Insurance struct {
-	Company string `json:"company"`
-	Price float32 `json:"price"`
+	Company string  `json:"company"`
+	Price   float32 `json:"price"`
 }
 
 type TravelQuote struct {
-	City string `json:"city"`
-	Coordinates []float64 `json:"coordinates"`
-	CreatedAt string `json:"createdAt"`
-	Status string `json:"status"`
-	Flights []Flight `json:"flights"`
-	Hotels []Hotel `json:"hotels"`
-	Cars []Car `json:"cars"`
-	Insurances []Insurance `json:"insurances"`
+	City        string      `json:"city"`
+	Coordinates []float64   `json:"coordinates"`
+	CreatedAt   string      `json:"createdAt"`
+	Status      string      `json:"status"`
+	Flights     []Flight    `json:"flights"`
+	Hotels      []Hotel     `json:"hotels"`
+	Cars        []Car       `json:"cars"`
+	Insurances  []Insurance `json:"insurances"`
 }
 
 var (
 	currentService = "travels"
 	currentVersion = "no-version"
-	instance = currentService + "/" + currentVersion
-	listenAddress = ":8090"
+	instance       = currentService + "/" + currentVersion
+	listenAddress  = ":8090"
 
-	carsService = "http://localhost:8091"
-	flightsService = "http://localhost:8093"
-	hotelsService = "http://localhost:8094"
+	carsService       = "http://localhost:8091"
+	flightsService    = "http://localhost:8093"
+	hotelsService     = "http://localhost:8094"
 	insurancesService = "http://localhost:8095"
 
-	chaosMonkey = false
+	chaosMonkey      = false
 	chaosMonkeySleep = 500 * time.Millisecond // Milliseconds to wait if chaosMonkey is enabled
-	chaosMonkeyCity = ""
-	chaosMonkeyUser = ""
+	chaosMonkeyCity  = ""
+	chaosMonkeyUser  = ""
 )
 
 func setup() {
@@ -142,12 +144,12 @@ func GetDestinations(w http.ResponseWriter, r *http.Request) {
 
 	glog.Infof("[%s] GetDestinations from [%s]. Device [%s]. User [%s]. Travel [%s] \n", instance, portal, device, user, travel)
 
-	request, _ := http.NewRequest("GET", hotelsService + "/hotels", nil)
+	request, _ := http.NewRequest("GET", hotelsService+"/hotels", nil)
 	propagateHeaders(r, request)
 	client := &http.Client{}
 	response, err := client.Do(request)
 	if err != nil {
-		Error(w, false, "Error fetching destinations for portal [" + portal + "]")
+		Error(w, false, "Error fetching destinations for portal ["+portal+"]")
 		return
 	}
 	cities := make([]City, 0)
@@ -168,9 +170,9 @@ func GetTravelQuote(w http.ResponseWriter, r *http.Request) {
 	glog.Infof("[%s] GetTravelQuote from [%s]. Device [%s]. User [%s]. Travel [%s] for [city: %s].\n", instance, portal, device, user, travel, city)
 
 	travelQuote := TravelQuote{
-		City: city,
+		City:      city,
 		CreatedAt: time.Now().Format(time.RFC3339),
-		Status: "Not valid",
+		Status:    "Not valid",
 	}
 
 	if travel == "" {
@@ -188,7 +190,7 @@ func GetTravelQuote(w http.ResponseWriter, r *http.Request) {
 	go func() {
 		defer wg.Done()
 		if travel == "t1" || travel == "t2" {
-			request, _ := http.NewRequest("GET", flightsService + "/flights/" + city, nil)
+			request, _ := http.NewRequest("GET", flightsService+"/flights/"+city, nil)
 			propagateHeaders(r, request)
 			client := &http.Client{}
 			response, err := client.Do(request)
@@ -206,7 +208,7 @@ func GetTravelQuote(w http.ResponseWriter, r *http.Request) {
 
 	go func() {
 		defer wg.Done()
-		request, _ := http.NewRequest("GET", hotelsService + "/hotels/" + city, nil)
+		request, _ := http.NewRequest("GET", hotelsService+"/hotels/"+city, nil)
 		propagateHeaders(r, request)
 
 		client := &http.Client{}
@@ -225,7 +227,7 @@ func GetTravelQuote(w http.ResponseWriter, r *http.Request) {
 	go func() {
 		defer wg.Done()
 		if travel == "t1" || travel == "t3" {
-			request, _ := http.NewRequest("GET", carsService + "/cars/" + city, nil)
+			request, _ := http.NewRequest("GET", carsService+"/cars/"+city, nil)
 			propagateHeaders(r, request)
 
 			client := &http.Client{}
@@ -244,7 +246,7 @@ func GetTravelQuote(w http.ResponseWriter, r *http.Request) {
 
 	go func() {
 		defer wg.Done()
-		request, _ := http.NewRequest("GET", insurancesService + "/insurances/" + city, nil)
+		request, _ := http.NewRequest("GET", insurancesService+"/insurances/"+city, nil)
 		propagateHeaders(r, request)
 
 		client := &http.Client{}
@@ -262,7 +264,7 @@ func GetTravelQuote(w http.ResponseWriter, r *http.Request) {
 
 	wg.Wait()
 	if len(errChan) != 0 {
-		Error(w, true, "Travel Quote for " + city + " not found")
+		Error(w, true, "Travel Quote for "+city+" not found")
 		return
 	}
 
@@ -284,22 +286,22 @@ func releaseTheMonkey(city, user string) {
 }
 
 func propagateHeaders(a *http.Request, b *http.Request) {
-	headers := []string{
-		"portal",
-		"device",
-		"user",
-		"travel",
-		"x-request-id",
-		"x-b3-traceid",
-		"x-b3-spanid",
-		"x-b3-parentspanid",
-		"x-b3-sampled",
-		"x-b3-flags",
-		"x-ot-span-context",
+	// Keep business headers used by this demo logic.
+	for _, header := range []string{"portal", "device", "user", "travel"} {
+		value := a.Header.Get(header)
+		if value != "" {
+			b.Header.Set(header, value)
+		}
 	}
-	for _, header := range headers {
-		b.Header.Add(header, a.Header.Get(header))
-	}
+
+	// Extract trace context from inbound request and inject it outbound.
+	propagator := propagation.NewCompositeTextMapPropagator(
+		b3.New(b3.WithInjectEncoding(b3.B3MultipleHeader|b3.B3SingleHeader)),
+		propagation.TraceContext{},
+		propagation.Baggage{},
+	)
+	ctx := propagator.Extract(a.Context(), propagation.HeaderCarrier(a.Header))
+	propagator.Inject(ctx, propagation.HeaderCarrier(b.Header))
 }
 
 func main() {
@@ -310,5 +312,3 @@ func main() {
 	router.HandleFunc("/travels/{city}", GetTravelQuote).Methods("GET")
 	glog.Fatal(http.ListenAndServe(listenAddress, router))
 }
-
-

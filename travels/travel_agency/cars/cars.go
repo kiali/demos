@@ -1,13 +1,15 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"errors"
 	"flag"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/golang/glog"
 	"github.com/gorilla/mux"
-	"database/sql"
-	_ "github.com/go-sql-driver/mysql"
+	"go.opentelemetry.io/contrib/propagators/b3"
+	"go.opentelemetry.io/otel/propagation"
 	"net/http"
 	"os"
 	"strconv"
@@ -15,37 +17,37 @@ import (
 )
 
 type Car struct {
-	CarModel string `json:"carModel"`
-	Price float32 `json:"price"`
+	CarModel string  `json:"carModel"`
+	Price    float32 `json:"price"`
 }
 
 type TravelInfo struct {
 	City string `json:"city"`
-	Cars []Car `json:"cars"`
+	Cars []Car  `json:"cars"`
 }
 
 type Discount struct {
-	User string `json:"user"`
+	User     string  `json:"user"`
 	Discount float32 `json:"discount"`
 }
 
 var (
-	currentService = "cars"
-	currentVersion = "no-version"
-	instance = currentService + "/" + currentVersion
-	listenAddress = ":8091"
+	currentService   = "cars"
+	currentVersion   = "no-version"
+	instance         = currentService + "/" + currentVersion
+	listenAddress    = ":8091"
 	discountsService = "http://localhost:8092"
 
-	mysqlService = "localhost:3306"
-	mysqlUser = "root"
+	mysqlService  = "localhost:3306"
+	mysqlUser     = "root"
 	mysqlPassword = "password"
 	mysqlDatabase = "test"
 
-	chaosMonkey = false
-	chaosMonkeySleep = 500 * time.Millisecond // Milliseconds to wait if chaosMonkey is enabled
+	chaosMonkey       = false
+	chaosMonkeySleep  = 500 * time.Millisecond // Milliseconds to wait if chaosMonkey is enabled
 	chaosMonkeyPortal = ""
 	chaosMonkeyDevice = ""
-	chaosMonkeyUser = ""
+	chaosMonkeyUser   = ""
 )
 
 func setup() {
@@ -164,7 +166,7 @@ func getTravelInfo(r *http.Request) (TravelInfo, error, bool) {
 		var car Car
 		err := results.Scan(&car.CarModel, &car.Price)
 		if err != nil {
-			glog.Errorf("[%s] getTravelInfo can't parse a car row %s \n", err.Error())
+			glog.Errorf("[%s] getTravelInfo can't parse a car row: %s \n", instance, err.Error())
 			continue
 		}
 		travelInfo.Cars = append(travelInfo.Cars, car)
@@ -182,7 +184,7 @@ func applyDiscounts(r *http.Request, travelInfo *TravelInfo, discountFrom string
 	}
 
 	discount := float32(1)
-	request, _ := http.NewRequest("GET", discountsService + "/discounts/" + user, nil)
+	request, _ := http.NewRequest("GET", discountsService+"/discounts/"+user, nil)
 	propagateHeaders(r, request)
 	request.Header.Set("discountFrom", discountFrom)
 
@@ -217,22 +219,22 @@ func releaseTheMonkey(portal, device, user string) {
 }
 
 func propagateHeaders(a *http.Request, b *http.Request) {
-	headers := []string{
-		"portal",
-		"device",
-		"user",
-		"travel",
-		"x-request-id",
-		"x-b3-traceid",
-		"x-b3-spanid",
-		"x-b3-parentspanid",
-		"x-b3-sampled",
-		"x-b3-flags",
-		"x-ot-span-context",
+	// Keep business headers used by this demo logic.
+	for _, header := range []string{"portal", "device", "user", "travel"} {
+		value := a.Header.Get(header)
+		if value != "" {
+			b.Header.Set(header, value)
+		}
 	}
-	for _, header := range headers {
-		b.Header.Add(header, a.Header.Get(header))
-	}
+
+	// Extract trace context from inbound request and inject it outbound.
+	propagator := propagation.NewCompositeTextMapPropagator(
+		b3.New(b3.WithInjectEncoding(b3.B3MultipleHeader|b3.B3SingleHeader)),
+		propagation.TraceContext{},
+		propagation.Baggage{},
+	)
+	ctx := propagator.Extract(a.Context(), propagation.HeaderCarrier(a.Header))
+	propagator.Inject(ctx, propagation.HeaderCarrier(b.Header))
 }
 
 func main() {
