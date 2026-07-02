@@ -1,4 +1,4 @@
-= Travels Demo
+= Travel Demo
 
 A Microservices demo based on Istio Service Mesh tool. 
 
@@ -44,7 +44,7 @@ kubectl port-forward svc/control 8080:8080 -n travel-control
 
 ----
 
-Open http://localhost:8080[Travels Dashboard].
+Open http://localhost:8080[Travel Dashboard].
 
 Undeploy the example:
 
@@ -59,7 +59,7 @@ kubectl delete namespace travel-portal
 kubectl delete namespace travel-control
 ----
 
-== Travels Demo Design
+== Travel Demo Design
 
 This demo creates two groups of services to simulate a travel portal scenario.
 
@@ -87,23 +87,23 @@ Service relations between namespaces can be described in the following diagram:
 
 image:doc/Preliminary-Design.png[Design]
 
-== Travels Dashboard
+== Travel Dashboard
 
-In the Travels Demo it has been introduced a *business dashboard* with two features:
+In the Travel Demo it has been introduced a *business dashboard* with two features:
 
 * Allow to change the settings of every travel shop simulator. Allowing to change the characteristics of the traffic (ratio, device, user, type of travel).
 * Providing a *business* view of the total requests generated from the *travel-portal* namespace to the *travel-agency* services, organized with business criteria as grouped per shop, per type of traffic and per city.
 
-image:doc/Travels-Dashboard.png[Travels Dashboard]
+image:doc/Travels-Dashboard.png[Travel Dashboard]
 
 == Kiali Dashboard
 
-Travels Demo has introduced a *database* in the example.
+The Travel Demo has introduced a *database* in the example.
 
 A typical flow consists of following steps:
 
 . A portal queries the travels service for available destinations.
-. Travels service queries the available hotels and return to the portal shop.
+. The _travels_ service queries the available hotels and returns them to the portal shop.
 . A user selects a destination and a type of travel, which may include a _flight_ and/or a _car_, _hotel_ and _insurance_.
 . _Cars_, _Hotels_ and _Flights_ may have available discounts depending of user type.
 
