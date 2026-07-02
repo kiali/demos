@@ -6,7 +6,7 @@ This goal of this demo is to demonstrate link:https:/istio.io/[Istio] capabiliti
 
 == Platform Install
 
-This demo has been tested using https://istio.io/latest/docs/setup/platform-setup/minikube/[Minikube] and https://istio.io/latest/docs/setup/install/istioctl/#install-a-different-profile[Istio 1.6 Demo Profile]
+This demo has been tested using https://kind.sigs.k8s.io/[Kind] (Kubernetes in Docker) with MetalLB for ingress, and the Istio demo profile. OpenShift qualification is in progress.
 
 == Quick Start
 
