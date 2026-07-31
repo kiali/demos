@@ -79,7 +79,7 @@ A second namespace called *travel-agency* will host a set of services created to
 
 A main _travels_ service will be the business entry point for the travel agency. It receives a destination city and a user as parameters and it calculates all elements that compose a travel budget: airfares, lodging, car reservation and travel insurances.
 
-There are several services that calculates a separate price and the travels service is responsible to aggregate them in a single response.
+There are several services that calculate a separate price and the travels service is responsible to aggregate them in a single response.
 
 Additionally, some users like _registered_ users can have access to special discounts, managed as well by an external service.
 
