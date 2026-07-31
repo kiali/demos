@@ -1,12 +1,12 @@
-= Travels Demo
+= Travel Demo
 
 A Microservices demo based on Istio Service Mesh tool. 
 
-This goal of this demo is to demonstrate link:https:/istio.io/[Istio] capabilities observed and managed by https://kiali.io[Kiali] tool.
+This goal of this demo is to demonstrate link:https://istio.io/[Istio] capabilities observed and managed by https://kiali.io[Kiali] tool.
 
 == Platform Install
 
-This demo has been tested using https://istio.io/latest/docs/setup/platform-setup/minikube/[Minikube] and https://istio.io/latest/docs/setup/install/istioctl/#install-a-different-profile[Istio 1.6 Demo Profile]
+This demo has been tested using https://kind.sigs.k8s.io/[Kind] (Kubernetes in Docker) with MetalLB for ingress, and the Istio demo profile. OpenShift qualification is in progress.
 
 == Quick Start
 
@@ -44,7 +44,7 @@ kubectl port-forward svc/control 8080:8080 -n travel-control
 
 ----
 
-Open http://localhost:8080[Travels Dashboard].
+Open http://localhost:8080[Travel Dashboard].
 
 Undeploy the example:
 
@@ -59,7 +59,7 @@ kubectl delete namespace travel-portal
 kubectl delete namespace travel-control
 ----
 
-== Travels Demo Design
+== Travel Demo Design
 
 This demo creates two groups of services to simulate a travel portal scenario.
 
@@ -79,7 +79,7 @@ A second namespace called *travel-agency* will host a set of services created to
 
 A main _travels_ service will be the business entry point for the travel agency. It receives a destination city and a user as parameters and it calculates all elements that compose a travel budget: airfares, lodging, car reservation and travel insurances.
 
-There are several services that calculates a separate price and the travels service is responsible to aggregate them in a single response.
+There are several services that calculate a separate price and the travels service is responsible to aggregate them in a single response.
 
 Additionally, some users like _registered_ users can have access to special discounts, managed as well by an external service.
 
@@ -87,23 +87,23 @@ Service relations between namespaces can be described in the following diagram:
 
 image:doc/Preliminary-Design.png[Design]
 
-== Travels Dashboard
+== Travel Dashboard
 
-In the Travels Demo it has been introduced a *business dashboard* with two features:
+In the Travel Demo it has been introduced a *business dashboard* with two features:
 
 * Allow to change the settings of every travel shop simulator. Allowing to change the characteristics of the traffic (ratio, device, user, type of travel).
 * Providing a *business* view of the total requests generated from the *travel-portal* namespace to the *travel-agency* services, organized with business criteria as grouped per shop, per type of traffic and per city.
 
-image:doc/Travels-Dashboard.png[Travels Dashboard]
+image:doc/Travels-Dashboard.png[Travel Dashboard]
 
 == Kiali Dashboard
 
-Travels Demo has introduced a *database* in the example.
+The Travel Demo has introduced a *database* in the example.
 
 A typical flow consists of following steps:
 
 . A portal queries the travels service for available destinations.
-. Travels service queries the available hotels and return to the portal shop.
+. The _travels_ service queries the available hotels and returns them to the portal shop.
 . A user selects a destination and a type of travel, which may include a _flight_ and/or a _car_, _hotel_ and _insurance_.
 . _Cars_, _Hotels_ and _Flights_ may have available discounts depending of user type.
 
@@ -113,7 +113,7 @@ image:doc/Kiali-Travel-Graph.png[Kiali Dashboard]
 
 == Chaos Engineering
 
-The _flights_ service can be made to behave badly for some types fo requests based on devices (web mobile), user type (new/registered) and/or portal (travels.uk, viaggi.it & voyages.fr).  
+The _flights_ service can be made to behave badly for some types of requests based on devices (web mobile), user type (new/registered) and/or portal (travels.uk, viaggi.it & voyages.fr).  
 
 To add delay into the service the following env variable must be set:
 
