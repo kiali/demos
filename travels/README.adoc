@@ -2,7 +2,7 @@
 
 A Microservices demo based on Istio Service Mesh tool. 
 
-This goal of this demo is to demonstrate link:https:/istio.io/[Istio] capabilities observed and managed by https://kiali.io[Kiali] tool.
+This goal of this demo is to demonstrate link:https://istio.io/[Istio] capabilities observed and managed by https://kiali.io[Kiali] tool.
 
 == Platform Install
 
